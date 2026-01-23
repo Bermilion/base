@@ -1,5 +1,6 @@
 <?php namespace Chunker2i\Base\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
 		]);
 
 		$this->loadViewsFrom($this->packageViewsPath('utils'), 'utils');
+
+        // Добавляем анонимный компонент с алиасом <x-type::h>
+        Blade::anonymousComponentPath($this->packageViewsPath('type'), 'type');
 
 	}
 
