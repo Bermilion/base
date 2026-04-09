@@ -1,6 +1,7 @@
 @props([
     'size' => 2,
     'mode' => null,
+    'text' => null,
 ])
 
 @php
@@ -17,5 +18,5 @@
 @endphp
 
 <{{ $tag }} {{ $attributes->except('text')->class($class) }}>
-{{ $slot }}
+	{{ $text ?? $slot }}
 </{{ $tag }}>
