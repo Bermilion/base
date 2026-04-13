@@ -1,0 +1,4 @@
+@use "../config/sizes" as sizes;
+@use "../utils/mixins/generate-css-variables" as *;
+
+@include generate-css-variables(sizes.$sizes);

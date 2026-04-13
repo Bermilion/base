@@ -1,0 +1,10 @@
+/*
+ * Генерирует CSS переменные в разделе :root
+ */
+@mixin generate-css-variables($map) {
+	:root {
+		@each $key, $value in $map {
+			--#{$key}: #{$value}rem;
+		}
+	}
+}

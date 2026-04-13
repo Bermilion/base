@@ -3,34 +3,10 @@
 @use "@config/viewports" as config;
 @use "@core/viewports";
 
-/**
- * Расчет размера шрифта для корневого элемента страницы
- * на основе стандартной ширины вьюпорта. При стандартной
- * ширине вьюпорта 1rem страницы должен быть равен 1px
+/*
+ * Базовый блок равен 8px = 1rem,
+ * все остальные величины будут строиться от него поэтому font-size равен 50%.
  */
-@mixin _root-font-size($viewportConfig) {
-	$standard_width: map.get($viewportConfig, "standard");
-	$standard_width_divider: math.div($standard_width, 100px);
-	font-size: math.div(1, $standard_width_divider) + vw;
-}
-
 html {
-	@include viewports.phone-portrait {
-		@include _root-font-size(config.$phone-portrait);
-	}
-	@include viewports.phone-landscape {
-		@include _root-font-size(config.$phone-landscape);
-	}
-	@include viewports.tablet-portrait {
-		@include _root-font-size(config.$tablet-portrait);
-	}
-	@include viewports.tablet-landscape {
-		@include _root-font-size(config.$tablet-landscape);
-	}
-	@include viewports.laptop {
-		@include _root-font-size(config.$laptop);
-	}
-	@include viewports.wide {
-		@include _root-font-size(config.$wide);
-	}
+	font-size: 50%;
 }

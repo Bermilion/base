@@ -1,0 +1,11 @@
+@use "@config/sizes" as config;
+
+@function size($key) {
+	@if map-has-key(config.$sizes, $key) {
+		@return var(--#{$key});
+	}
+	@else {
+		@warn "Ключ `#{$key}` не найден в карте $sizes.";
+		@return null;
+	}
+}
