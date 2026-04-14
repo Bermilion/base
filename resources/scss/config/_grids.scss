@@ -1,0 +1,38 @@
+$grids: (
+	'phone-portrait': (
+		'width': 41rem,
+		'gap': 16rem,
+		'spacing': 16rem,
+		'cols': 4
+	),
+	'phone-lanscape': (
+		'width': 92rem,
+		'gap': 24rem,
+		'spacing': 32rem,
+		'cols': 6
+	),
+	'tablet-portrait': (
+		'width': 88rem,
+		'gap': 24rem,
+		'spacing': 32rem,
+		'cols': 6
+	),
+	'tablet-lanscape': (
+		'width': 120rem,
+		'gap': 24rem,
+		'spacing': 32rem,
+		'cols': 6
+	),
+	'laptop': (
+		'width': 154.75rem,
+		'gap': 32rem,
+		'spacing': 64rem,
+		'cols': 12
+	),
+	'wide': (
+		'width': 160rem,
+		'gap': 32rem,
+		'spacing': 320rem,
+		'cols': 12
+	)
+)
