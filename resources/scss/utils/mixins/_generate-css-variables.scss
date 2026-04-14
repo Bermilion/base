@@ -1,10 +1,14 @@
 /*
  * Генерирует CSS переменные в разделе :root
+ * @param {map} $map - Карта значений для генерации переменных
+ * @param {string} $prefix - Опциональный префикс для имён переменных (например, 'spacing-' или 'radius-')
  */
-@mixin generate-css-variables($map) {
-	:root {
-		@each $key, $value in $map {
-			--#{$key}: #{$value}rem;
+@mixin generate-css-variables($map, $prefix: '') {
+	@each $key, $value in $map {
+		@if $prefix != '' {
+			--#{$prefix}-#{$key}: #{$value};
+		} @else {
+			--#{$key}: #{$value};
 		}
 	}
 }
