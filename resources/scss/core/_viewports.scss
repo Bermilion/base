@@ -129,3 +129,12 @@ $_wide-min: map.get(config.$laptop, "max") + 1px;
 		@content
 	}
 }
+
+/**
+ * Все устройства, кроме телефонов
+ */
+@mixin no-phone {
+	@media (min-width: $_phone-landscape-max + 1px) {
+		@content
+	}
+}

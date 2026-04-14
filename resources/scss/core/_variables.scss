@@ -1,8 +1,6 @@
 @use "../config/sizes" as sizes;
-//@use "../config/breakpoints" as breakpoints;
 @use "../utils/mixins/generate-css-variables" as *;
 
 :root {
-	//@include generate-css-variables(breakpoints.$breakpoints, 'breakpoint');
 	@include generate-css-variables(sizes.$sizes);
 }
