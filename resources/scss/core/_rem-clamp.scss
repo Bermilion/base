@@ -1,0 +1,132 @@
+@use "sass:math";
+@use "sass:map";
+@use "@config/viewports" as config;
+@use "@core/viewports";
+
+/**
+ * Гибридная адаптивная система шрифтов
+ * Сочетает математическую точность расчетов на основе viewport
+ * с контролируемым ростом функции clamp()
+ */
+
+/**
+ * Рассчитывает параметры clamp() для диапазона viewport
+ * @param {Map} $viewportConfig - Конфигурация текущего viewport
+ * @param {Number} $minSize - Минимальный размер шрифта (по умолчанию: 8px)
+ * @param {Number} $maxSize - Максимальный размер шрифта в конце диапазона
+ * @returns {String} Функция CSS clamp()
+ */
+@mixin _adaptive-clamp($viewportConfig, $minSize: 8px, $maxSize: 12px) {
+	$standard_width: map.get($viewportConfig, "standard");
+
+	// Рассчитываем границы viewport на основе фактических диапазонов
+	$range_min: 0px;
+	$range_max: 9999px;
+
+	// Специфические расчеты для каждого устройства
+	@if $viewportConfig == config.$phone-portrait {
+		$range_min: 0px;
+		$range_max: 767px; // До начала планшета на 768px
+	}
+	@if $viewportConfig == config.$phone-landscape {
+		$range_min: 0px;
+		$range_max: 1023px; // До начала планшета в ландшафтной ориентации на 1024px
+	}
+	@if $viewportConfig == config.$tablet-portrait {
+		$range_min: 768px;
+		$range_max: 1023px;
+	}
+	@if $viewportConfig == config.$tablet-landscape {
+		$range_min: 1024px;
+		$range_max: 1279px;
+	}
+	@if $viewportConfig == config.$laptop {
+		$range_min: 1280px; // После окончания планшета в ландшафтной ориентации
+		$range_max: 1599px;
+	}
+	@if $viewportConfig == config.$wide {
+		$range_min: 1600px; // После окончания ноутбука
+		$range_max: 9999px;
+	}
+
+	// Рассчитываем наклон для линейного роста
+	$range_width: $range_max - $range_min;
+	$size_range: $maxSize - $minSize;
+
+	@if $range_width > 0px {
+		$slope: math.div($size_range, $range_width) * 100vw;
+		$intercept: $minSize - math.div($size_range, $range_width) * $range_min;
+
+		font-size: clamp($minSize, #{$intercept} + #{$slope}, $maxSize);
+	} @else {
+		// Резервный вариант для одноточечных viewports
+		font-size: $minSize;
+	}
+}
+
+/**
+ * Улучшенный расчет размера шрифта корня с защитой через clamp
+ * Обеспечивает плавное масштабирование в пределах границ viewport
+ */
+@mixin _root-font-size-clamped($viewportConfig) {
+	$standard_width: map.get($viewportConfig, "standard");
+
+	// Максимальные размеры для каждого устройства
+	$max-sizes: (
+		"phone-portrait": 9px,
+		"phone-landscape": 10px,
+		"tablet-portrait": 10px,
+		"tablet-landscape": 11px,
+		"laptop": 11px,
+		"wide": 12px
+	);
+
+	// Получаем имя viewport для поиска максимального размера
+	$viewport_name: null;
+	@if $viewportConfig == config.$phone-portrait { $viewport_name: "phone-portrait"; }
+	@if $viewportConfig == config.$phone-landscape { $viewport_name: "phone-landscape"; }
+	@if $viewportConfig == config.$tablet-portrait { $viewport_name: "tablet-portrait"; }
+	@if $viewportConfig == config.$tablet-landscape { $viewport_name: "tablet-landscape"; }
+	@if $viewportConfig == config.$laptop { $viewport_name: "laptop"; }
+	@if $viewportConfig == config.$wide { $viewport_name: "wide"; }
+
+	$max_size: map.get($max-sizes, $viewport_name);
+	@if $max_size == null { $max_size: 12px; }
+
+	@include _adaptive-clamp($viewportConfig, 8px, $max_size);
+}
+
+/**
+ * Основная реализация - гибридный подход
+ */
+html {
+	/* Телефон в портретной ориентации (360px-767px): 8px при 360px, увеличивается до 9px при 767px */
+	@include viewports.phone-portrait {
+		@include _root-font-size-clamped(config.$phone-portrait);
+	}
+
+	/* Телефон в ландшафтной ориентации (800px-1023px): 8px при 800px, увеличивается до 10px при 1023px */
+	@include viewports.phone-landscape {
+		@include _root-font-size-clamped(config.$phone-landscape);
+	}
+
+	/* Планшет в портретной ориентации (768px-1023px): 8px при 768px, увеличивается до 10px при 1023px */
+	@include viewports.tablet-portrait {
+		@include _root-font-size-clamped(config.$tablet-portrait);
+	}
+
+	/* Планшет в ландшафтной ориентации (1024px-1279px): 8px при 1024px, увеличивается до 11px при 1279px */
+	@include viewports.tablet-landscape {
+		@include _root-font-size-clamped(config.$tablet-landscape);
+	}
+
+	/* Ноутбук (1280px-1599px): 8px при 1280px, увеличивается до 11px при 1599px */
+	@include viewports.laptop {
+		@include _root-font-size-clamped(config.$laptop);
+	}
+
+	/* Широкий экран (1600px+): 8px при 1600px, увеличивается до 12px при 1920px+ */
+	@include viewports.wide {
+		@include _root-font-size-clamped(config.$wide);
+	}
+}
