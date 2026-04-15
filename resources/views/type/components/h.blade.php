@@ -1,6 +1,6 @@
 @props([
     'size' => 2,
-    'mode' => null,
+    'mod' => null,
     'text' => null,
 ])
 
@@ -11,8 +11,8 @@
 
 	// Формируем модификатор только если mode передан
     $class = 'h' . $size;
-    if ($mode) {
-        $class .= ' h' . $size . '_' . $mode;
+    if ($mod) {
+        $class .= ' h' . $size . '_' . $mod;
     }
     $class = trim($class);
 @endphp

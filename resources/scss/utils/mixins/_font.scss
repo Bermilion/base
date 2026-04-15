@@ -1,0 +1,25 @@
+@use "../functions/font" as *;
+
+/// Устанавливает типографические свойства для текста
+/// @param {Number|String} $size - Размер шрифта. Принимает числовое значение или ключ из конфигурации
+/// @param {Number|String} $height - Межстрочный интервал. Принимает числовое значение или ключ из конфигурации
+/// @param {Number|String|null} $weight [null] - Насыщенность шрифта. Опциональный параметр. Принимает числовое
+/// 											 значение (100-900) или ключ из конфигурации. Если не указан,
+/// 											 font-weight не устанавливается
+/// @example
+///   // Только размер и межстрочный интервал
+///   .element {
+///     @include font(16px, 1.5);
+///   }
+/// @example
+///   // Размер, межстрочный интервал и насыщенность
+///   .element {
+///     @include font(16px, 1.5, 500);
+///   }
+@mixin font($size, $height, $weight: null) {
+	font-size: f('font-size', $size);
+	line-height: f('line-height', $height);
+	@if($weight) {
+		font-weight: f('font-weight', $weight);
+	}
+}

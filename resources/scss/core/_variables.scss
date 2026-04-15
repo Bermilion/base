@@ -1,6 +1,10 @@
 @use "../config/sizes" as sizes;
+@use "../config/typography" as typography;
 @use "../utils/mixins/generate-css-variables" as *;
 
 :root {
-	@include generate-css-variables(sizes.$sizes);
+	@include generate-css-variables(sizes.$sizes, 'size');
+	@include generate-css-variables(typography.$font-size, 'font-size');
+	@include generate-css-variables(typography.$line-height, 'line-height');
+	@include generate-css-variables(typography.$font-weight, 'font-weight');
 }

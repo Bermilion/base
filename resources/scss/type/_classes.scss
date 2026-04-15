@@ -1,0 +1,14 @@
+@use "@core/viewports";
+@use "../utils/mixins/font" as *;
+
+.h1 {
+	@include font(24, 32, 'bold');
+	word-wrap: break-word;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	text-wrap: pretty;
+
+	@include viewports.no-phone {
+		@include font(48, 56);
+	}
+}

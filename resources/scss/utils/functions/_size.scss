@@ -1,36 +1,52 @@
 @use "sass:map";
+@use "sass:list";
 @use "../../config/sizes" as config;
 
-/// Возвращает CSS-переменную для заданного размера из глобальной карты $sizes.
+/// Возвращает CSS-переменные для заданных размеров из глобальной карты $sizes.
 ///
-/// Использует префикс `--` для преобразования ключа в CSS-переменную (например, `sm` → `var(--sm)`).
-/// Если ключ не найден — выводит предупреждение и возвращает `null`.
+/// Использует префикс `--` для преобразования ключей в CSS-переменные (например, `16` -> `var(--size-16)`).
+/// Если ключ не найден - выводит предупреждение и возвращает `null`.
 ///
-/// @param {string | number} $key - Ключ размера. Допустимые значения:
-///   '0', '1px', '4px',
-///   'base' (8px), 'xs' (12px), 'sm' (16px), 'md' (20px), 'lg' (24px),
-///   'xl' (32px), '2xl' (40px), '3xl' (48px), '4xl' (56px), '5xl' (64px),
-///   '6xl' (72px), '7xl' (80px), '8xl' (88px), '9xl' (96px), '10xl' (100px), '11xl' (104px)
+/// @param {string | number} $keys... - До 4 ключей размеров.
+///   Допустимые значения: '0', '1', '2', '4', '8', '12', '16', '20', '24', '32', '40', '48', '56', '64', '72', '80', '88', '96', '104'
+///   Если значения не предоставлены, используется первое значение из карты ('0')
 ///
-/// @return {css-variable|null} - Значение `var(--ключ)` или `null`, если ключ не найден.
+/// @return {css-variable|null} - CSS-переменные или null, если ключи не найдены.
 ///
 /// @example scss
 ///   .box {
-///     padding: s(sm);    // → var(--sm)
-///     margin: s(2xl);    // → var(--2xl)
-///     gap: s(invalid);   // → null + предупреждение в консоли
+///     padding: s(16);                    // -> var(--size-16)
+///     margin: s(24, 32, 40, 48);         // -> var(--size-24) var(--size-32) var(--size-40) var(--size-48)
+///     gap: s();                          // -> var(--size-0) (первое значение карты)
+///     gap: s(invalid);                   // -> null + предупреждение
 ///   }
 ///
 /// @see /docs/design-tokens.md
 /// @see ../../config/sizes/_sizes.scss - Определение карты $sizes
-@function s($key) {
-	$key: "#{$key}";
-
-	@if map.has-key(config.$sizes, $key) {
-		@return var(--#{$key});
+@function s($keys...) {
+	// Если аргументы не предоставлены, использовать первое значение из карты
+	@if list.length($keys) == 0 {
+		@return var(--size-0);
 	}
-	@else {
-		@warn "Ключ `#{$key}` не найден в карте $sizes.";
+
+	$result: ();
+	$hasError: false;
+
+	@each $key in $keys {
+		$key: "#{$key}";
+
+		@if map.has-key(config.$sizes, $key) {
+			$result: list.append($result, var(--size-#{$key}), space);
+		}
+		@else {
+			@warn "Ключ `#{$key}` не найден в карте $sizes.";
+			$hasError: true;
+		}
+	}
+
+	@if $hasError {
 		@return null;
 	}
+
+	@return $result;
 }

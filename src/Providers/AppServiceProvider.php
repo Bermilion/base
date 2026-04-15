@@ -23,10 +23,7 @@ class AppServiceProvider extends ServiceProvider
 		]);
 
 		$this->loadViewsFrom($this->packageViewsPath('utils'), 'utils');
-
-        // Добавляем анонимный компонент с алиасом <x-type::h>
-        Blade::anonymousComponentPath($this->packageViewsPath('type'), 'type');
-
+		$this->loadViewsFrom($this->packageViewsPath('type'), 'type');
 	}
 
 	/**
