@@ -6,9 +6,71 @@
 	word-wrap: break-word;
 	word-break: break-word;
 	overflow-wrap: break-word;
+	hyphens: auto;
 	text-wrap: pretty;
 
 	@include viewports.no-phone {
 		@include font(48, 56);
 	}
+}
+
+.h2 {
+	@include font(20, 24, 'bold');
+
+	@include viewports.no-phone {
+		@include font(40, 48);
+	}
+}
+
+.h3 {
+	@include font(16, 24, 'bold');
+
+	@include viewports.no-phone {
+		@include font(32, 40);
+	}
+}
+
+.h4 {
+	@include font(24, 32, 'medium');
+
+	@include viewports.no-phone {
+		@include font(32, 40);
+	}
+}
+
+.h5 {
+	@include font(20, 24, 'medium');
+
+	@include viewports.no-phone {
+		@include font(24, 32);
+	}
+}
+
+.h6 {
+	@include font(16, 24, 'medium');
+}
+
+.hero {
+	@include font(32, 40, 'bold');
+	word-wrap: break-word;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
+	text-wrap: pretty;
+
+	@include viewports.no-phone {
+		@include font(64, 72);
+	}
+}
+
+.supheading {
+	@include font(12, 16, 'regular');
+	text-transform: uppercase;
+}
+
+.p {
+	@include font(16, 24, 'regular');
+}
+.hint {
+	@include font(12, 16, 'regular');
 }
