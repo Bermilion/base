@@ -1,0 +1,342 @@
+/*
+  1. Предотвратить влияние padding и border на ширину элемента. (https://github.com/mozdevs/cssremedy/issues/4)
+  2. Удалить отступы по умолчанию
+  3. Сбросить все границы.
+*/
+
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+	box-sizing: border-box; /* 1 */
+	margin: 0; /* 2 */
+	padding: 0; /* 2 */
+	border: 0 solid; /* 3 */
+}
+
+/*
+  1. Использовать согласованную межстрочную высоту во всех браузерах.
+  2. Предотвратить изменение размера шрифта после смены ориентации в iOS.
+  3. Использовать более читаемый размер табуляции.
+  4. Использовать настроенные пользователем `sans` font-family по умолчанию.
+  5. Использовать настроенные пользователем `sans` font-feature-settings по умолчанию.
+  6. Использовать настроенные пользователем `sans` font-variation-settings по умолчанию.
+  7. Отключить подсветку нажатий в iOS.
+*/
+
+html,
+:host {
+	line-height: 1.5; /* 1 */
+	-webkit-text-size-adjust: 100%; /* 2 */
+	tab-size: 4; /* 3 */
+	-webkit-tap-highlight-color: transparent; /* 7 */
+}
+
+/*
+  1. Добавить правильную высоту в Firefox.
+  2. Исправить наследование цвета границы в Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+  3. Сбросить стиль границы по умолчанию на сплошную границу 1px.
+*/
+
+hr {
+	height: 0; /* 1 */
+	color: inherit; /* 2 */
+	border-top-width: 1px; /* 3 */
+}
+
+/*
+  Добавить правильное текстовое оформление в Chrome, Edge и Safari.
+*/
+
+abbr:where([title]) {
+	text-decoration: underline dotted;
+}
+
+/*
+  Удалить размер и вес шрифта по умолчанию для заголовков.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+/*
+  Сбросить ссылки для оптимизации стилизации opt-in вместо opt-out.
+*/
+
+a {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+/*
+  Добавить правильный вес шрифта в Edge и Safari.
+*/
+
+b,
+strong {
+	font-weight: bolder;
+}
+
+/*
+  1. Использовать настроенные пользователем `mono` font-family по умолчанию.
+  2. Использовать настроенные пользователем `mono` font-feature-settings по умолчанию.
+  3. Использовать настроенные пользователем `mono` font-variation-settings по умолчанию.
+  4. Исправить странное `em` измерение шрифта во всех браузерах.
+*/
+
+code,
+kbd,
+samp,
+pre {
+	font-size: 1em; /* 4 */
+}
+
+/*
+  Добавить правильный размер шрифта во всех браузерах.
+*/
+
+small {
+	font-size: 80%;
+}
+
+/*
+  Предотвратить влияние элементов `sub` и `sup` на межстрочную высоту во всех браузерах.
+*/
+
+sub,
+sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+sub {
+	bottom: -0.25em;
+}
+
+sup {
+	top: -0.5em;
+}
+
+/*
+  1. Удалить текстовый отступ из содержимого таблиц в Chrome и Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+  2. Исправить наследование цвета границы таблицы во всех Chrome и Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+  3. Удалить пробелы между границами таблиц по умолчанию.
+*/
+
+table {
+	text-indent: 0; /* 1 */
+	border-color: inherit; /* 2 */
+	border-collapse: collapse; /* 3 */
+}
+
+/*
+  Использовать современный стиль фокуса Firefox для всех элементов, которые могут получать фокус.
+*/
+
+:-moz-focusring {
+	outline: auto;
+}
+
+/*
+  Добавить правильное вертикальное выравнивание в Chrome и Firefox.
+*/
+
+progress {
+	vertical-align: baseline;
+}
+
+/*
+  Добавить правильное отображение в Chrome и Safari.
+*/
+
+summary {
+	display: list-item;
+}
+
+/*
+  Сделать списки нестилизованными по умолчанию.
+*/
+
+ol,
+ul,
+menu {
+	list-style: none;
+}
+
+/*
+  1. Сделать заменяемые элементы `display: block` по умолчанию. (https://github.com/mozdevs/cssremedy/issues/14)
+  2. Добавить `vertical-align: middle` для более разумного выравнивания заменяемых элементов по умолчанию. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+      Это может вызвать плохо продуманную ошибку lint в некоторых инструментах, но включено намеренно.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+	display: block; /* 1 */
+	vertical-align: middle; /* 2 */
+}
+
+/*
+  Ограничить изображения и видео шириной родителя и сохранить их внутреннее соотношение сторон. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+	max-width: 100%;
+	height: auto;
+}
+
+/*
+  1. Наследовать стили шрифта во всех браузерах.
+  2. Удалить радиус границы во всех браузерах.
+  3. Удалить цвет фона во всех браузерах.
+  4. Обеспечить согласованную прозрачность для отключенных состояний во всех браузерах.
+*/
+
+button,
+input,
+select,
+optgroup,
+textarea,
+::file-selector-button {
+	font: inherit; /* 1 */
+	font-feature-settings: inherit; /* 1 */
+	font-variation-settings: inherit; /* 1 */
+	letter-spacing: inherit; /* 1 */
+	color: inherit; /* 1 */
+	border-radius: 0; /* 2 */
+	background-color: transparent; /* 3 */
+	opacity: 1; /* 4 */
+}
+
+/*
+  Восстановить вес шрифта по умолчанию.
+*/
+
+:where(select:is([multiple], [size])) optgroup {
+	font-weight: bolder;
+}
+
+/*
+  Восстановить отступ.
+*/
+
+:where(select:is([multiple], [size])) optgroup option {
+	padding-inline-start: 20px;
+}
+
+/*
+  Восстановить пробел после кнопки.
+*/
+
+::file-selector-button {
+	margin-inline-end: 4px;
+}
+
+/*
+  Сбросить прозрачность placeholder по умолчанию в Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+*/
+
+::placeholder {
+	opacity: 1;
+}
+
+/*
+  Предотвратить изменение размера textarea по горизонтали по умолчанию.
+*/
+
+textarea {
+	resize: vertical;
+}
+
+/*
+  Удалить внутренние отступы в Chrome и Safari на macOS.
+*/
+
+::-webkit-search-decoration {
+	-webkit-appearance: none;
+}
+
+/*
+  1. Обеспечить одинаковую высоту для полей даты/времени когда они пусты в iOS Safari.
+  2. Обеспечить возможность изменения выравнивания текста для полей даты/времени в iOS Safari.
+*/
+
+::-webkit-date-and-time-value {
+	min-height: 1lh; /* 1 */
+	text-align: inherit; /* 2 */
+}
+
+
+/*
+  Удалить лишние отступы из псевдоэлементов в полях даты/времени для обеспечения согласованной высоты во всех браузерах.
+*/
+
+::-webkit-datetime-edit-fields-wrapper {
+	padding: 0;
+}
+
+::-webkit-datetime-edit-year-field,
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-hour-field {
+	padding-block: 0;
+}
+
+/*
+  Центрировать маркер выпадающего списка, показываемый на полях с парными `<datalist>` в Chrome. (https://github.com/tailwindlabs/tailwindcss/issues/18499)
+*/
+
+::-webkit-calendar-picker-indicator {
+	line-height: 1;
+}
+
+/*
+  Удалить дополнительные стили `:invalid` в Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+	box-shadow: none;
+}
+
+/*
+  Исправить невозможность стилизовать радиус границы в iOS Safari.
+*/
+
+button,
+input:where([type='button'], [type='reset'], [type='submit']),
+::file-selector-button {
+	appearance: button;
+}
+
+/*
+  Исправить стиль курсора кнопок увеличения и уменьшения в Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+	height: auto;
+}
+
+/*
+  Сделать элементы с атрибутом HTML hidden скрытыми по умолчанию.
+*/
+
+[hidden]:where(:not([hidden='until-found'])) {
+	display: none !important;
+}
