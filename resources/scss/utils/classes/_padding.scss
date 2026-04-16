@@ -1,4 +1,44 @@
-@use "sass:map";
-@use "sass:list";
-@use "../../config/sizes";
 @use "@core/viewports";
+@use "../mixins/generate-spacing-classes" as *;
+
+/*
+ * Генерация классов без учета устройств
+ */
+@include generate-spacing-classes('padding');
+
+/*
+ * Генерация классов с учетом устройств
+ */
+@include viewports.phone-portrait {
+	@include generate-spacing-classes('padding', 'pp');
+}
+@include viewports.phone-landscape {
+	@include generate-spacing-classes('padding', 'pl');
+}
+@include viewports.phone {
+	@include generate-spacing-classes('padding', 'p');
+}
+@include viewports.tablet-portrait {
+	@include generate-spacing-classes('padding', 'tp');
+}
+@include viewports.tablet-landscape {
+	@include generate-spacing-classes('padding', 'tl');
+}
+@include viewports.tablet {
+	@include generate-spacing-classes('padding', 't');
+}
+@include viewports.mobile {
+	@include generate-spacing-classes('padding', 'm');
+}
+@include viewports.laptop {
+	@include generate-spacing-classes('padding', 'l');
+}
+@include viewports.wide {
+	@include generate-spacing-classes('padding', 'w');
+}
+@include viewports.desktop {
+	@include generate-spacing-classes('padding', 'd');
+}
+@include viewports.no-phone {
+	@include generate-spacing-classes('padding', 'np');
+}

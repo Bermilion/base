@@ -1,5 +1,6 @@
 @use "@core/viewports";
 @use "../utils/mixins/font" as *;
+@use "../utils/functions/size" as *;
 
 .h1 {
 	@include font(24, 32, 'bold');
@@ -68,9 +69,108 @@
 	text-transform: uppercase;
 }
 
-.p {
+.p, .ul, .ol, .li {
 	@include font(16, 24, 'regular');
 }
 .hint {
 	@include font(12, 16, 'regular');
+}
+
+.ol {
+	list-style-position: inside;
+	counter-reset: ol-level-1;
+
+	&_base {
+		list-style-type: none;
+
+		.li {
+			counter-increment: ol-level-1;
+
+			&::before {
+				content: counter(ol-level-1) ". ";
+			}
+		}
+
+		// Нумерация до 4-го уровня вложенности
+		.ol {
+			counter-reset: ol-level-2;
+
+			.li {
+				counter-increment: ol-level-2;
+
+				&::before {
+					content: counter(ol-level-1) "." counter(ol-level-2) ". ";
+				}
+			}
+
+			.ol {
+				counter-reset: ol-level-3;
+
+				.li {
+					counter-increment: ol-level-3;
+
+					&::before {
+						content: counter(ol-level-1) "." counter(ol-level-2) "." counter(ol-level-3) ". ";
+					}
+				}
+
+				.ol {
+					counter-reset: ol-level-4;
+
+					.li {
+						counter-increment: ol-level-4;
+
+						&::before {
+							content: counter(ol-level-1) "." counter(ol-level-2) "." counter(ol-level-3) "." counter(ol-level-4) ". ";
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&_abc {
+		list-style-type: lower-alpha;
+
+		.ol {
+			.li {
+				&::before {
+					content: counter(ol-level-1) ". ";
+				}
+			}
+		}
+	}
+}
+
+.ul {
+	list-style-position: inside;
+
+	&_circle {
+		list-style-type: circle; // Маркер в виде кружка.
+	}
+	&_disc {
+		list-style-type: disc; 	// Маркер в виде точки.
+	}
+	&_square {
+		list-style-type: square; // Маркер в виде квадрата.
+	}
+
+}
+
+.ol, .ul {
+	.ol, .ul {
+		margin-top: s(4);
+		margin-bottom: s(8);
+		padding-left: s(24);
+	}
+}
+.li {
+	> .ol, > .ul {
+		margin: s(4, 0);
+		padding-left: s(20);
+	}
+	&:has(.ol, .ul) {
+		list-style-type: none;
+		margin-left: 0;
+	}
 }
