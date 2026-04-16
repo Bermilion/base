@@ -11,9 +11,9 @@
 	};
 
 	// Build CSS class with modifiers
-	$class = $modifierHelper->buildModifiersClass('p', $mod);
+	$class = $modifierHelper->buildModifiersClass('ol', $mod);
 @endphp
 
-<p {{ $attributes->class($class) }}>
+<ol {{ $attributes->class($class) }}>
 	{{ $slot }}
-</p>
+</ol>

@@ -6,15 +6,18 @@
 
 @php
 	$size = (int) $size;
-	$size = max(1, min(6, $size)); // Ограничиваем размер от 1 до 6
+	$size = max(1, min(6, $size)); // Limit size from 1 to 6
 	$tag = 'h' . $size;
 
-	// Формируем модификатор только если mode передан
-    $class = 'h' . $size;
-    if ($mod) {
-        $class .= ' h' . $size . '_' . $mod;
-    }
-    $class = trim($class);
+	use Chunker2i\Base\Traits\ModifiersTrait;
+
+	// Create anonymous class to use trait
+	$modifierHelper = new class {
+		use ModifiersTrait;
+	};
+
+	// Build CSS class with modifiers
+	$class = $modifierHelper->buildModifiersClass('h' . $size, $mod);
 @endphp
 
 <{{ $tag }} {{ $attributes->except('text')->class($class) }}>

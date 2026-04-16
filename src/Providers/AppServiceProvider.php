@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
 
 		$this->loadViewsFrom($this->packageViewsPath('utils'), 'utils');
 		$this->loadViewsFrom($this->packageViewsPath('type'), 'type');
+		$this->loadViewsFrom($this->packageViewsPath('base'), 'base');
 	}
 
 	/**

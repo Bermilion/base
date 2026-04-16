@@ -1,5 +1,6 @@
 @props([
 	'mod' => null,
+	'text' => null,
 ])
 
 @php
@@ -11,9 +12,13 @@
 	};
 
 	// Build CSS class with modifiers
-	$class = $modifierHelper->buildModifiersClass('p', $mod);
+	$class = $modifierHelper->buildModifiersClass('link', $mod);
 @endphp
 
-<p {{ $attributes->class($class) }}>
-	{{ $slot }}
-</p>
+<a {{ $attributes->class($class) }}>
+	@if($text)
+		<span class="link__text">{{ $text }}</span>
+	@else
+		{{ $slot }}
+	@endif
+</a>

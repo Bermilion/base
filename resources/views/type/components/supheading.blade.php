@@ -3,12 +3,15 @@
 ])
 
 @php
-	// Формируем модификатор только если mode передан
-    $class = 'supheading';
-    if ($mod) {
-        $class .= ' supheading_' . $mod;
-    }
-    $class = trim($class);
+	use Chunker2i\Base\Traits\ModifiersTrait;
+
+	// Create anonymous class to use trait
+	$modifierHelper = new class {
+		use ModifiersTrait;
+	};
+
+	// Build CSS class with modifiers
+	$class = $modifierHelper->buildModifiersClass('supheading', $mod);
 @endphp
 
 <p {{ $attributes->class($class) }}>
