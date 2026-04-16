@@ -340,3 +340,9 @@ input:where([type='button'], [type='reset'], [type='submit']),
 [hidden]:where(:not([hidden='until-found'])) {
 	display: none !important;
 }
+
+a, a:-webkit-any-link {
+	color: inherit;
+	cursor: inherit;
+	text-decoration: none;
+}
