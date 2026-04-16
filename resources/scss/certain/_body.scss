@@ -1,10 +1,11 @@
 @use "@fontsource-variable/geologica";
 @use "@core/colors";
+@use "@utils/mixins/font" as *;
 
 body {
-	line-height: 24rem;
-	font-size: 16rem;
+	@include font(16, 24, 'regular');
 	font-family: "Geologica Variable", sans-serif;
 	color: colors.content(colors.$content);
 	background-color: colors.base(colors.$content);
+	scrollbar-gutter: stable;
 }
