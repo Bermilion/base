@@ -45,18 +45,18 @@ $_directions: (
 	} @else {
 		@each $size-key, $size-value in sizes.$sizes {
 			// Все стороны
-			.#{$device-key}-#{$prefix}-#{$size-key} {
+			.#{$device-key}\:#{$prefix}-#{$size-key} {
 				#{$property}: s($size-key);
 			}
 
 			// Отдельные направления
 			@each $dir-key, $dir-value in $_directions {
 				@if meta.type-of($dir-value) == 'string' {
-					.#{$device-key}-#{$prefix}#{$dir-key}-#{$size-key} {
+					.#{$device-key}\:#{$prefix}#{$dir-key}-#{$size-key} {
 						#{$property}-#{$dir-value}: s($size-key);
 					}
 				} @else {
-					.#{$device-key}-#{$prefix}#{$dir-key}-#{$size-key} {
+					.#{$device-key}\:#{$prefix}#{$dir-key}-#{$size-key} {
 						@each $side in $dir-value {
 							#{$property}-#{$side}: s($size-key);
 						}
