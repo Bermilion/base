@@ -1,6 +1,8 @@
 @use "@core/viewports";
 @use "../utils/mixins/font" as *;
 @use "../utils/functions/size" as *;
+@use "@core/colors" as *;
+@use "@config/colors" as colors;
 
 .h1 {
 	@include font(24, 32, 'bold');
@@ -74,6 +76,14 @@
 }
 .hint {
 	@include font(12, 16, 'regular');
+}
+.code {
+	@include font(12, 16, 'regular');
+	font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
+	background-color: var-base(colors.$warning);
+	outline: s(1) solid var-dark(colors.$warning);
+	padding: s(2, 8);
+	border-radius: s(4);
 }
 
 .ol {

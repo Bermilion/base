@@ -112,16 +112,20 @@ $_result-colors: ();
 }
 
 @function var-base($color) {
-	@return var(--color-#{$color}-base);
+	$name: _get-color-name($color);
+	@return var(--color-#{$name}-base);
 }
 @function var-light($color) {
-	@return var(--color-#{$color}-light);
+	$name: _get-color-name($color);
+	@return var(--color-#{$name}-light);
 }
 @function var-dark($color) {
-	@return var(--color-#{$color}-dark);
+	$name: _get-color-name($color);
+	@return var(--color-#{$name}-dark);
 }
 @function var-content($color) {
-	@return var(--color-#{$color}-content);
+	$name: _get-color-name($color);
+	@return var(--color-#{$name}-content);
 }
 
 /**
