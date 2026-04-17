@@ -110,3 +110,63 @@ $_result-colors: ();
 @function content($color) {
 	@return get($color, "content");
 }
+
+@function var-base($color) {
+	@return var(--color-#{$color}-base);
+}
+@function var-light($color) {
+	@return var(--color-#{$color}-light);
+}
+@function var-dark($color) {
+	@return var(--color-#{$color}-dark);
+}
+@function var-content($color) {
+	@return var(--color-#{$color}-content);
+}
+
+/**
+ * Получить CSS переменную цвета по названию и оттенку
+ */
+@function get-var-color($color-name, $shade-name) {
+	@if $shade-name == "base" {
+		@return var(--color-#{$color-name}-base);
+	} @else if $shade-name == "light" {
+		@return var(--color-#{$color-name}-light);
+	} @else if $shade-name == "dark" {
+		@return var(--color-#{$color-name}-dark);
+	} @else if $shade-name == "content" {
+		@return var(--color-#{$color-name}-content);
+	}
+}
+
+/*
+ * Выводит карту базовых цветов
+ */
+@function get-base-colors-map(){
+	@return $_base-colors;
+}
+
+/*
+ * Выводит двумерную карту цветов с их вариациями
+ */
+@function get-colors-map() {
+	@return $_result-colors;
+}
+
+/**
+ * Преобразует двумерную карту цветов в одномерную
+ * ("accent":("base":#0088ff, "light": #fff, "dark": #000, "content": #222))
+ * превращается в
+ * ("accent-base": #0088ff, "accent-light": #fff, "accent-dark":#000, "accent-content": #222)
+ */
+@function get-colors-map-flat() {
+	$_flat-map: ();
+	@each $color-name, $shades in $_result-colors {
+		@each $shade-name, $shade-value in $shades {
+			$_flat-map: map.set($_flat-map, "#{$color-name}-#{$shade-name}", $shade-value);
+		}
+	}
+	@return $_flat-map;
+}
+
+
