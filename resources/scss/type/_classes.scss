@@ -81,9 +81,14 @@
 	@include font(12, 16, 'regular');
 	font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
 	background-color: var-base(colors.$warning);
-	outline: s(1) solid var-dark(colors.$warning);
+	outline: s(1) solid var-base(colors.$grey);
 	padding: s(2, 8);
 	border-radius: s(4);
+
+	&_block {
+		display: block;
+		white-space: pre;
+	}
 }
 
 .ol {

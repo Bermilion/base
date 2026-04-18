@@ -15,5 +15,5 @@
 @endphp
 
 <code {{ $attributes->class($class) }}>
-	{{ $slot }}
+	{!! $slot !!}
 </code>
