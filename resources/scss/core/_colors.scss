@@ -120,6 +120,8 @@ $_result-colors: ();
  * 500 — базовый цвет (без изменений)
  * 50-400 — светлые оттенки
  * 600-950 — тёмные оттенки
+ * При использовании этой функции нужно учитывать что если исходный цвет слишком
+ * светлый или слишком темный то крайние значения могут быть не корректны
  */
 @function shade($color, $step, $alpha: 1) {
 	$base-color: null;
@@ -141,19 +143,19 @@ $_result-colors: ();
 	$_light-range: $_max-lightness - $_current-lightness;
 	$_dark-range: $_current-lightness - $_min-lightness;
 
-	// Карта шагов: для светлых - доля от диапазона к max, для тёмных - доля от диапазона к min
+	// Безразмерные коэффициенты для каждого шага
 	$_step-fractions: (
-		50: 1.0,
-		100: 0.75,
-		200: 0.5,
-		300: 0.25,
-		400: 0.1,
+		50: math.div($_light-range, 5) * 5,
+		100: math.div($_light-range, 5) * 4,
+		200: math.div($_light-range, 5) * 3,
+		300: math.div($_light-range, 5) * 2,
+		400: math.div($_light-range, 5),
 		500: 0,
-		600: -0.1,
-		700: -0.25,
-		800: -0.5,
-		900: -0.75,
-		950: -1.0
+		600: math.div($_dark-range, 5) * -1,
+		700: math.div($_dark-range, 5) * -2,
+		800: math.div($_dark-range, 5) * -3,
+		900: math.div($_dark-range, 5) * -4,
+		950: math.div($_dark-range, 5) * -5
 	);
 
 	$_fraction: map.get($_step-fractions, $step);
@@ -168,16 +170,31 @@ $_result-colors: ();
 	// Вычисляем корректировку в процентах
 	@if $_fraction > 0 {
 		// Светлые оттенки: шаг к max-lightness
-		$adjustment: $_light-range * $_fraction;
+		$adjustment: $_current-lightness - $_fraction;
 	} @else if $_fraction < 0 {
 		// Тёмные оттенки: шаг к min-lightness
-		$adjustment: $_dark-range * $_fraction;
+		$adjustment: $_current-lightness + $_fraction;
 	}
 
 	$shaded: color.adjust($base-color, $lightness: $adjustment);
-	@debug $color $step $_current-lightness;
+
+	// Проверяем, не стал ли цвет слишком близким к белому или черному
+	$_shaded-lightness: $_current-lightness + $adjustment;
+	//@debug $step $_shaded-lightness $_current-lightness $adjustment ' | ' rgba-to-oklch($shaded);
+	//@debug 'Диапазон: ' $_current-lightness $_dark-range math.div($_dark-range, 5) $adjustment;
+	@debug 'Светлота цвета: #{$_current-lightness}';
+	@debug 'Шаг: #{$_fraction}';
+	@debug 'Корректировка в %: #{$adjustment}';
+
+	@if $_shaded-lightness > 98% {
+		@warn "Полученный цвет #{$step} слишком близок к белому (светлота: #{$_shaded-lightness}). Используйте другой базовый цвет или другую ступень.";
+	} @else if $_shaded-lightness < 5% {
+		@warn "Полученный цвет #{$step} слишком близок к черному (светлота: #{$_shaded-lightness}). Используйте другой базовый цвет или другую ступень.";
+	}
+
 	@return color.change($shaded, $alpha: $alpha);
 }
+
 
 @function var-base($color) {
 	$name: _get-color-name($color);
