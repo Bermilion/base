@@ -2,6 +2,7 @@
 @use "sass:meta";
 @use "sass:math";
 @use "sass:map";
+@use "sass:string";
 
 // Пробрасываем базовые цвета из конфига дальше,
 // чтобы к ним можно было обращаться и было удобно
@@ -174,3 +175,92 @@ $_result-colors: ();
 }
 
 
+
+
+
+
+
+
+
+
+
+
+// Конвертирование HEX в OKLCH
+@function hex-to-oklch($hex) {
+	@if(meta.type-of($hex) == 'color') {
+
+		@if(string.index("#{$hex}", "#") == 1) {
+			$oklch: color.to-space($hex, oklch);
+
+			@return round-oklch($oklch);
+
+		} @else {
+			@return #{$hex} 'Не является HEX цветом.';
+		}
+
+	} @else {
+		@return #{meta.type-of($hex)} 'Не является цветом.';
+	}
+}
+
+// Конвертирование RGBA в OKLCH
+@function rgba-to-oklch($rgba) {
+	@if(meta.type-of($rgba) == 'color') {
+		$oklch: color.to-space($rgba, oklch);
+
+		@return round-oklch($oklch);
+	} @else {
+		@return #{meta.type-of($rgba)} 'Не является цветом.';
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+// Вспомогательная функция для конвертации числа в hex
+@function to-hex($value) {
+	$hex-map: (
+		0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
+		8: "8", 9: "9", 10: "a", 11: "b", 12: "c", 13: "d", 14: "e", 15: "f"
+	);
+	$first: map.get($hex-map, math.floor(math.div($value, 16)));
+	$second: map.get($hex-map, $value % 16);
+	@return "#{$first}#{$second}";
+}
+
+// Конвертирование RGB в HEX
+@function rgb-to-hex($rgb) {
+	@return $rgb;
+}
+
+// Конвертирование OKLCH в HEX
+@function oklch-to-hex($oklch) {
+	$rgb: color.to-space($oklch, rgb);
+	@return rgb-to-hex($rgb);
+}
+
+// Округление знаков после запятой у OKLCH цветов (возвращает строку для отображения)
+//@function round-oklch-string($color) {
+//	$l: math.div(math.round(color.channel($color, "lightness") * 10), 10);
+//	$c: math.div(math.round(color.channel($color, "chroma") * 1000), 1000);
+//	$h: math.div(math.round(color.channel($color, "hue") * 100), 100);
+//
+//	@return string.unquote("oklch(#{$l} #{$c} #{$h})");
+//}
+
+// Округление знаков после запятой у OKLCH цветов (возвращает цветовой объект для вычислений)
+@function round-oklch($color) {
+	$l: math.div(math.round(color.channel($color, "lightness") * 10), 10);
+	$c: math.div(math.round(color.channel($color, "chroma") * 1000), 1000);
+	$h: math.div(math.round(color.channel($color, "hue") * 100), 100);
+
+	$adjusted: color.change($color, $lightness: $l, $chroma: $c, $hue: $h);
+	@return $adjusted;
+}
