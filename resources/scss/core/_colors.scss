@@ -15,6 +15,7 @@
 
 
 
+
 /**
  * Генерация внутреннего массива с оттенками цветов из конфига
  *
@@ -110,6 +111,72 @@ $_result-colors: ();
  */
 @function content($color) {
 	@return get($color, "content");
+}
+
+/**
+ * Генерация оттенка по ступени (50-950)
+ *
+ * Ступени: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+ * 500 — базовый цвет (без изменений)
+ * 50-400 — светлые оттенки
+ * 600-950 — тёмные оттенки
+ */
+@function shade($color, $step, $alpha: 1) {
+	$base-color: null;
+
+	@if (meta.type-of($color) == "color") {
+		$base-color: $color;
+	} @else {
+		$base-color: map.get($_base-colors, $color);
+	}
+
+	// Получаем текущую светлоту базового цвета
+	$_current-lightness: color.channel(hex-to-oklch($base-color), "lightness");
+
+	// Ограничиваем целевую светлоту в диапазоне 5-97.1%
+	$_max-lightness: 97.1%;
+	$_min-lightness: 5%;
+
+	// Вычисляем диапазоны для светлых и тёмных оттенков
+	$_light-range: $_max-lightness - $_current-lightness;
+	$_dark-range: $_current-lightness - $_min-lightness;
+
+	// Карта шагов: для светлых - доля от диапазона к max, для тёмных - доля от диапазона к min
+	$_step-fractions: (
+		50: 1.0,
+		100: 0.75,
+		200: 0.5,
+		300: 0.25,
+		400: 0.1,
+		500: 0,
+		600: -0.1,
+		700: -0.25,
+		800: -0.5,
+		900: -0.75,
+		950: -1.0
+	);
+
+	$_fraction: map.get($_step-fractions, $step);
+
+	@if $_fraction == null {
+		@error "Некорректная ступень: #{$step}. Допустимые значения: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950";
+	}
+
+	// Объявляем переменную корректировки
+	$adjustment: 0%;
+
+	// Вычисляем корректировку в процентах
+	@if $_fraction > 0 {
+		// Светлые оттенки: шаг к max-lightness
+		$adjustment: $_light-range * $_fraction;
+	} @else if $_fraction < 0 {
+		// Тёмные оттенки: шаг к min-lightness
+		$adjustment: $_dark-range * $_fraction;
+	}
+
+	$shaded: color.adjust($base-color, $lightness: $adjustment);
+	@debug $color $step $_current-lightness;
+	@return color.change($shaded, $alpha: $alpha);
 }
 
 @function var-base($color) {
@@ -225,7 +292,7 @@ $_result-colors: ();
 
 
 // Вспомогательная функция для конвертации числа в hex
-@function to-hex($value) {
+@function _to-hex($value) {
 	$hex-map: (
 		0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
 		8: "8", 9: "9", 10: "a", 11: "b", 12: "c", 13: "d", 14: "e", 15: "f"
@@ -236,14 +303,22 @@ $_result-colors: ();
 }
 
 // Конвертирование RGB в HEX
-@function rgb-to-hex($rgb) {
-	@return $rgb;
+@function rgb-to-hex-string($rgb) {
+	@if (meta.type-of($rgb) != "color") {
+		@return "#{$rgb}";
+	}
+
+	$red: color.channel($rgb, "red");
+	$green: color.channel($rgb, "green");
+	$blue: color.channel($rgb, "blue");
+
+	@return "##{_to-hex($red)}#{_to-hex($green)}#{_to-hex($blue)}";
 }
 
-// Конвертирование OKLCH в HEX
+// Конвертирование OKLCH в HEX строку (так как sass не может конвертировать в HEX с типом color)
 @function oklch-to-hex($oklch) {
 	$rgb: color.to-space($oklch, rgb);
-	@return rgb-to-hex($rgb);
+	@return rgb-to-hex-string($rgb);
 }
 
 // Округление знаков после запятой у OKLCH цветов (возвращает строку для отображения)
