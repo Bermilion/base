@@ -11,6 +11,7 @@
 
 // А здесь подключаем цвета для пользования внутри модуля
 @use "@config/colors" as config;
+@use "@core/palette" as palette;
 
 
 
@@ -135,8 +136,8 @@ $_result-colors: ();
 	// Получаем текущую светлоту базового цвета
 	$_current-lightness: color.channel(hex-to-oklch($base-color), "lightness");
 
-	// Ограничиваем целевую светлоту в диапазоне 5-97.1%
-	$_max-lightness: 97.1%;
+	// Ограничиваем целевую светлоту в диапазоне 5-97%
+	$_max-lightness: 97%;
 	$_min-lightness: 5%;
 
 	// Вычисляем диапазоны для светлых и тёмных оттенков
@@ -150,7 +151,7 @@ $_result-colors: ();
 		200: math.div($_light-range, 5) * 3,
 		300: math.div($_light-range, 5) * 2,
 		400: math.div($_light-range, 5),
-		500: 0,
+		500: $_current-lightness,
 		600: math.div($_dark-range, 5) * -1,
 		700: math.div($_dark-range, 5) * -2,
 		800: math.div($_dark-range, 5) * -3,
@@ -168,29 +169,27 @@ $_result-colors: ();
 	$adjustment: 0%;
 
 	// Вычисляем корректировку в процентах
-	@if $_fraction > 0 {
+	@if $_fraction > $_current-lightness {
 		// Светлые оттенки: шаг к max-lightness
-		$adjustment: $_current-lightness - $_fraction;
-	} @else if $_fraction < 0 {
+		$adjustment: $_current-lightness + $_fraction;
+	} @else if $_fraction < $_current-lightness {
 		// Тёмные оттенки: шаг к min-lightness
 		$adjustment: $_current-lightness + $_fraction;
 	}
 
-	$shaded: color.adjust($base-color, $lightness: $adjustment);
+	$shaded: $color;
+
+	@if $_fraction == $_current-lightness {
+		$shaded: $color;
+	} @else {
+		$shaded: color.change($base-color, $lightness: $adjustment);
+	}
 
 	// Проверяем, не стал ли цвет слишком близким к белому или черному
 	$_shaded-lightness: $_current-lightness + $adjustment;
-	//@debug $step $_shaded-lightness $_current-lightness $adjustment ' | ' rgba-to-oklch($shaded);
-	//@debug 'Диапазон: ' $_current-lightness $_dark-range math.div($_dark-range, 5) $adjustment;
-	@debug 'Светлота цвета: #{$_current-lightness}';
-	@debug 'Шаг: #{$_fraction}';
-	@debug 'Корректировка в %: #{$adjustment}';
 
-	@if $_shaded-lightness > 98% {
-		@warn "Полученный цвет #{$step} слишком близок к белому (светлота: #{$_shaded-lightness}). Используйте другой базовый цвет или другую ступень.";
-	} @else if $_shaded-lightness < 5% {
-		@warn "Полученный цвет #{$step} слишком близок к черному (светлота: #{$_shaded-lightness}). Используйте другой базовый цвет или другую ступень.";
-	}
+	//@debug 'Получившийся цвет: #{color.change($shaded, $alpha: $alpha)} | Исходная светлота:#{$_current-lightness} Текущая светлота:#{$adjustment} шага-#{$step}';
+	@debug 'Исходная светлота:#{$_current-lightness} Текущая светлота:#{$adjustment} шага-#{$step}: #{$_fraction}';
 
 	@return color.change($shaded, $alpha: $alpha);
 }
@@ -298,6 +297,15 @@ $_result-colors: ();
 	}
 }
 
+@function hsl-to-rgb($hsl) {
+	@if(meta.type-of($hsl) == 'color') {
+		$rgb: color.to-space($hsl, hsl);
+
+		@return $rgb;
+	} @else {
+		@return #{meta.type-of($hsl)} 'Не является цветом.';
+	}
+}
 
 
 
