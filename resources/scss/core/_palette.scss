@@ -1,39 +1,41 @@
 
-$red-50: #fef2f2;
-$red-100: #fee2e2;
-$red-200: #fecaca;
-$red-300: #fca5a5;
-$red-400: #f87171;
-$red-500: #ef4444;
-$red-600: #dc2626;
-$red-700: #b91c1c;
-$red-800: #991b1b;
-$red-900: #7f1d1d;
-$red-950: #450a0a;
+@forward "@config/colors";
 
-$orange-50: #fff7ed;
-$orange-100: #ffedd5;
-$orange-200: #fed7aa;
-$orange-300: #fdba74;
-$orange-400: #fb923c;
-$orange-500: #f97316;
-$orange-600: #ea580c;
-$orange-700: #c2410c;
-$orange-800: #9a3412;
-$orange-900: #7c2d12;
-$orange-950: #431407;
+$red-50: #fef2f2;  // lightness: -33.4% chroma: 0.195 hue: 7.95deg
+$red-100: #fee2e2; // lightness: -29.9% chroma: 0.177 hue: 7.61deg
+$red-200: #fecaca; // lightness: -24.8% chroma: 0.149 hue: 7deg
+$red-300: #fca5a5; // lightness: -17.1% chroma: 0.105 hue: 5.76deg
+$red-400: #f87171; // lightness: -7.4% chroma: 0.042 hue: 3.11deg
+$red-500: #ef4444; // lightness: 0% chroma: 0 hue: 0deg
+$red-600: #dc2626; // lightness: 6% chroma: -0.007 hue: -2deg
+$red-700: #b91c1c; // lightness: 13.2% chroma: 0.018 hue: -2.19deg
+$red-800: #991b1b; // lightness: 19.3% chroma: 0.047 hue: -1.57deg
+$red-900: #7f1d1d; // lightness: 24.1% chroma: 0.075 hue: -0.39deg
+$red-950: #450a0a; // lightness: 37.9% chroma: 0.119 hue: -0.71deg
 
-$amber-50: #fffbeb;
-$amber-100: #fef3c7;
-$amber-200: #fde68a;
-$amber-300: #fcd34d;
-$amber-400: #fbbf24;
-$amber-500: #f59e0b;
-$amber-600: #d97706;
-$amber-700: #b45309;
-$amber-800: #92400e;
-$amber-900: #78350f;
-$amber-950: #451a03;
+$orange-50: #fff7ed;  // lightness: -27.5% chroma: 0.171 hue: -26.08deg
+$orange-100: #ffedd5; // lightness: -24.9% chroma: 0.15 hue: -27.56deg
+$orange-200: #fed7aa; // lightness: -19.6% chroma: 0.114 hue: -23.1deg
+$orange-300: #fdba74; // lightness: -13.2% chroma: 0.07 hue: -18.69deg
+$orange-400: #fb923c; // lightness: -5.3% chroma: 0.028 hue: -8.33deg
+$orange-500: #f97316; // lightness: 0% chroma: 0 hue: 0deg
+$orange-600: #ea580c; // lightness: 5.9% chroma: -0.007 hue: 6.48deg
+$orange-700: #c2410c; // lightness: 15.2% chroma: 0.013 hue: 9.2deg
+$orange-800: #9a3412; // lightness: 23.5% chroma: 0.044 hue: 10.3deg
+$orange-900: #7c2d12; // lightness: 29.7% chroma: 0.071 hue: 9.43deg
+$orange-950: #431407; // lightness: 43.9% chroma: 0.111 hue: 11.34deg
+
+$amber-50: #fffbeb;  // lightness: -21.8% chroma: 0.144 hue: -25.2degNn
+$amber-100: #fef3c7; // lightness: -19.3% chroma: 0.107 hue: -25.54deg
+$amber-200: #fde68a; // lightness: -15.5% chroma: 0.05 hue: -25.67deg
+$amber-300: #fcd34d; // lightness: -11% chroma: 0.012 hue: -21.53deg
+$amber-400: #fbbf24; // lightness: -6.8% chroma: 0.001 hue: -14.35deg
+$amber-500: #f59e0b; // lightness: 0% chroma: 0 hue: 0deg
+$amber-600: #d97706; // lightness: 10.3% chroma: 0.008 hue: 11.76deg
+$amber-700: #b45309; // lightness: 21.4% chroma: 0.019 hue: 21.08deg
+$amber-800: #92400e; // lightness: 29.6% chroma: 0.04 hue: 23.88deg
+$amber-900: #78350f; // lightness: 35.5% chroma: 0.06 hue: 24.18deg
+$amber-950: #451a03; // lightness: 49% chroma: 0.091 hue: 24.44deg
 
 $yellow-50: #fefce8;
 $yellow-100: #fef9c3;
@@ -313,17 +315,17 @@ $taupe-950: #0c0a09;
 
 
 $red: (
-	50: #fef2f2,
-	100: #fee2e2,
-	200: #fecaca,
-	300: #fca5a5,
-	400: #f87171,
-	500: #ef4444,
-	600: #dc2626,
-	700: #b91c1c,
-	800: #991b1b,
-	900: #7f1d1d,
-	950: #450a0a,
+	50: #fef2f2,  // lightness:33.4% chroma:-0.195 hue:-7.95deg
+	100: #fee2e2, // lightness:29.9% chroma:-0.177 hue:-7.61deg
+	200: #fecaca, // lightness:24.8% chroma:-0.149 hue:-7deg
+	300: #fca5a5, // lightness:17.1% chroma:-0.105 hue:-5.76deg
+	400: #f87171, // lightness:7.4% chroma:-0.042 hue:-3.11deg
+	500: #ef4444, // lightness: chroma: hue:
+	600: #dc2626, // lightness: chroma: hue:
+	700: #b91c1c, // lightness: chroma: hue:
+	800: #991b1b, // lightness: chroma: hue:
+	900: #7f1d1d, // lightness: chroma: hue:
+	950: #450a0a, // lightness: chroma: hue:
 );
 
 $orange: (
