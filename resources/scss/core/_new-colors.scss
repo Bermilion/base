@@ -97,134 +97,7 @@ $variables: ();
 	@return $adjusted;
 }
 
-/// Находит наиболее близкий цвет из палитры OKLCH к заданному цвету
-///
-/// Функция анализирует lightness, chroma и hue входного цвета и сравнивает их
-/// с цветами из палитры $_oklch-palette, используя взвешенную евклидову дистанцию.
-///
-/// @param {color} $color - Входной цвет (HEX, RGB или другой формат, поддерживаемый Sass)
-/// @return {map} Map с двумя ключами:
-///   - "name": название наиболее близкого цвета из палитры (string)
-///   - "color": значение цвета из палитры в формате OKLCH (color)
-///
-/// @example
-///   $result: compare-colors(#ff0000);
-///   @debug map.get($result, "name");  // "red"
-///   @debug map.get($result, "color"); // oklch(63.7% 0.208 25.33deg)
-///
-/// @algorithm
-/// 1. Входной цвет конвертируется в пространство OKLCH
-/// 2. Извлекаются значения lightness, chroma, hue
-/// 3. Для каждого цвета в палитре рассчитывается взвешенная дистанция:
-///    - Разница по lightness умножается на вес 2.0 (наиболее важный параметр)
-///    - Разница по chroma умножается на вес 1.5
-///    - Разница по hue умножается на вес 1.0 (учитывается круговая природа hue)
-/// 4. Возвращается цвет с минимальной дистанцией
-///
-/// @custom-weights
-/// Веса параметров настраиваются в строках расчета дистанции:
-///   - math.pow($_l-diff * 2.0, 2) — вес lightness
-///   - math.pow($_c-diff * 1.5, 2) — вес chroma
-///   - math.pow($_h-diff * 1.0, 2) — вес hue
-///
-/// Увеличение веса делает параметр более значимым при сравнении.
-/// Например, если важнее точность по hue, увеличьте его вес до 2.0 или выше.
-@function compare-colors($color) {
-	$_oklch-palette: meta.module-variables(oklch-palette);
-
-	$_color: hex-to-oklch($color);
-	$_lightness: color.channel($_color, "lightness");
-	$_chroma: color.channel($_color, "chroma");
-	$_hue: color.channel($_color, "hue");
-
-	$_min-distance: null;
-	$_closest-color: null;
-	$_closest-color-value: null;
-
-	@each $_name, $_palette-color in $_oklch-palette {
-		$_palette-lightness: color.channel($_palette-color, "lightness");
-		$_palette-chroma: color.channel($_palette-color, "chroma");
-		$_palette-hue: color.channel($_palette-color, "hue");
-
-		// Разница по lightness (вес 2.0 - наиболее важный параметр)
-		$_l-diff: math.div($_lightness - $_palette-lightness, 1%);
-
-		// Разница по chroma (вес 1.5)
-		$_c-diff: $_chroma - $_palette-chroma;
-
-		// Разница по hue (вес 1.0, учитывая круговую природу hue)
-		$_h-diff-raw: math.div($_hue - $_palette-hue, 1deg);
-		$_h-diff: if($_h-diff-raw > 180, $_h-diff-raw - 360, if($_h-diff-raw < -180, $_h-diff-raw + 360, $_h-diff-raw));
-
-		// Расчет взвешенной евклидовой дистанции
-		$_distance: math.sqrt(
-			math.pow($_l-diff * 2.0, 2) +
-			math.pow($_c-diff * 1.5, 2) +
-			math.pow($_h-diff * 1.0, 2)
-		);
-
-		@if ($_min-distance == null or $_distance < $_min-distance) {
-			$_min-distance: $_distance;
-			$_closest-color: $_name;
-			$_closest-color-value: $_palette-color;
-		}
-	}
-
-	@return (
-		"base-color": (
-			'color': $_color,
-			'lightness': $_lightness,
-			'chroma': $_chroma,
-			'hue': $_hue
-		),
-		"map-name": $_closest-color
-	);
-}
-
-@function map-compare-palette($map) {
-	$_map-palette: meta.module-variables(map-palette);
-	$_base-color: map.get($map, 'base-color');
-	$_color: map.get($_base-color, 'color');
-	$_lightness: map.get($_base-color, 'lightness');
-	$_chroma: map.get($_base-color, 'chroma');
-	$_hue: map.get($_base-color, 'hue');
-	$_map-name: map.get($map, 'map-name');
-	$_current-map: map.get($_map-palette, $_map-name);
-
-
-	@return color-interpolation($_current-map);
-}
-
-@function color-interpolation($map) {
-	$_base-color: hex-to-oklch(map.get($map, 500));
-	$_lightness: color.channel($_base-color, "lightness");
-	$_chroma: color.channel($_base-color, "chroma");
-	$_hue: color.channel($_base-color, "hue");
-	$_result-map-interpolation: ();
-
-	@each $key, $value in $map {
-		$_shade-color: hex-to-oklch($value);
-		$_shade-lightness: color.channel($_shade-color, "lightness");
-		$_shade-chroma: color.channel($_shade-color, "chroma");
-		$_shade-hue: color.channel($_shade-color, "hue");
-
-		$_diff-shade-lightness: $_lightness - $_shade-lightness;
-		$_diff-shade-chroma: $_chroma - $_shade-chroma;
-		$_diff-shade-hue: $_hue - $_shade-hue;
-
-		$_shades: (
-			'lightness': $_diff-shade-lightness,
-			'chroma': $_diff-shade-chroma,
-			'hue': $_diff-shade-hue,
-		);
-
-		$_result-map-interpolation: map.set($_result-map-interpolation, $key, $_shades);
-	}
-
-	@return $_result-map-interpolation;
-}
-
-@function get-oklch-params($color) {
+@function _get-oklch-params($color) {
 	$_color: color.to-space($color, oklch);
 	$_lightness: color.channel($_color, 'lightness');
 	$_chroma: color.channel($_color, 'chroma');
@@ -235,89 +108,6 @@ $variables: ();
 		'lightness': $_lightness,
 		'chroma': $_chroma,
 		'hue': $_hue,
-	);
-}
-
-@function get-map-by-shade($color) {
-	$_palette: meta.module-variables(map-palette);
-	$_color: get-oklch-params($color);
-	$_color-lightness: map.get($_color, 'lightness');
-	$_color-chroma: map.get($_color, 'chroma');
-	$_color-hue: map.get($_color, 'hue');
-
-	$_min-distance: null;
-	$_closest-shade-color: null;
-	$_closest-shade-key: null;
-	$_closest-map-key: null;
-	$_map-shades: null;
-	$_palette-key-name: null;
-
-	@each $key, $shades in $_palette {
-		$_palette-key-name: $key;
-		$_map-shades: $shades;
-
-		@each $shade-key, $shade-color in $shades {
-			$_shade-color-oklch: get-oklch-params($shade-color);
-			$_shade-color-lightness: map.get($_shade-color-oklch, 'lightness');
-			$_shade-color-chroma: map.get($_shade-color-oklch, 'chroma');
-			$_shade-color-hue: map.get($_shade-color-oklch, 'hue');
-
-			// Разница по hue (учитывая круговую природу hue)
-			$_h-diff-raw: math.div($_color-hue - $_shade-color-hue, 1deg);
-			$_h-diff: if($_h-diff-raw > 180, $_h-diff-raw - 360, if($_h-diff-raw < -180, $_h-diff-raw + 360, $_h-diff-raw));
-
-			// Разница по chroma
-			$_c-diff: $_color-chroma - $_shade-color-chroma;
-
-			// Разница по lightness
-			$_l-diff: math.div($_color-lightness - $_shade-color-lightness, 1%);
-
-			// Расчет взвешенной дистанции (lightness имеет наибольший вес)
-			$_distance: math.sqrt(
-				math.pow($_l-diff * 1.0, 2) +
-				math.pow($_h-diff * 1.5, 2) +
-				math.pow($_c-diff * 2.0, 2)
-			);
-
-			@if ($_min-distance == null or $_distance < $_min-distance) {
-				$_min-distance: $_distance;
-				$_closest-shade-color: $shade-color;
-				$_closest-shade-key: $shade-key;
-				$_closest-map-key: $key;
-			}
-		}
-	}
-
-	//$map-interpolation: color-interpolation($_map-shades);
-	//
-	//$_result-shade-colors: ();
-	//
-	//@each $key, $params in $map-interpolation {
-	//	$_param-lightness: map.get($params, 'lightness');
-	//	$_param-chroma: map.get($params, 'chroma');
-	//	$_param-hue: map.get($params, 'hue');
-	//
-	//	//@debug $_palette-key-name $key map.get($_color, 'lightness') map.get($_color, 'chroma') map.get($_color, 'hue') ' | ' $_param-lightness $_param-chroma $_param-hue;
-	//
-	//	$_oklch-shaded-color: color.change(map.get($_color, 'color'),
-	//	$lightness: $_param-lightness, $chroma: $_param-chroma, $hue: $_param-hue);
-	//
-	//	$_result-shade-colors: map.set($_result-shade-colors, $key, $_oklch-shaded-color);
-	//}
-
-
-	@debug (
-		'shade-color': $_closest-shade-color,
-		'shade-key': $_closest-shade-key,
-		'map-key': $_closest-map-key,
-	);
-
-	//@return $_result-shade-colors;
-
-	@return (
-		'shade-color': $_closest-shade-color,
-		'shade-key': $_closest-shade-key,
-		'map-key': $_closest-map-key,
 	);
 }
 
@@ -340,7 +130,7 @@ $variables: ();
 		$_map-shades: $shades;
 
 		@each $shade-key, $shade-color in $shades {
-			$_shade-color-oklch: get-oklch-params($shade-color);
+			$_shade-color-oklch: _get-oklch-params($shade-color);
 			$_shade-color-lightness: map.get($_shade-color-oklch, 'lightness');
 			$_shade-color-chroma: map.get($_shade-color-oklch, 'chroma');
 			$_shade-color-hue: map.get($_shade-color-oklch, 'hue');
@@ -378,37 +168,6 @@ $variables: ();
 	);
 }
 
-@function _interpolation($scop, $shade) {
-	$_scop: map.get(palette, $scop);
-	$_shade: map.get($_scop, );
-	$_base-color: hex-to-oklch(map.get($map, 500));
-	$_lightness: color.channel($_base-color, "lightness");
-	$_chroma: color.channel($_base-color, "chroma");
-	$_hue: color.channel($_base-color, "hue");
-	$_result-map-interpolation: ();
-
-	@each $key, $value in $map {
-		$_shade-color: hex-to-oklch($value);
-		$_shade-lightness: color.channel($_shade-color, "lightness");
-		$_shade-chroma: color.channel($_shade-color, "chroma");
-		$_shade-hue: color.channel($_shade-color, "hue");
-
-		$_diff-shade-lightness: $_lightness - $_shade-lightness;
-		$_diff-shade-chroma: $_chroma - $_shade-chroma;
-		$_diff-shade-hue: $_hue - $_shade-hue;
-
-		$_shades: (
-			'lightness': $_diff-shade-lightness,
-			'chroma': $_diff-shade-chroma,
-			'hue': $_diff-shade-hue,
-		);
-
-		$_result-map-interpolation: map.set($_result-map-interpolation, $key, $_shades);
-	}
-
-	@return $_result-map-interpolation;
-}
-
 @function _get-interpolation-shade($scope, $shade) {
 	$_scope: map.get($_interpolation-map, $scope);
 
@@ -416,100 +175,46 @@ $variables: ();
 }
 
 @function light-10($color) {
-	$_color: hex-to-oklch($color);
-	$_scope-map: _get-map-by-shade($_color);
-	$_scope-name: map.get($_scope-map, 'scope');
-	$_interpolation: _get-interpolation-shade($_scope-name, 400);
-	$_lightness: map.get($_interpolation, 'lightness') * -1;
-	$_chroma: map.get($_interpolation, 'chroma');
-	$_hue: map.get($_interpolation, 'hue') * -1;
-
-	$result-color: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
-
-	@return $result-color;
+	@return _shade-color($color, 400);
 }
 @function light-20($color) {
-	$_color: hex-to-oklch($color);
-	$_scope-map: _get-map-by-shade($_color);
-	$_scope-name: map.get($_scope-map, 'scope');
-	$_interpolation: _get-interpolation-shade($_scope-name, 300);
-	$_lightness: map.get($_interpolation, 'lightness') * -1;
-	$_chroma: map.get($_interpolation, 'chroma');
-	$_hue: map.get($_interpolation, 'hue') * -1;
-
-	$result-color: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
-
-	@return $result-color;
+	@return _shade-color($color, 300);
 }
 @function light-30($color) {
-	$_color: hex-to-oklch($color);
-	$_scope-map: _get-map-by-shade($_color);
-	$_scope-name: map.get($_scope-map, 'scope');
-	$_interpolation: _get-interpolation-shade($_scope-name, 200);
-	$_lightness: map.get($_interpolation, 'lightness') * -1;
-	$_chroma: map.get($_interpolation, 'chroma');
-	$_hue: map.get($_interpolation, 'hue') * -1;
-
-	$result-color: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
-
-	@return $result-color;
+	@return _shade-color($color, 200);
 }
 @function light-40($color) {
-	$_color: hex-to-oklch($color);
-	$_scope-map: _get-map-by-shade($_color);
-	$_scope-name: map.get($_scope-map, 'scope');
-	$_interpolation: _get-interpolation-shade($_scope-name, 100);
-	$_lightness: map.get($_interpolation, 'lightness') * -1;
-	$_chroma: map.get($_interpolation, 'chroma');
-	$_hue: map.get($_interpolation, 'hue') * -1;
-
-	$result-color: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
-
-	@return $result-color;
+	@return _shade-color($color, 100);
 }
 @function light-50($color) {
+	@return _shade-color($color, 50);
+}
+@function dark-10($color) {
+	@return _shade-color($color, 600);
+}
+@function dark-20($color) {
+	@return _shade-color($color, 700);
+}
+@function dark-30($color) {
+	@return _shade-color($color, 800);
+}
+@function dark-40($color) {
+	@return _shade-color($color, 900);
+}
+@function dark-50($color) {
+	@return _shade-color($color, 950);
+}
+
+@function _shade-color($color, $step) {
 	$_color: hex-to-oklch($color);
 	$_scope-map: _get-map-by-shade($_color);
 	$_scope-name: map.get($_scope-map, 'scope');
-	$_interpolation: _get-interpolation-shade($_scope-name, 50);
-	$_lightness: map.get($_interpolation, 'lightness') * -1;
+	$_interpolation: _get-interpolation-shade($_scope-name, $step);
+	$_lightness: map.get($_interpolation, 'lightness');
 	$_chroma: map.get($_interpolation, 'chroma');
-	$_hue: map.get($_interpolation, 'hue') * -1;
+	$_hue: map.get($_interpolation, 'hue');
 
 	$result-color: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
 
 	@return $result-color;
 }
-
-$tmp: ();
-
-@each $base-color-name, $base-color in meta.module-variables(oklch-palette) {
-	$_base-color-lightness: color.channel($base-color, "lightness");
-	$_base-color-chroma: color.channel($base-color, "chroma");
-	$_base-color-hue: color.channel($base-color, "hue");
-
-	$_base-map: ();
-
-	@each $shade-name, $shade-color in map.get(meta.module-variables(map-palette), $base-color-name) {
-		$_color: hex-to-oklch($shade-color);
-		$_lightness: color.channel($_color, "lightness");
-		$_chroma: color.channel($_color, "chroma");
-		$_hue: color.channel($_color, "hue");
-
-		$_diff-lightness: $_lightness - $_base-color-lightness;
-		$_diff-chroma: $_chroma - $_base-color-chroma;
-		$_diff-hue: $_hue - $_base-color-hue;
-
-		$_shade-params: (
-			"lightness": $_diff-lightness,
-			"chroma": $_diff-chroma,
-			"hue": $_diff-hue
-		);
-
-		$_base-map: map.set($_base-map, $shade-name, $_shade-params);
-	}
-
-	$tmp: map.set($tmp, $base-color-name, $_base-map);
-}
-
-@debug $tmp;
