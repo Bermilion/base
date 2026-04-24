@@ -1,0 +1,392 @@
+$red: (
+	50: ("lightness": -33.4%, "chroma": 0.195, "hue": 7.95deg),
+	100: ("lightness": -29.9%, "chroma": 0.177, "hue": 7.61deg),
+	200: ("lightness": -24.8%, "chroma": 0.149, "hue": 7deg),
+	300: ("lightness": -17.1%, "chroma": 0.105, "hue": 5.76deg),
+	400: ("lightness": -7.4%, "chroma": 0.042, "hue": 3.11deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 6%, "chroma": -0.007, "hue": -2deg),
+	700: ("lightness": 13.2%, "chroma": 0.018, "hue": -2.19deg),
+	800: ("lightness": 19.3%, "chroma": 0.047, "hue": -1.57deg),
+	900: ("lightness": 24.1%, "chroma": 0.075, "hue": -0.39deg),
+	950: ("lightness": 37.9%, "chroma": 0.119, "hue": -0.71deg),
+);
+
+$orange: (
+	50: ("lightness": -27.5%, "chroma": 0.171, "hue": -26.08deg),
+	100: ("lightness": -24.9%, "chroma": 0.15, "hue": -27.56deg),
+	200: ("lightness": -19.6%, "chroma": 0.114, "hue": -23.1deg),
+	300: ("lightness": -13.2%, "chroma": 0.07, "hue": -18.69deg),
+	400: ("lightness": -5.3%, "chroma": 0.028, "hue": -8.33deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 5.9%, "chroma": -0.007, "hue": 6.48deg),
+	700: ("lightness": 15.2%, "chroma": 0.013, "hue": 9.2deg),
+	800: ("lightness": 23.5%, "chroma": 0.044, "hue": 10.3deg),
+	900: ("lightness": 29.7%, "chroma": 0.071, "hue": 9.43deg),
+	950: ("lightness": 43.9%, "chroma": 0.111, "hue": 11.34deg),
+);
+
+$amber: (
+	50: ("lightness": -21.8%, "chroma": 0.144, "hue": -25.2deg),
+	100: ("lightness": -19.3%, "chroma": 0.107, "hue": -25.54deg),
+	200: ("lightness": -15.5%, "chroma": 0.05, "hue": -25.67deg),
+	300: ("lightness": -11%, "chroma": 0.012, "hue": -21.53deg),
+	400: ("lightness": -6.8%, "chroma": 0.001, "hue": -14.35deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.3%, "chroma": 0.008, "hue": 11.76deg),
+	700: ("lightness": 21.4%, "chroma": 0.019, "hue": 21.08deg),
+	800: ("lightness": 29.6%, "chroma": 0.04, "hue": 23.88deg),
+	900: ("lightness": 35.5%, "chroma": 0.06, "hue": 24.18deg),
+	950: ("lightness": 49%, "chroma": 0.091, "hue": 24.44deg),
+);
+
+$yellow: (
+	50: ("lightness": -19.2%, "chroma": 0.136, "hue": -16.16deg),
+	100: ("lightness": -17.8%, "chroma": 0.093, "hue": -17.14deg),
+	200: ("lightness": -15%, "chroma": 0.038, "hue": -15.49deg),
+	300: ("lightness": -11%, "chroma": -0.004, "hue": -12.06deg),
+	400: ("lightness": -6.6%, "chroma": -0.011, "hue": -5.89deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 11.4%, "chroma": 0.02, "hue": 10.22deg),
+	700: ("lightness": 24.1%, "chroma": 0.041, "hue": 19.61deg),
+	800: ("lightness": 31.9%, "chroma": 0.059, "hue": 24.14deg),
+	900: ("lightness": 37.4%, "chroma": 0.072, "hue": 28.34deg),
+	950: ("lightness": 50.9%, "chroma": 0.098, "hue": 32.24deg),
+);
+
+$lime: (
+	50: ("lightness": -21.8%, "chroma": 0.173, "hue": 10.09deg),
+	100: ("lightness": -19.9%, "chroma": 0.138, "hue": 8.52deg),
+	200: ("lightness": -17%, "chroma": 0.082, "hue": 6.53deg),
+	300: ("lightness": -12.9%, "chroma": 0.025, "hue": 4.18deg),
+	400: ("lightness": -8.1%, "chroma": -0.003, "hue": 2deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 12%, "chroma": 0.029, "hue": -0.83deg),
+	700: ("lightness": 23.6%, "chroma": 0.063, "hue": -0.74deg),
+	800: ("lightness": 31.5%, "chroma": 0.091, "hue": -0.08deg),
+	900: ("lightness": 36.3%, "chroma": 0.108, "hue": -0.21deg),
+	950: ("lightness": 49.4%, "chroma": 0.135, "hue": -1.26deg),
+);
+
+$green: (
+	50: ("lightness": -25.9%, "chroma": 0.174, "hue": -6.25deg),
+	100: ("lightness": -23.9%, "chroma": 0.149, "hue": -7.16deg),
+	200: ("lightness": -20.2%, "chroma": 0.111, "hue": -6.41deg),
+	300: ("lightness": -14.8%, "chroma": 0.056, "hue": -4.87deg),
+	400: ("lightness": -7.7%, "chroma": 0.01, "hue": -2.13deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 9.6%, "chroma": 0.022, "hue": 0.37deg),
+	700: ("lightness": 19.6%, "chroma": 0.055, "hue": -0.49deg),
+	800: ("lightness": 27.5%, "chroma": 0.084, "hue": -1.75deg),
+	900: ("lightness": 33%, "chroma": 0.102, "hue": -2.96deg),
+	950: ("lightness": 45.7%, "chroma": 0.129, "hue": -3.35deg),
+);
+
+$emerald: (
+	50: ("lightness": -28.3%, "chroma": 0.128, "hue": -3.63deg),
+	100: ("lightness": -25.4%, "chroma": 0.098, "hue": -0.57deg),
+	200: ("lightness": -20.9%, "chroma": 0.06, "hue": -1.67deg),
+	300: ("lightness": -14.9%, "chroma": 0.019, "hue": -2.5deg),
+	400: ("lightness": -7.7%, "chroma": -0.004, "hue": -0.74deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10%, "chroma": 0.022, "hue": -0.75deg),
+	700: ("lightness": 18.8%, "chroma": 0.044, "hue": -3.13deg),
+	800: ("lightness": 26.4%, "chroma": 0.063, "hue": -4.43deg),
+	900: ("lightness": 31.8%, "chroma": 0.076, "hue": -6.46deg),
+	950: ("lightness": 43.4%, "chroma": 0.1, "hue": -10.07deg),
+);
+
+$teal: (
+	50: ("lightness": -28%, "chroma": 0.109, "hue": 1.78deg),
+	100: ("lightness": -24.9%, "chroma": 0.073, "hue": 1.7deg),
+	200: ("lightness": -20.6%, "chroma": 0.03, "hue": 2.07deg),
+	300: ("lightness": -15.1%, "chroma": -0.002, "hue": 1.43deg),
+	400: ("lightness": -8.1%, "chroma": -0.01, "hue": 0.59deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.4%, "chroma": 0.019, "hue": -2.2deg),
+	700: ("lightness": 19.3%, "chroma": 0.037, "hue": -3.89deg),
+	800: ("lightness": 26.7%, "chroma": 0.052, "hue": -5.72deg),
+	900: ("lightness": 31.8%, "chroma": 0.064, "hue": -5.92deg),
+	950: ("lightness": 42.7%, "chroma": 0.078, "hue": -10.02deg),
+);
+
+$cyan: (
+	50: ("lightness": -26.9%, "chroma": 0.107, "hue": 14.35deg),
+	100: ("lightness": -24.1%, "chroma": 0.082, "hue": 11.83deg),
+	200: ("lightness": -20.2%, "chroma": 0.049, "hue": 10.18deg),
+	300: ("lightness": -15%, "chroma": 0.011, "hue": 8.14deg),
+	400: ("lightness": -8.2%, "chroma": -0.008, "hue": 3.69deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.6%, "chroma": 0.015, "hue": -6.5deg),
+	700: ("lightness": 19.5%, "chroma": 0.032, "hue": -7.91deg),
+	800: ("lightness": 26.5%, "chroma": 0.049, "hue": -9.06deg),
+	900: ("lightness": 31.7%, "chroma": 0.06, "hue": -12.17deg),
+	950: ("lightness": 41.3%, "chroma": 0.072, "hue": -14.48deg),
+);
+
+$sky: (
+	50: ("lightness": -29.2%, "chroma": 0.136, "hue": 0.7deg),
+	100: ("lightness": -26.6%, "chroma": 0.123, "hue": 0.5deg),
+	200: ("lightness": -21.6%, "chroma": 0.093, "hue": 6.42deg),
+	300: ("lightness": -14.3%, "chroma": 0.047, "hue": 7deg),
+	400: ("lightness": -6.9%, "chroma": 0.009, "hue": 4.66deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 9.7%, "chroma": 0.009, "hue": -4.65deg),
+	700: ("lightness": 18.5%, "chroma": 0.029, "hue": -5.43deg),
+	800: ("lightness": 24.2%, "chroma": 0.048, "hue": -3.47deg),
+	900: ("lightness": 29.4%, "chroma": 0.063, "hue": -3.56deg),
+	950: ("lightness": 39.2%, "chroma": 0.085, "hue": -5.84deg),
+);
+
+$blue: (
+	50: ("lightness": -34.7%, "chroma": 0.174, "hue": 5.21deg),
+	100: ("lightness": -30.9%, "chroma": 0.156, "hue": 4.22deg),
+	200: ("lightness": -25.9%, "chroma": 0.131, "hue": 5.68deg),
+	300: ("lightness": -18.6%, "chroma": 0.092, "hue": 8deg),
+	400: ("lightness": -9.1%, "chroma": 0.045, "hue": 5.19deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 7.7%, "chroma": -0.027, "hue": -3.07deg),
+	700: ("lightness": 13.5%, "chroma": -0.029, "hue": -4.57deg),
+	800: ("lightness": 19.9%, "chroma": 0.007, "hue": -5.83deg),
+	900: ("lightness": 24.4%, "chroma": 0.05, "hue": -5.71deg),
+	950: ("lightness": 34.1%, "chroma": 0.101, "hue": -8.13deg),
+);
+
+$indigo: (
+	50: ("lightness": -37.7%, "chroma": 0.186, "hue": 4.81deg),
+	100: ("lightness": -34.5%, "chroma": 0.171, "hue": 4.33deg),
+	200: ("lightness": -28.5%, "chroma": 0.142, "hue": 3.08deg),
+	300: ("lightness": -20%, "chroma": 0.1, "hue": 2.41deg),
+	400: ("lightness": -9.5%, "chroma": 0.046, "hue": 0.19deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 7.4%, "chroma": -0.026, "hue": 0.15deg),
+	700: ("lightness": 12.8%, "chroma": -0.011, "hue": 0.1deg),
+	800: ("lightness": 18.7%, "chroma": 0.027, "hue": -0.25deg),
+	900: ("lightness": 22.6%, "chroma": 0.069, "hue": -1.58deg),
+	950: ("lightness": 32.8%, "chroma": 0.118, "hue": -4.17deg),
+);
+
+$violet: (
+	50: ("lightness": -36.3%, "chroma": 0.203, "hue": -1.04deg),
+	100: ("lightness": -33.7%, "chroma": 0.191, "hue": -1.87deg),
+	200: ("lightness": -28.8%, "chroma": 0.164, "hue": -0.56deg),
+	300: ("lightness": -20.5%, "chroma": 0.118, "hue": -0.85deg),
+	400: ("lightness": -10.3%, "chroma": 0.06, "hue": -0.82deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 6.5%, "chroma": -0.028, "hue": -0.29deg),
+	700: ("lightness": 11.5%, "chroma": -0.022, "hue": 0.14deg),
+	800: ("lightness": 17.4%, "chroma": 0.008, "hue": -0.04deg),
+	900: ("lightness": 22.6%, "chroma": 0.041, "hue": -1.02deg),
+	950: ("lightness": 32.3%, "chroma": 0.084, "hue": 1.63deg),
+);
+
+$purple: (
+	50: ("lightness": -35%, "chroma": 0.219, "hue": -4.4deg),
+	100: ("lightness": -31.9%, "chroma": 0.2, "hue": -3.27deg),
+	200: ("lightness": -27.5%, "chroma": 0.173, "hue": -2.8deg),
+	300: ("lightness": -20%, "chroma": 0.125, "hue": -2.48deg),
+	400: ("lightness": -9.5%, "chroma": 0.056, "hue": -1.6deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 6.9%, "chroma": -0.019, "hue": 1.58deg),
+	700: ("lightness": 13.1%, "chroma": -0.004, "hue": 1.98deg),
+	800: ("lightness": 18.9%, "chroma": 0.035, "hue": 0.18deg),
+	900: ("lightness": 24.6%, "chroma": 0.067, "hue": -1.09deg),
+	950: ("lightness": 33.6%, "chroma": 0.09, "hue": 1.18deg),
+);
+
+$fuchsia: (
+	50: ("lightness": -31%, "chroma": 0.242, "hue": 2.09deg),
+	100: ("lightness": -28.5%, "chroma": 0.223, "hue": 3.3deg),
+	200: ("lightness": -23.6%, "chroma": 0.186, "hue": 2.53deg),
+	300: ("lightness": -16.6%, "chroma": 0.127, "hue": 0.72deg),
+	400: ("lightness": -8.1%, "chroma": 0.052, "hue": -0.01deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 7.6%, "chroma": 0.002, "hue": -0.75deg),
+	700: ("lightness": 14.9%, "chroma": 0.033, "hue": -1.8deg),
+	800: ("lightness": 21.5%, "chroma": 0.067, "hue": -2.44deg),
+	900: ("lightness": 26.6%, "chroma": 0.099, "hue": -3.46deg),
+	950: ("lightness": 37.4%, "chroma": 0.128, "hue": -3.51deg),
+);
+
+$pink: (
+	50: ("lightness": -31.5%, "chroma": 0.198, "hue": 11.11deg),
+	100: ("lightness": -29.2%, "chroma": 0.184, "hue": 12.05deg),
+	200: ("lightness": -24.3%, "chroma": 0.153, "hue": 11.08deg),
+	300: ("lightness": -16.7%, "chroma": 0.102, "hue": 8.29deg),
+	400: ("lightness": -6.9%, "chroma": 0.037, "hue": 4.55deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 6.4%, "chroma": -0.006, "hue": 353.73deg),
+	700: ("lightness": 13.1%, "chroma": 0.013, "hue": 350.35deg),
+	800: ("lightness": 19.7%, "chroma": 0.042, "hue": 350.49deg),
+	900: ("lightness": 24.8%, "chroma": 0.068, "hue": 351.88deg),
+	950: ("lightness": 37.2%, "chroma": 0.107, "hue": 350.4deg),
+);
+
+$rose: (
+	50: ("lightness": -32.4%, "chroma": 0.2, "hue": 4.02deg),
+	100: ("lightness": -29.6%, "chroma": 0.185, "hue": 3.86deg),
+	200: ("lightness": -24.7%, "chroma": 0.159, "hue": 6.44deg),
+	300: ("lightness": -16.5%, "chroma": 0.109, "hue": 4.8deg),
+	400: ("lightness": -7.4%, "chroma": 0.046, "hue": 3.01deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 5.9%, "chroma": -0.007, "hue": -1.14deg),
+	700: ("lightness": 13.1%, "chroma": 0.017, "hue": -0.49deg),
+	800: ("lightness": 19%, "chroma": 0.044, "hue": 2.74deg),
+	900: ("lightness": 23.5%, "chroma": 0.065, "hue": 6.17deg),
+	950: ("lightness": 37.4%, "chroma": 0.114, "hue": 4.35deg),
+);
+
+$slate: (
+	50: ("lightness": -43%, "chroma": 0.038, "hue": 9.56deg),
+	100: ("lightness": -41.4%, "chroma": 0.034, "hue": 9.52deg),
+	200: ("lightness": -37.5%, "chroma": 0.028, "hue": 1.91deg),
+	300: ("lightness": -31.5%, "chroma": 0.021, "hue": 4.53deg),
+	400: ("lightness": -15.7%, "chroma": 0.006, "hue": 0.63deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.8%, "chroma": 0.004, "hue": 0.14deg),
+	700: ("lightness": 18.2%, "chroma": 0.002, "hue": 0.13deg),
+	800: ("lightness": 27.5%, "chroma": 0.004, "hue": -2.61deg),
+	900: ("lightness": 34.6%, "chroma": 0.001, "hue": -8.33deg),
+	950: ("lightness": 42.5%, "chroma": 0, "hue": -7.28deg),
+);
+
+$gray: (
+	50: ("lightness": -43.4%, "chroma": 0.021, "hue": 16.52deg),
+	100: ("lightness": -41.6%, "chroma": 0.02, "hue": -0.18deg),
+	200: ("lightness": -37.7%, "chroma": 0.017, "hue": -0.17deg),
+	300: ("lightness": -32.1%, "chroma": 0.014, "hue": 6.02deg),
+	400: ("lightness": -16.3%, "chroma": 0.004, "hue": 3.04deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.5%, "chroma": -0.003, "hue": 7.56deg),
+	700: ("lightness": 17.8%, "chroma": -0.008, "hue": 4.63deg),
+	800: ("lightness": 27.3%, "chroma": -0.007, "hue": 7.51deg),
+	900: ("lightness": 34.1%, "chroma": -0.009, "hue": -0.3deg),
+	950: ("lightness": 42.1%, "chroma": -0.004, "hue": 2.67deg),
+);
+
+$zinc: (
+	50: ("lightness": -43.3%, "chroma": 0.014, "hue": 285.94deg),
+	100: ("lightness": -41.5%, "chroma": 0.013, "hue": -0.43deg),
+	200: ("lightness": -36.8%, "chroma": 0.01, "hue": -0.38deg),
+	300: ("lightness": -31.9%, "chroma": 0.009, "hue": -0.35deg),
+	400: ("lightness": -16%, "chroma": 0.001, "hue": -0.13deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 11%, "chroma": -0.001, "hue": 0.15deg),
+	700: ("lightness": 18.2%, "chroma": 0.002, "hue": 0.13deg),
+	800: ("lightness": 27.8%, "chroma": 0.009, "hue": -0.09deg),
+	900: ("lightness": 34.2%, "chroma": 0.008, "hue": 0.05deg),
+	950: ("lightness": 41.1%, "chroma": 0.01, "hue": 0.12deg),
+);
+
+$neutral: (
+	50: ("lightness": -42.9%, "chroma": 0, "hue": 0deg),
+	100: ("lightness": -41.4%, "chroma": 0, "hue": 0deg),
+	200: ("lightness": -36.6%, "chroma": 0, "hue": 0deg),
+	300: ("lightness": -31.4%, "chroma": 0, "hue": 0deg),
+	400: ("lightness": -15.9%, "chroma": 0, "hue": 0deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 11.7%, "chroma": 0, "hue": 0deg),
+	700: ("lightness": 18.5%, "chroma": 0, "hue": 0deg),
+	800: ("lightness": 28.7%, "chroma": 0, "hue": 0deg),
+	900: ("lightness": 35.1%, "chroma": 0, "hue": 0deg),
+	950: ("lightness": 41.1%, "chroma": 0, "hue": 0deg),
+);
+
+$stone: (
+	50: ("lightness": -43.2%, "chroma": 0.011, "hue": -48.35deg),
+	100: ("lightness": -41.7%, "chroma": 0.011, "hue": -48.35deg),
+	200: ("lightness": -37%, "chroma": 0.009, "hue": 9.35deg),
+	300: ("lightness": -31.6%, "chroma": 0.008, "hue": 1.7deg),
+	400: ("lightness": -16.3%, "chroma": 0.003, "hue": 1.81deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.9%, "chroma": 0.002, "hue": -15.57deg),
+	700: ("lightness": 17.9%, "chroma": 0.003, "hue": -9.49deg),
+	800: ("lightness": 28.5%, "chroma": 0.006, "hue": 23.77deg),
+	900: ("lightness": 33.7%, "chroma": 0.006, "hue": 2.03deg),
+	950: ("lightness": 40.6%, "chroma": 0.008, "hue": 8.82deg),
+);
+
+$mauve: (
+	50: ("lightness": -43.3%, "chroma": 0.014, "hue": 285.94deg),
+	100: ("lightness": -41.5%, "chroma": 0.013, "hue": -0.43deg),
+	200: ("lightness": -36.8%, "chroma": 0.01, "hue": -0.38deg),
+	300: ("lightness": -31.9%, "chroma": 0.009, "hue": -0.35deg),
+	400: ("lightness": -16%, "chroma": 0.001, "hue": -0.13deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 11%, "chroma": -0.001, "hue": 0.15deg),
+	700: ("lightness": 18.2%, "chroma": 0.002, "hue": 0.13deg),
+	800: ("lightness": 27.8%, "chroma": 0.009, "hue": -0.09deg),
+	900: ("lightness": 34.2%, "chroma": 0.008, "hue": 0.05deg),
+	950: ("lightness": 41.1%, "chroma": 0.01, "hue": 0.12deg),
+);
+
+$olive: (
+	50: ("lightness": -43.2%, "chroma": 0.011, "hue": -48.35deg),
+	100: ("lightness": -41.7%, "chroma": 0.011, "hue": -48.35deg),
+	200: ("lightness": -37%, "chroma": 0.009, "hue": 9.35deg),
+	300: ("lightness": -31.6%, "chroma": 0.008, "hue": 1.7deg),
+	400: ("lightness": -16.3%, "chroma": 0.003, "hue": 1.81deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.9%, "chroma": 0.002, "hue": -15.57deg),
+	700: ("lightness": 17.9%, "chroma": 0.003, "hue": -9.49deg),
+	800: ("lightness": 28.5%, "chroma": 0.006, "hue": 23.77deg),
+	900: ("lightness": 33.7%, "chroma": 0.006, "hue": 2.03deg),
+	950: ("lightness": 40.6%, "chroma": 0.008, "hue": 8.82deg),
+);
+
+$mist: (
+	50: ("lightness": -43%, "chroma": 0.038, "hue": 9.56deg),
+	100: ("lightness": -41.4%, "chroma": 0.034, "hue": 9.52deg),
+	200: ("lightness": -37.5%, "chroma": 0.028, "hue": 1.91deg),
+	300: ("lightness": -31.5%, "chroma": 0.021, "hue": 4.53deg),
+	400: ("lightness": -15.7%, "chroma": 0.006, "hue": 0.63deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.8%, "chroma": 0.004, "hue": 0.14deg),
+	700: ("lightness": 18.2%, "chroma": 0.002, "hue": 0.13deg),
+	800: ("lightness": 27.5%, "chroma": 0.004, "hue": -2.61deg),
+	900: ("lightness": 34.6%, "chroma": 0.001, "hue": -8.33deg),
+	950: ("lightness": 42.5%, "chroma": 0, "hue": -7.28deg),
+);
+
+$taupe: (
+	50: ("lightness": -43.2%, "chroma": 0.011, "hue": -48.35deg),
+	100: ("lightness": -41.7%, "chroma": 0.011, "hue": -48.35deg),
+	200: ("lightness": -37%, "chroma": 0.009, "hue": 9.35deg),
+	300: ("lightness": -31.6%, "chroma": 0.008, "hue": 1.7deg),
+	400: ("lightness": -16.3%, "chroma": 0.003, "hue": 1.81deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": 10.9%, "chroma": 0.002, "hue": -15.57deg),
+	700: ("lightness": 17.9%, "chroma": 0.003, "hue": -9.49deg),
+	800: ("lightness": 28.5%, "chroma": 0.006, "hue": 23.77deg),
+	900: ("lightness": 33.7%, "chroma": 0.006, "hue": 2.03deg),
+	950: ("lightness": 40.6%, "chroma": 0.008, "hue": 8.82deg),
+);
+
+$red: (
+	50: ("lightness": 33.4%, "chroma": -0.195, "hue": -7.95deg),
+	100: ("lightness": 29.9%, "chroma": -0.177, "hue": -7.61deg),
+	200: ("lightness": 24.8%, "chroma": -0.149, "hue": -7deg),
+	300: ("lightness": 17.1%, "chroma": -0.105, "hue": -5.76deg),
+	400: ("lightness": 7.4%, "chroma": -0.042, "hue": -3.11deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": -6%, "chroma": 0.007, "hue": 2deg),
+	700: ("lightness": -13.2%, "chroma": -0.018, "hue": 2.19deg),
+	800: ("lightness": -19.3%, "chroma": -0.047, "hue": 1.57deg),
+	900: ("lightness": -24.1%, "chroma": -0.075, "hue": 0.39deg),
+	950: ("lightness": -37.9%, "chroma": -0.119, "hue": 0.71deg)
+);
+
+$orange: (
+	50: ("lightness": 27.5%, "chroma": -0.171, "hue": 26.08deg),
+	100: ("lightness": 24.9%, "chroma": -0.15, "hue": 27.56deg),
+	200: ("lightness": 19.6%, "chroma": -0.114, "hue": 23.1deg),
+	300: ("lightness": 13.2%, "chroma": -0.07, "hue": 18.69deg),
+	400: ("lightness": 5.3%, "chroma": -0.028, "hue": 8.33deg),
+	500: ("lightness": 0%, "chroma": 0, "hue": 0deg),
+	600: ("lightness": -5.9%, "chroma": 0.007, "hue": -6.48deg),
+	700: ("lightness": -15.2%, "chroma": -0.013, "hue": -9.2deg),
+	800: ("lightness": -23.5%, "chroma": -0.044, "hue": -10.3deg),
+	900: ("lightness": -29.7%, "chroma": -0.071, "hue": -9.43deg),
+	950: ("lightness": -43.9%, "chroma": -0.111, "hue": -11.34deg)
+);
+"amber": (50: ("lightness": 21.8%, "chroma": -0.144, "hue": 25.2deg), 100: ("lightness": 19.3%, "chroma": -0.107, "hue": 25.54deg), 200: ("lightness": 15.5%, "chroma": -0.05, "hue": 25.67deg), 300: ("lightness": 11%, "chroma": -0.012, "hue": 21.53deg), 400: ("lightness": 6.8%, "chroma": -0.001, "hue": 14.35deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.3%, "chroma": -0.008, "hue": -11.76deg), 700: ("lightness": -21.4%, "chroma": -0.019, "hue": -21.08deg), 800: ("lightness": -29.6%, "chroma": -0.04, "hue": -23.88deg), 900: ("lightness": -35.5%, "chroma": -0.06, "hue": -24.18deg), 950: ("lightness": -49%, "chroma": -0.091, "hue": -24.44deg)), "yellow": (50: ("lightness": 19.2%, "chroma": -0.136, "hue": 16.16deg), 100: ("lightness": 17.8%, "chroma": -0.093, "hue": 17.14deg), 200: ("lightness": 15%, "chroma": -0.038, "hue": 15.49deg), 300: ("lightness": 11%, "chroma": 0.004, "hue": 12.06deg), 400: ("lightness": 6.6%, "chroma": 0.011, "hue": 5.89deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -11.4%, "chroma": -0.02, "hue": -10.22deg), 700: ("lightness": -24.1%, "chroma": -0.041, "hue": -19.61deg), 800: ("lightness": -31.9%, "chroma": -0.059, "hue": -24.14deg), 900: ("lightness": -37.4%, "chroma": -0.072, "hue": -28.34deg), 950: ("lightness": -50.9%, "chroma": -0.098, "hue": -32.24deg)), "lime": (50: ("lightness": 21.8%, "chroma": -0.173, "hue": -10.09deg), 100: ("lightness": 19.9%, "chroma": -0.138, "hue": -8.52deg), 200: ("lightness": 17%, "chroma": -0.082, "hue": -6.53deg), 300: ("lightness": 12.9%, "chroma": -0.025, "hue": -4.18deg), 400: ("lightness": 8.1%, "chroma": 0.003, "hue": -2deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -12%, "chroma": -0.029, "hue": 0.83deg), 700: ("lightness": -23.6%, "chroma": -0.063, "hue": 0.74deg), 800: ("lightness": -31.5%, "chroma": -0.091, "hue": 0.08deg), 900: ("lightness": -36.3%, "chroma": -0.108, "hue": 0.21deg), 950: ("lightness": -49.4%, "chroma": -0.135, "hue": 1.26deg)), "green": (50: ("lightness": 25.9%, "chroma": -0.174, "hue": 6.25deg), 100: ("lightness": 23.9%, "chroma": -0.149, "hue": 7.16deg), 200: ("lightness": 20.2%, "chroma": -0.111, "hue": 6.41deg), 300: ("lightness": 14.8%, "chroma": -0.056, "hue": 4.87deg), 400: ("lightness": 7.7%, "chroma": -0.01, "hue": 2.13deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -9.6%, "chroma": -0.022, "hue": -0.37deg), 700: ("lightness": -19.6%, "chroma": -0.055, "hue": 0.49deg), 800: ("lightness": -27.5%, "chroma": -0.084, "hue": 1.75deg), 900: ("lightness": -33%, "chroma": -0.102, "hue": 2.96deg), 950: ("lightness": -45.7%, "chroma": -0.129, "hue": 3.35deg)), "emerald": (50: ("lightness": 28.3%, "chroma": -0.128, "hue": 3.63deg), 100: ("lightness": 25.4%, "chroma": -0.098, "hue": 0.57deg), 200: ("lightness": 20.9%, "chroma": -0.06, "hue": 1.67deg), 300: ("lightness": 14.9%, "chroma": -0.019, "hue": 2.5deg), 400: ("lightness": 7.7%, "chroma": 0.004, "hue": 0.74deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10%, "chroma": -0.022, "hue": 0.75deg), 700: ("lightness": -18.8%, "chroma": -0.044, "hue": 3.13deg), 800: ("lightness": -26.4%, "chroma": -0.063, "hue": 4.43deg), 900: ("lightness": -31.8%, "chroma": -0.076, "hue": 6.46deg), 950: ("lightness": -43.4%, "chroma": -0.1, "hue": 10.07deg)), "teal": (50: ("lightness": 28%, "chroma": -0.109, "hue": -1.78deg), 100: ("lightness": 24.9%, "chroma": -0.073, "hue": -1.7deg), 200: ("lightness": 20.6%, "chroma": -0.03, "hue": -2.07deg), 300: ("lightness": 15.1%, "chroma": 0.002, "hue": -1.43deg), 400: ("lightness": 8.1%, "chroma": 0.01, "hue": -0.59deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.4%, "chroma": -0.019, "hue": 2.2deg), 700: ("lightness": -19.3%, "chroma": -0.037, "hue": 3.89deg), 800: ("lightness": -26.7%, "chroma": -0.052, "hue": 5.72deg), 900: ("lightness": -31.8%, "chroma": -0.064, "hue": 5.92deg), 950: ("lightness": -42.7%, "chroma": -0.078, "hue": 10.02deg)), "cyan": (50: ("lightness": 26.9%, "chroma": -0.107, "hue": -14.35deg), 100: ("lightness": 24.1%, "chroma": -0.082, "hue": -11.83deg), 200: ("lightness": 20.2%, "chroma": -0.049, "hue": -10.18deg), 300: ("lightness": 15%, "chroma": -0.011, "hue": -8.14deg), 400: ("lightness": 8.2%, "chroma": 0.008, "hue": -3.69deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.6%, "chroma": -0.015, "hue": 6.5deg), 700: ("lightness": -19.5%, "chroma": -0.032, "hue": 7.91deg), 800: ("lightness": -26.5%, "chroma": -0.049, "hue": 9.06deg), 900: ("lightness": -31.7%, "chroma": -0.06, "hue": 12.17deg), 950: ("lightness": -41.3%, "chroma": -0.072, "hue": 14.48deg)), "sky": (50: ("lightness": 29.2%, "chroma": -0.136, "hue": -0.7deg), 100: ("lightness": 26.6%, "chroma": -0.123, "hue": -0.5deg), 200: ("lightness": 21.6%, "chroma": -0.093, "hue": -6.42deg), 300: ("lightness": 14.3%, "chroma": -0.047, "hue": -7deg), 400: ("lightness": 6.9%, "chroma": -0.009, "hue": -4.66deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -9.7%, "chroma": -0.009, "hue": 4.65deg), 700: ("lightness": -18.5%, "chroma": -0.029, "hue": 5.43deg), 800: ("lightness": -24.2%, "chroma": -0.048, "hue": 3.47deg), 900: ("lightness": -29.4%, "chroma": -0.063, "hue": 3.56deg), 950: ("lightness": -39.2%, "chroma": -0.085, "hue": 5.84deg)), "blue": (50: ("lightness": 34.7%, "chroma": -0.174, "hue": -5.21deg), 100: ("lightness": 30.9%, "chroma": -0.156, "hue": -4.22deg), 200: ("lightness": 25.9%, "chroma": -0.131, "hue": -5.68deg), 300: ("lightness": 18.6%, "chroma": -0.092, "hue": -8deg), 400: ("lightness": 9.1%, "chroma": -0.045, "hue": -5.19deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -7.7%, "chroma": 0.027, "hue": 3.07deg), 700: ("lightness": -13.5%, "chroma": 0.029, "hue": 4.57deg), 800: ("lightness": -19.9%, "chroma": -0.007, "hue": 5.83deg), 900: ("lightness": -24.4%, "chroma": -0.05, "hue": 5.71deg), 950: ("lightness": -34.1%, "chroma": -0.101, "hue": 8.13deg)), "indigo": (50: ("lightness": 37.7%, "chroma": -0.186, "hue": -4.81deg), 100: ("lightness": 34.5%, "chroma": -0.171, "hue": -4.33deg), 200: ("lightness": 28.5%, "chroma": -0.142, "hue": -3.08deg), 300: ("lightness": 20%, "chroma": -0.1, "hue": -2.41deg), 400: ("lightness": 9.5%, "chroma": -0.046, "hue": -0.19deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -7.4%, "chroma": 0.026, "hue": -0.15deg), 700: ("lightness": -12.8%, "chroma": 0.011, "hue": -0.1deg), 800: ("lightness": -18.7%, "chroma": -0.027, "hue": 0.25deg), 900: ("lightness": -22.6%, "chroma": -0.069, "hue": 1.58deg), 950: ("lightness": -32.8%, "chroma": -0.118, "hue": 4.17deg)), "violet": (50: ("lightness": 36.3%, "chroma": -0.203, "hue": 1.04deg), 100: ("lightness": 33.7%, "chroma": -0.191, "hue": 1.87deg), 200: ("lightness": 28.8%, "chroma": -0.164, "hue": 0.56deg), 300: ("lightness": 20.5%, "chroma": -0.118, "hue": 0.85deg), 400: ("lightness": 10.3%, "chroma": -0.06, "hue": 0.82deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -6.5%, "chroma": 0.028, "hue": 0.29deg), 700: ("lightness": -11.5%, "chroma": 0.022, "hue": -0.14deg), 800: ("lightness": -17.4%, "chroma": -0.008, "hue": 0.04deg), 900: ("lightness": -22.6%, "chroma": -0.041, "hue": 1.02deg), 950: ("lightness": -32.3%, "chroma": -0.084, "hue": -1.63deg)), "purple": (50: ("lightness": 35%, "chroma": -0.219, "hue": 4.4deg), 100: ("lightness": 31.9%, "chroma": -0.2, "hue": 3.27deg), 200: ("lightness": 27.5%, "chroma": -0.173, "hue": 2.8deg), 300: ("lightness": 20%, "chroma": -0.125, "hue": 2.48deg), 400: ("lightness": 9.5%, "chroma": -0.056, "hue": 1.6deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -6.9%, "chroma": 0.019, "hue": -1.58deg), 700: ("lightness": -13.1%, "chroma": 0.004, "hue": -1.98deg), 800: ("lightness": -18.9%, "chroma": -0.035, "hue": -0.18deg), 900: ("lightness": -24.6%, "chroma": -0.067, "hue": 1.09deg), 950: ("lightness": -33.6%, "chroma": -0.09, "hue": -1.18deg)), "fuchsia": (50: ("lightness": 31%, "chroma": -0.242, "hue": -2.09deg), 100: ("lightness": 28.5%, "chroma": -0.223, "hue": -3.3deg), 200: ("lightness": 23.6%, "chroma": -0.186, "hue": -2.53deg), 300: ("lightness": 16.6%, "chroma": -0.127, "hue": -0.72deg), 400: ("lightness": 8.1%, "chroma": -0.052, "hue": 0.01deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -7.6%, "chroma": -0.002, "hue": 0.75deg), 700: ("lightness": -14.9%, "chroma": -0.033, "hue": 1.8deg), 800: ("lightness": -21.5%, "chroma": -0.067, "hue": 2.44deg), 900: ("lightness": -26.6%, "chroma": -0.099, "hue": 3.46deg), 950: ("lightness": -37.4%, "chroma": -0.128, "hue": 3.51deg)), "pink": (50: ("lightness": 31.5%, "chroma": -0.198, "hue": -11.11deg), 100: ("lightness": 29.2%, "chroma": -0.184, "hue": -12.05deg), 200: ("lightness": 24.3%, "chroma": -0.153, "hue": -11.08deg), 300: ("lightness": 16.7%, "chroma": -0.102, "hue": -8.29deg), 400: ("lightness": 6.9%, "chroma": -0.037, "hue": -4.55deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -6.4%, "chroma": 0.006, "hue": -353.73deg), 700: ("lightness": -13.1%, "chroma": -0.013, "hue": -350.35deg), 800: ("lightness": -19.7%, "chroma": -0.042, "hue": -350.49deg), 900: ("lightness": -24.8%, "chroma": -0.068, "hue": -351.88deg), 950: ("lightness": -37.2%, "chroma": -0.107, "hue": -350.4deg)), "rose": (50: ("lightness": 32.4%, "chroma": -0.2, "hue": -4.02deg), 100: ("lightness": 29.6%, "chroma": -0.185, "hue": -3.86deg), 200: ("lightness": 24.7%, "chroma": -0.159, "hue": -6.44deg), 300: ("lightness": 16.5%, "chroma": -0.109, "hue": -4.8deg), 400: ("lightness": 7.4%, "chroma": -0.046, "hue": -3.01deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -5.9%, "chroma": 0.007, "hue": 1.14deg), 700: ("lightness": -13.1%, "chroma": -0.017, "hue": 0.49deg), 800: ("lightness": -19%, "chroma": -0.044, "hue": -2.74deg), 900: ("lightness": -23.5%, "chroma": -0.065, "hue": -6.17deg), 950: ("lightness": -37.4%, "chroma": -0.114, "hue": -4.35deg)), "slate": (50: ("lightness": 43%, "chroma": -0.038, "hue": -9.56deg), 100: ("lightness": 41.4%, "chroma": -0.034, "hue": -9.52deg), 200: ("lightness": 37.5%, "chroma": -0.028, "hue": -1.91deg), 300: ("lightness": 31.5%, "chroma": -0.021, "hue": -4.53deg), 400: ("lightness": 15.7%, "chroma": -0.006, "hue": -0.63deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.8%, "chroma": -0.004, "hue": -0.14deg), 700: ("lightness": -18.2%, "chroma": -0.002, "hue": -0.13deg), 800: ("lightness": -27.5%, "chroma": -0.004, "hue": 2.61deg), 900: ("lightness": -34.6%, "chroma": -0.001, "hue": 8.33deg), 950: ("lightness": -42.5%, "chroma": 0, "hue": 7.28deg)), "gray": (50: ("lightness": 43.4%, "chroma": -0.021, "hue": -16.52deg), 100: ("lightness": 41.6%, "chroma": -0.02, "hue": 0.18deg), 200: ("lightness": 37.7%, "chroma": -0.017, "hue": 0.17deg), 300: ("lightness": 32.1%, "chroma": -0.014, "hue": -6.02deg), 400: ("lightness": 16.3%, "chroma": -0.004, "hue": -3.04deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.5%, "chroma": 0.003, "hue": -7.56deg), 700: ("lightness": -17.8%, "chroma": 0.008, "hue": -4.63deg), 800: ("lightness": -27.3%, "chroma": 0.007, "hue": -7.51deg), 900: ("lightness": -34.1%, "chroma": 0.009, "hue": 0.3deg), 950: ("lightness": -42.1%, "chroma": 0.004, "hue": -2.67deg)), "zinc": (50: ("lightness": 43.3%, "chroma": -0.014, "hue": -285.94deg), 100: ("lightness": 41.5%, "chroma": -0.013, "hue": 0.43deg), 200: ("lightness": 36.8%, "chroma": -0.01, "hue": 0.38deg), 300: ("lightness": 31.9%, "chroma": -0.009, "hue": 0.35deg), 400: ("lightness": 16%, "chroma": -0.001, "hue": 0.13deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -11%, "chroma": 0.001, "hue": -0.15deg), 700: ("lightness": -18.2%, "chroma": -0.002, "hue": -0.13deg), 800: ("lightness": -27.8%, "chroma": -0.009, "hue": 0.09deg), 900: ("lightness": -34.2%, "chroma": -0.008, "hue": -0.05deg), 950: ("lightness": -41.1%, "chroma": -0.01, "hue": -0.12deg)), "neutral": (50: ("lightness": 42.9%, "chroma": 0, "hue": 0deg), 100: ("lightness": 41.4%, "chroma": 0, "hue": 0deg), 200: ("lightness": 36.6%, "chroma": 0, "hue": 0deg), 300: ("lightness": 31.4%, "chroma": 0, "hue": 0deg), 400: ("lightness": 15.9%, "chroma": 0, "hue": 0deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -11.7%, "chroma": 0, "hue": 0deg), 700: ("lightness": -18.5%, "chroma": 0, "hue": 0deg), 800: ("lightness": -28.7%, "chroma": 0, "hue": 0deg), 900: ("lightness": -35.1%, "chroma": 0, "hue": 0deg), 950: ("lightness": -41.1%, "chroma": 0, "hue": 0deg)), "stone": (50: ("lightness": 43.2%, "chroma": -0.011, "hue": 48.35deg), 100: ("lightness": 41.7%, "chroma": -0.011, "hue": 48.35deg), 200: ("lightness": 37%, "chroma": -0.009, "hue": -9.35deg), 300: ("lightness": 31.6%, "chroma": -0.008, "hue": -1.7deg), 400: ("lightness": 16.3%, "chroma": -0.003, "hue": -1.81deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.9%, "chroma": -0.002, "hue": 15.57deg), 700: ("lightness": -17.9%, "chroma": -0.003, "hue": 9.49deg), 800: ("lightness": -28.5%, "chroma": -0.006, "hue": -23.77deg), 900: ("lightness": -33.7%, "chroma": -0.006, "hue": -2.03deg), 950: ("lightness": -40.6%, "chroma": -0.008, "hue": -8.82deg)), "mauve": (50: ("lightness": 43.3%, "chroma": -0.014, "hue": -285.94deg), 100: ("lightness": 41.5%, "chroma": -0.013, "hue": 0.43deg), 200: ("lightness": 36.8%, "chroma": -0.01, "hue": 0.38deg), 300: ("lightness": 31.9%, "chroma": -0.009, "hue": 0.35deg), 400: ("lightness": 16%, "chroma": -0.001, "hue": 0.13deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -11%, "chroma": 0.001, "hue": -0.15deg), 700: ("lightness": -18.2%, "chroma": -0.002, "hue": -0.13deg), 800: ("lightness": -27.8%, "chroma": -0.009, "hue": 0.09deg), 900: ("lightness": -34.2%, "chroma": -0.008, "hue": -0.05deg), 950: ("lightness": -41.1%, "chroma": -0.01, "hue": -0.12deg)), "olive": (50: ("lightness": 43.2%, "chroma": -0.011, "hue": 48.35deg), 100: ("lightness": 41.7%, "chroma": -0.011, "hue": 48.35deg), 200: ("lightness": 37%, "chroma": -0.009, "hue": -9.35deg), 300: ("lightness": 31.6%, "chroma": -0.008, "hue": -1.7deg), 400: ("lightness": 16.3%, "chroma": -0.003, "hue": -1.81deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.9%, "chroma": -0.002, "hue": 15.57deg), 700: ("lightness": -17.9%, "chroma": -0.003, "hue": 9.49deg), 800: ("lightness": -28.5%, "chroma": -0.006, "hue": -23.77deg), 900: ("lightness": -33.7%, "chroma": -0.006, "hue": -2.03deg), 950: ("lightness": -40.6%, "chroma": -0.008, "hue": -8.82deg)), "mist": (50: ("lightness": 43%, "chroma": -0.038, "hue": -9.56deg), 100: ("lightness": 41.4%, "chroma": -0.034, "hue": -9.52deg), 200: ("lightness": 37.5%, "chroma": -0.028, "hue": -1.91deg), 300: ("lightness": 31.5%, "chroma": -0.021, "hue": -4.53deg), 400: ("lightness": 15.7%, "chroma": -0.006, "hue": -0.63deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.8%, "chroma": -0.004, "hue": -0.14deg), 700: ("lightness": -18.2%, "chroma": -0.002, "hue": -0.13deg), 800: ("lightness": -27.5%, "chroma": -0.004, "hue": 2.61deg), 900: ("lightness": -34.6%, "chroma": -0.001, "hue": 8.33deg), 950: ("lightness": -42.5%, "chroma": 0, "hue": 7.28deg)), "taupe": (50: ("lightness": 43.2%, "chroma": -0.011, "hue": 48.35deg), 100: ("lightness": 41.7%, "chroma": -0.011, "hue": 48.35deg), 200: ("lightness": 37%, "chroma": -0.009, "hue": -9.35deg), 300: ("lightness": 31.6%, "chroma": -0.008, "hue": -1.7deg), 400: ("lightness": 16.3%, "chroma": -0.003, "hue": -1.81deg), 500: ("lightness": 0%, "chroma": 0, "hue": 0deg), 600: ("lightness": -10.9%, "chroma": -0.002, "hue": 15.57deg), 700: ("lightness": -17.9%, "chroma": -0.003, "hue": 9.49deg), 800: ("lightness": -28.5%, "chroma": -0.006, "hue": -23.77deg), 900: ("lightness": -33.7%, "chroma": -0.006, "hue": -2.03deg), 950: ("lightness": -40.6%, "chroma": -0.008, "hue": -8.82deg))
