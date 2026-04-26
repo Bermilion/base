@@ -169,17 +169,17 @@ $variables-map: ();
 // Возвращает контрастный цвет для текста в виде CSS-переменной
 // Используется для автоматического определения цвета текста на основе цвета фона
 // @param $color - название цвета из палитры
-// @return CSS-переменная с контрастным цветом (var(--color-{color}-contrast))
-@function content($color) {
-	@return _get-css-var-color($color, 1, 'contrast', 500);
+// @return CSS-переменная с контрастным цветом (var(--color-{color}-content))
+@function content($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'contrast', light);
 }
 
 // Вычисляет оттенок цвета на основе параметров интерполяции
-// Определяет палитру цвета, применяет интерполяцию и конвертирует в HEX
+// Определяет палитру цвета, применяет интерполяцию и возвращает цвет в OKLCH
 // @param $color - исходный цвет
 // @param $step - номер оттенка для интерполяции (например, 500, 600)
 // @param $alpha - прозрачность
-// @return HEX-значение цвета
+// @return цвет в пространстве OKLCH
 @function _shade-color($color, $step, $alpha) {
 	$_color: color.to-space($color, oklch);
 	$_scope-map: _get-map-by-shade($_color);
@@ -193,13 +193,7 @@ $variables-map: ();
 
 	$result-color: color.change($_lch, $alpha: $alpha);
 
-	$_alpha-boolean: false;
-
-	@if $alpha < 1 {
-		$_alpha-boolean: true;
-	}
-
-	@return _to-hex($result-color, $_alpha-boolean);
+	@return $result-color;
 }
 
 // Генерирует имя CSS-переменной на основе цвета, эффекта оттенка и прозрачности
@@ -211,12 +205,22 @@ $variables-map: ();
 @function _get-variable-color-name($color, $shade-effect, $alpha) {
 	$_name: map.get($_base-colors-reversed, $color);
 
-	@if $shade-effect != 'base' {
-		$_name: '#{$_name}-#{$shade-effect}';
-	}
-
-	@if $alpha < 1 {
+	@if $shade-effect == 'base' and $alpha == 1 {
+		$_name: $_name;
+	} @else if $shade-effect == 'base' and $alpha < 1 {
 		$_name: '#{$_name}-alpha-#{$alpha * 100}';
+	} @else if $shade-effect == 'contrast' and $alpha == 1 {
+		$_contrast-map: _contrast($color, $alpha);
+		$_shade-effect: '#{map.get($_contrast-map, 'shade-effect')}';
+		$_name: 'content-#{$_shade-effect}';
+	} @else if $shade-effect == 'contrast' and $alpha < 1 {
+		$_contrast-map: _contrast($color, $alpha);
+		$_shade-effect: '#{map.get($_contrast-map, 'shade-effect')}';
+		$_name: 'content-#{$_shade-effect}-alpha-#{$alpha * 100}';
+	} @else if $shade-effect != 'base' and $shade-effect != 'contrast' and $alpha < 1 {
+		$_name: '#{$_name}-#{$shade-effect}-alpha-#{$alpha * 100}';
+	} @else  {
+		$_name: '#{$_name}-#{$shade-effect}';
 	}
 
 	@return $_name;
@@ -225,7 +229,7 @@ $variables-map: ();
 // Добавляет цвет в глобальную карту переменных, если его там еще нет
 // Избегает дублирования переменных
 // @param $name - имя переменной
-// @param $color - HEX-значение цвета
+// @param $color - цвет в цветовом пространстве (OKLCH)
 // @return имя переменной
 @function _set-color-in-variables-map($name, $color) {
 	$_name: map.get($variables-map, $name);
@@ -249,11 +253,12 @@ $variables-map: ();
 	$_var-name: _get-variable-color-name($color, $shade-effect-name, $alpha);
 	$_shade-color: null;
 
-	@if $shade-effect-name != 'contrast' {
-		$_shade-color: _shade-color($color, $shade-effect-value, $alpha);
+	@if $shade-effect-name == 'contrast' {
+		$_shade-color: map.get(_contrast($color, $alpha), 'color');
 	} @else {
-		$_shade-color: _contrast($color);
+		$_shade-color: _shade-color($color, $shade-effect-value, $alpha);
 	}
+
 
 	$_set-var: _set-color-in-variables-map($_var-name, $_shade-color);
 
@@ -261,54 +266,31 @@ $variables-map: ();
 }
 
 
-// Конвертирует цвет из любого пространства в HEX-формат
-// @param $color - цвет в любом цветовом пространстве
-// @param $include-alpha - включать ли альфа-канал в результат
-// @return HEX-строка (например, #FF0000 или #FF000080)
-@function _to-hex($color, $include-alpha: false) {
-	$_srgb: color.to-space($color, srgb);
-	$_r: math.round(color.channel($_srgb, 'red', $space: srgb) * 255);
-	$_g: math.round(color.channel($_srgb, 'green', $space: srgb) * 255);
-	$_b: math.round(color.channel($_srgb, 'blue', $space: srgb) * 255);
 
-	$_hex: "##{_to-hex-byte($_r)}#{_to-hex-byte($_g)}#{_to-hex-byte($_b)}";
-
-	@if $include-alpha {
-		$_a: color.channel($_srgb, 'alpha', $space: srgb);
-		$_a-int: math.round($_a * 255);
-		$_hex: "#{$_hex}#{_to-hex-byte($_a-int)}";
-	}
-
-	@return $_hex;
-}
-
-// Конвертирует число (0-255) в двухсимвольную HEX-строку
-// @param $value - число от 0 до 255
-// @return HEX-строка (например, 'FF' для 255)
-@function _to-hex-byte($value) {
-	$_hex: "0123456789ABCDEF";
-	$_high: math.floor(math.div($value, 16));
-	$_low: $value % 16;
-
-	@return "#{string.slice($_hex, $_high + 1, $_high + 1)}#{string.slice($_hex, $_low + 1, $_low + 1)}";
-}
-
-
-
-// Вычисляет контрастный цвет для текста на основе яркости фона
-// Использует взвешенную формулу яркости (ITU-R BT.601)
+// Вычисляет контрастный цвет для текста на основе светлоты фона
+// Использует канал lightness в пространстве OKLCH
 // @param $color - цвет фона в любом цветовом пространстве
-// @return темный цвет (#222) для светлых фонов (>50% яркости) или светлый (#fff) для темных фонов
-@function _contrast($color) {
-	$_brightness: 0.299 * color.channel($color, "red");
-	$_brightness: $_brightness + 0.587 * color.channel($color, "green");
-	$_brightness: $_brightness + 0.114 * color.channel($color, "blue");
-	$_brightness: math.div($_brightness, 255) * 100%;
+// @return темный цвет (#222) для светлых фонов (>0.5 lightness) или светлый (#fff) для темных фонов
+@function _contrast($color, $alpha) {
+	$_oklch: color.to-space($color, oklch);
+	$_lightness: color.channel($_oklch, 'lightness');
 
 	// Определение цвета контента в зависимости от светлоты базового цвета
-	@if $_brightness > 50% {
-		@return #222;
+	@if $_lightness > 50% {
+		@if $alpha < 1 {
+			$_color: color.change(palette.$content-dark, $alpha: $alpha);
+
+			@return ('shade-effect': 'dark', 'color': $_color);
+		} @else {
+			@return ('shade-effect': 'dark', 'color': palette.$content-dark);
+		}
 	} @else {
-		@return #fff;
+		@if $alpha < 1 {
+			$_color: color.change(palette.$content-light, $alpha: $alpha);
+
+			@return ('shade-effect': 'light', 'color': $_color);
+		} @else {
+			@return ('shade-effect': 'light', 'color': palette.$content-light);
+		}
 	}
 }
