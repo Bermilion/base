@@ -166,6 +166,10 @@ $variables-map: ();
 	@return _get-css-var-color($color, $alpha, 'dark-50', 950);
 }
 
+@function content($color) {
+	@return _get-css-var-color($color, 1, 'contrast', 500);
+}
+
 // Вычисляет оттенок цвета на основе параметров интерполяции
 // Определяет палитру цвета, применяет интерполяцию и конвертирует в HEX
 // @param $color - исходный цвет
@@ -239,7 +243,14 @@ $variables-map: ();
 // @return CSS-переменная в формате var(--color-{name})
 @function _get-css-var-color($color, $alpha, $shade-effect-name, $shade-effect-value) {
 	$_var-name: _get-variable-color-name($color, $shade-effect-name, $alpha);
-	$_shade-color: _shade-color($color, $shade-effect-value, $alpha);
+	$_shade-color: null;
+
+	@if $shade-effect-name != 'contrast' {
+		$_shade-color: _shade-color($color, $shade-effect-value, $alpha);
+	} @else {
+		$_shade-color: _contrast($color);
+	}
+
 	$_set-var: _set-color-in-variables-map($_var-name, $_shade-color);
 
 	@return var(--color-#{$_var-name});
@@ -276,4 +287,23 @@ $variables-map: ();
 	$_low: $value % 16;
 
 	@return "#{string.slice($_hex, $_high + 1, $_high + 1)}#{string.slice($_hex, $_low + 1, $_low + 1)}";
+}
+
+
+
+@function _contrast($color) {
+	// Считаем светлоту цвета.
+	// Каждый канал имеет разный вес в светлоте цвета,
+	// поэтому необходимо использовать коэффициенты.
+	$_brightness: 0.299 * color.channel($color, "red");
+	$_brightness: $_brightness + 0.587 * color.channel($color, "green");
+	$_brightness: $_brightness + 0.114 * color.channel($color, "blue");
+	$_brightness: math.div($_brightness, 255) * 100%;
+
+	// Определение цвета контента в зависимости от светлоты базового цвета
+	@if $_brightness > 50% {
+		@return #222;
+	} @else {
+		@return #fff;
+	}
 }
