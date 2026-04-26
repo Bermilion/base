@@ -7,360 +7,273 @@
 // Пробрасываем базовые цвета из конфига дальше,
 // чтобы к ним можно было обращаться и было удобно
 // использовать через автоподстановку в IDE
-@forward "@config/colors";
+@forward "@colors/hex-palette";
 
 // А здесь подключаем цвета для пользования внутри модуля
-@use "@config/colors" as config;
-@use "@core/palette" as palette;
+@use "@colors/hex-palette" as palette;
+@use "@colors/palette-map" as palette-map;
+@use "@colors/interpolation-map" as interpolation-map;
+
+$_base-colors: meta.module-variables(palette);
+$_base-colors-map: meta.module-variables(palette-map);
+$_interpolation-map: meta.module-variables(interpolation-map);
 
 
-
-
-
-/**
- * Генерация внутреннего массива с оттенками цветов из конфига
- *
- * Файл с конфигом цветов сканируются, из него берутся переменные с цветами.
- * Каждая переменная с цветом — это базовый цвет. Для каждого базового цвета
- * создаётся массив с 4 элементами:
- *  `base` — сам базовый цвет, который и был указан в конфиге с цветами
- *  `light` — светлый оттенок базового цвета
- *  `dark` — тёмный оттенок базового цвета
- *  `content` — цвет контента: если базовый цвет тёмный, то контент будет белым,
- *              а если базовый цвет светлый, то контент будет тёмно-серым.
- */
-$_base-colors: meta.module-variables(config);
-$_result-colors: ();
-@each $_name, $_value in $_base-colors {
-	// Обрабатываем только цвета
-	@if (meta.type-of($_value) == "color") {
-
-		// Подготовка массива с оттенками
-		$_shades: (
-			"base": $_value,
-			"light": color.adjust($_value, $lightness: 10%),
-			"dark": color.adjust($_value, $lightness: -10%)
-		);
-
-		// Считаем светлоту цвета.
-		// Каждый канал имеет разный вес в светлоте цвета,
-		// поэтому необходимо использовать коэффициенты.
-		$_brightness: 0.299 * color.channel($_value, "red");
-		$_brightness: $_brightness + 0.587 * color.channel($_value, "green");
-		$_brightness: $_brightness + 0.114 * color.channel($_value, "blue");
-		$_brightness: math.div($_brightness, 255) * 100%;
-
-		// Определение цвета контента в зависимости от светлоты базового цвета
-		@if $_brightness > 50% {
-			$_shades: map.set($_shades, "content", #222);
-		} @else {
-			$_shades: map.set($_shades, "content", #fff);
-		}
-
-		// Сохранение массива с оттенками в массив с цветами
-		$_result-colors: map.set($_result-colors, $_name, $_shades);
-
-	}
+// Обратный map чтобы не гонять циклы лишний раз для поиска названия цвета
+$_base-colors-reversed: map.deep-merge((), ());
+@each $name, $value in $_base-colors {
+	$_base-colors-reversed: map.set($_base-colors-reversed, $value, $name);
 }
 
-/**
- * Получить название цвета по значению
- */
-@function _get-color-name($color) {
-	@each $_name, $_value in $_base-colors {
-		@if $color == $_value {
-			@return $_name;
-		}
-	}
-}
+$variables-map: ();
 
-/**
- * Получить оттенок из массива с цветами
- */
-@function get($color, $shade: "base") {
-	@if (meta.type-of($color) == "color") {
-		$color: _get-color-name($color);
-	}
+// Преобразует цвет в пространство OKLCH и извлекает его параметры
+// @param $color - исходный цвет в любом цветовом пространстве
+// @return map с ключами: color (в OKLCH), lightness, chroma, hue
+@function _get-oklch-params($color) {
+	$_color: color.to-space($color, oklch);
+	$_lightness: color.channel($_color, 'lightness');
+	$_chroma: color.channel($_color, 'chroma');
+	$_hue: color.channel($_color, 'hue');
 
-	$_shades: map.get($_result-colors, $color);
-	@return map.get($_shades, $shade);
-}
-
-/**
- * Получить базовый цвет
- */
-@function base($color) {
-	@return get($color);
-}
-
-/**
- * Получить светлый оттенок
- */
-@function light($color) {
-	@return get($color, "light");
-}
-
-/**
- * Получить темный оттенок
- */
-@function dark($color) {
-	@return get($color, "dark");
-}
-
-/**
- * Получить цвет контента
- */
-@function content($color) {
-	@return get($color, "content");
-}
-
-/**
- * Генерация оттенка по ступени (50-950)
- *
- * Ступени: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
- * 500 — базовый цвет (без изменений)
- * 50-400 — светлые оттенки
- * 600-950 — тёмные оттенки
- * При использовании этой функции нужно учитывать что если исходный цвет слишком
- * светлый или слишком темный то крайние значения могут быть не корректны
- */
-@function shade($color, $step, $alpha: 1) {
-	$base-color: null;
-
-	@if (meta.type-of($color) == "color") {
-		$base-color: $color;
-	} @else {
-		$base-color: map.get($_base-colors, $color);
-	}
-
-	// Получаем текущую светлоту базового цвета
-	$_current-lightness: color.channel(hex-to-oklch($base-color), "lightness");
-
-	// Ограничиваем целевую светлоту в диапазоне 5-97%
-	$_max-lightness: 97%;
-	$_min-lightness: 5%;
-
-	// Вычисляем диапазоны для светлых и тёмных оттенков
-	$_light-range: $_max-lightness - $_current-lightness;
-	$_dark-range: $_current-lightness - $_min-lightness;
-
-	// Безразмерные коэффициенты для каждого шага
-	$_step-fractions: (
-		50: math.div($_light-range, 5) * 5,
-		100: math.div($_light-range, 5) * 4,
-		200: math.div($_light-range, 5) * 3,
-		300: math.div($_light-range, 5) * 2,
-		400: math.div($_light-range, 5),
-		500: $_current-lightness,
-		600: math.div($_dark-range, 5) * -1,
-		700: math.div($_dark-range, 5) * -2,
-		800: math.div($_dark-range, 5) * -3,
-		900: math.div($_dark-range, 5) * -4,
-		950: math.div($_dark-range, 5) * -5
+	@return (
+		'color': $_color,
+		'lightness': $_lightness,
+		'chroma': $_chroma,
+		'hue': $_hue,
 	);
-
-	$_fraction: map.get($_step-fractions, $step);
-
-	@if $_fraction == null {
-		@error "Некорректная ступень: #{$step}. Допустимые значения: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950";
-	}
-
-	// Объявляем переменную корректировки
-	$adjustment: 0%;
-
-	// Вычисляем корректировку в процентах
-	@if $_fraction > $_current-lightness {
-		// Светлые оттенки: шаг к max-lightness
-		$adjustment: $_current-lightness + $_fraction;
-	} @else if $_fraction < $_current-lightness {
-		// Тёмные оттенки: шаг к min-lightness
-		$adjustment: $_current-lightness + $_fraction;
-	}
-
-	$shaded: $color;
-
-	@if $_fraction == $_current-lightness {
-		$shaded: $color;
-	} @else {
-		$shaded: color.change($base-color, $lightness: $adjustment);
-	}
-
-	// Проверяем, не стал ли цвет слишком близким к белому или черному
-	$_shaded-lightness: $_current-lightness + $adjustment;
-
-	//@debug 'Получившийся цвет: #{color.change($shaded, $alpha: $alpha)} | Исходная светлота:#{$_current-lightness} Текущая светлота:#{$adjustment} шага-#{$step}';
-	@debug 'Исходная светлота:#{$_current-lightness} Текущая светлота:#{$adjustment} шага-#{$step}: #{$_fraction}';
-
-	@return color.change($shaded, $alpha: $alpha);
 }
 
+// Находит ближайший оттенок в палитре для заданного цвета
+// Использует взвешенное евклидово расстояние в пространстве OKLCH
+// Веса: lightness (1.0), hue (1.5), chroma (2.0)
+// @param $color - цвет для поиска ближайшего оттенка
+// @return map с ключами: color (ближайший цвет), shade (номер оттенка), scope (название палитры)
+@function _get-map-by-shade($color) {
+	$_palette: $_base-colors-map;
+	$_color: $color;
+	$_color-lightness: color.channel($_color, 'lightness');
+	$_color-chroma: color.channel($_color, 'chroma');
+	$_color-hue: color.channel($_color, 'hue');
 
-@function var-base($color) {
-	$name: _get-color-name($color);
-	@return var(--color-#{$name}-base);
-}
-@function var-light($color) {
-	$name: _get-color-name($color);
-	@return var(--color-#{$name}-light);
-}
-@function var-dark($color) {
-	$name: _get-color-name($color);
-	@return var(--color-#{$name}-dark);
-}
-@function var-content($color) {
-	$name: _get-color-name($color);
-	@return var(--color-#{$name}-content);
-}
+	$_min-distance: null;
+	$_closest-shade-color: null;
+	$_closest-shade-key: null;
+	$_closest-map-key: null;
+	$_map-shades: null;
+	$_palette-key-name: null;
 
-/**
- * Получить CSS переменную цвета по названию и оттенку
- */
-@function get-var-color($color-name, $shade-name) {
-	@if $shade-name == "base" {
-		@return var(--color-#{$color-name}-base);
-	} @else if $shade-name == "light" {
-		@return var(--color-#{$color-name}-light);
-	} @else if $shade-name == "dark" {
-		@return var(--color-#{$color-name}-dark);
-	} @else if $shade-name == "content" {
-		@return var(--color-#{$color-name}-content);
-	}
-}
+	@each $key, $shades in $_palette {
+		$_palette-key-name: $key;
+		$_map-shades: $shades;
 
-/*
- * Выводит карту базовых цветов
- */
-@function get-base-colors-map(){
-	@return $_base-colors;
-}
+		@each $shade-key, $shade-color in $shades {
+			$_shade-color-oklch: _get-oklch-params($shade-color);
+			$_shade-color-lightness: map.get($_shade-color-oklch, 'lightness');
+			$_shade-color-chroma: map.get($_shade-color-oklch, 'chroma');
+			$_shade-color-hue: map.get($_shade-color-oklch, 'hue');
 
-/*
- * Выводит двумерную карту цветов с их вариациями
- */
-@function get-colors-map() {
-	@return $_result-colors;
-}
+			// Разница по hue (учитывая круговую природу hue)
+			$_h-diff-raw: math.div($_color-hue - $_shade-color-hue, 1deg);
+			$_h-diff: if($_h-diff-raw > 180, $_h-diff-raw - 360, if($_h-diff-raw < -180, $_h-diff-raw + 360, $_h-diff-raw));
 
-/**
- * Преобразует двумерную карту цветов в одномерную
- * ("accent":("base":#0088ff, "light": #fff, "dark": #000, "content": #222))
- * превращается в
- * ("accent-base": #0088ff, "accent-light": #fff, "accent-dark":#000, "accent-content": #222)
- */
-@function get-colors-map-flat() {
-	$_flat-map: ();
-	@each $color-name, $shades in $_result-colors {
-		@each $shade-name, $shade-value in $shades {
-			$_flat-map: map.set($_flat-map, "#{$color-name}-#{$shade-name}", $shade-value);
+			// Разница по chroma
+			$_c-diff: $_color-chroma - $_shade-color-chroma;
+
+			// Разница по lightness
+			$_l-diff: math.div($_color-lightness - $_shade-color-lightness, 1%);
+
+			// Расчет взвешенной дистанции (lightness имеет наибольший вес)
+			$_distance: math.sqrt(
+				math.pow($_l-diff * 1.0, 2) +
+				math.pow($_h-diff * 1.5, 2) +
+				math.pow($_c-diff * 2.0, 2)
+			);
+
+			@if ($_min-distance == null or $_distance < $_min-distance) {
+				$_min-distance: $_distance;
+				$_closest-shade-color: $shade-color;
+				$_closest-shade-key: $shade-key;
+				$_closest-map-key: $key;
+			}
 		}
 	}
-	@return $_flat-map;
-}
 
-
-
-
-
-
-
-
-
-
-
-
-// Конвертирование HEX в OKLCH
-@function hex-to-oklch($hex) {
-	@if(meta.type-of($hex) == 'color') {
-
-		@if(string.index("#{$hex}", "#") == 1) {
-			$oklch: color.to-space($hex, oklch);
-
-			@return round-oklch($oklch);
-
-		} @else {
-			@return #{$hex} 'Не является HEX цветом.';
-		}
-
-	} @else {
-		@return #{meta.type-of($hex)} 'Не является цветом.';
-	}
-}
-
-// Конвертирование RGBA в OKLCH
-@function rgba-to-oklch($rgba) {
-	@if(meta.type-of($rgba) == 'color') {
-		$oklch: color.to-space($rgba, oklch);
-
-		@return round-oklch($oklch);
-	} @else {
-		@return #{meta.type-of($rgba)} 'Не является цветом.';
-	}
-}
-
-@function hsl-to-rgb($hsl) {
-	@if(meta.type-of($hsl) == 'color') {
-		$rgb: color.to-space($hsl, hsl);
-
-		@return $rgb;
-	} @else {
-		@return #{meta.type-of($hsl)} 'Не является цветом.';
-	}
-}
-
-
-
-
-
-
-
-
-
-
-// Вспомогательная функция для конвертации числа в hex
-@function _to-hex($value) {
-	$hex-map: (
-		0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
-		8: "8", 9: "9", 10: "a", 11: "b", 12: "c", 13: "d", 14: "e", 15: "f"
+	@return (
+		'color': $_closest-shade-color,
+		'shade': $_closest-shade-key,
+		'scope': $_closest-map-key,
 	);
-	$first: map.get($hex-map, math.floor(math.div($value, 16)));
-	$second: map.get($hex-map, $value % 16);
-	@return "#{$first}#{$second}";
 }
 
-// Конвертирование RGB в HEX
-@function rgb-to-hex-string($rgb) {
-	@if (meta.type-of($rgb) != "color") {
-		@return "#{$rgb}";
+// Получает параметры интерполяции для заданной палитры и оттенка
+// @param $scope - название палитры (например, 'red', 'sky') из карты _palette-map.scss
+// @param $shade - номер оттенка (например, 500, 600)
+// @return map с параметрами интерполяции: lightness, chroma, hue
+@function _get-interpolation-shade($scope, $shade) {
+	$_scope: map.get($_interpolation-map, $scope);
+
+	@return map.get($_scope, $shade);
+}
+
+// Возвращает базовый цвет (оттенок 500) в виде CSS-переменной
+// @param $color - название цвета из палитры
+// @param $alpha - прозрачность (1 = непрозрачный)
+// @return CSS-переменная с цветом
+@function base($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'base', 500);
+}
+
+
+// Возвращает светлый оттенок цвета (уровни 10-50) в виде CSS-переменной
+// @param $color - название цвета из палитры
+// @param $alpha - прозрачность (1 = непрозрачный)
+// @return CSS-переменная с осветленным цветом
+@function light-10($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'light-10', 400);
+}
+@function light-20($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'light-20', 300);
+}
+@function light-30($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'light-30', 200);
+}
+@function light-40($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'light-40', 100);
+}
+@function light-50($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'light-50', 50);
+}
+
+
+// Возвращает темный оттенок цвета (уровни 10-50) в виде CSS-переменной
+// @param $color - название цвета из палитры
+// @param $alpha - прозрачность (1 = непрозрачный)
+// @return CSS-переменная с затемненным цветом
+@function dark-10($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'dark-10', 600);
+}
+@function dark-20($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'dark-20', 700);
+}
+@function dark-30($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'dark-30', 800);
+}
+@function dark-40($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'dark-40', 900);
+}
+@function dark-50($color, $alpha: 1) {
+	@return _get-css-var-color($color, $alpha, 'dark-50', 950);
+}
+
+// Вычисляет оттенок цвета на основе параметров интерполяции
+// Определяет палитру цвета, применяет интерполяцию и конвертирует в HEX
+// @param $color - исходный цвет
+// @param $step - номер оттенка для интерполяции (например, 500, 600)
+// @param $alpha - прозрачность
+// @return HEX-значение цвета
+@function _shade-color($color, $step, $alpha) {
+	$_color: color.to-space($color, oklch);
+	$_scope-map: _get-map-by-shade($_color);
+	$_scope-name: map.get($_scope-map, 'scope');
+	$_interpolation: _get-interpolation-shade($_scope-name, $step);
+	$_lightness: map.get($_interpolation, 'lightness');
+	$_chroma: map.get($_interpolation, 'chroma');
+	$_hue: map.get($_interpolation, 'hue');
+
+	$_lch: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
+
+	$result-color: color.change($_lch, $alpha: $alpha);
+
+	$_alpha-boolean: false;
+
+	@if $alpha < 1 {
+		$_alpha-boolean: true;
 	}
 
-	$red: color.channel($rgb, "red");
-	$green: color.channel($rgb, "green");
-	$blue: color.channel($rgb, "blue");
-
-	@return "##{_to-hex($red)}#{_to-hex($green)}#{_to-hex($blue)}";
+	@return _to-hex($result-color, $_alpha-boolean);
 }
 
-// Конвертирование OKLCH в HEX строку (так как sass не может конвертировать в HEX с типом color)
-@function oklch-to-hex($oklch) {
-	$rgb: color.to-space($oklch, rgb);
-	@return rgb-to-hex-string($rgb);
+// Генерирует имя CSS-переменной на основе цвета, эффекта оттенка и прозрачности
+// Формат: {color}-{effect}-alpha-{percent} (если alpha < 1)
+// @param $color - исходный цвет
+// @param $shade-effect - эффект оттенка (base, light-10, dark-20 и т.д.)
+// @param $alpha - прозрачность
+// @return строка с именем переменной
+@function _get-variable-color-name($color, $shade-effect, $alpha) {
+	$_name: map.get($_base-colors-reversed, $color);
+
+	@if $shade-effect != 'base' {
+		$_name: '#{$_name}-#{$shade-effect}';
+	}
+
+	@if $alpha < 1 {
+		$_name: '#{$_name}-alpha-#{$alpha * 100}';
+	}
+
+	@return $_name;
 }
 
-// Округление знаков после запятой у OKLCH цветов (возвращает строку для отображения)
-//@function round-oklch-string($color) {
-//	$l: math.div(math.round(color.channel($color, "lightness") * 10), 10);
-//	$c: math.div(math.round(color.channel($color, "chroma") * 1000), 1000);
-//	$h: math.div(math.round(color.channel($color, "hue") * 100), 100);
-//
-//	@return string.unquote("oklch(#{$l} #{$c} #{$h})");
-//}
+// Добавляет цвет в глобальную карту переменных, если его там еще нет
+// Избегает дублирования переменных
+// @param $name - имя переменной
+// @param $color - HEX-значение цвета
+// @return имя переменной
+@function _set-color-in-variables-map($name, $color) {
+	$_name: map.get($variables-map, $name);
 
-// Округление знаков после запятой у OKLCH цветов (возвращает цветовой объект для вычислений)
-@function round-oklch($color) {
-	$l: math.div(math.round(color.channel($color, "lightness") * 10), 10);
-	$c: math.div(math.round(color.channel($color, "chroma") * 1000), 1000);
-	$h: math.div(math.round(color.channel($color, "hue") * 100), 100);
+	@if $_name == null {
+		$variables-map: map.set($variables-map, $name, $color) !global;
+		@return $name;
+	} @else {
+		@return $_name;
+	}
+}
 
-	$adjusted: color.change($color, $lightness: $l, $chroma: $c, $hue: $h);
-	@return $adjusted;
+// Основная функция для получения CSS-переменной с цветом
+// Генерирует имя переменной, вычисляет цвет, сохраняет в карту и возвращает CSS var()
+// @param $color - исходный цвет
+// @param $alpha - прозрачность
+// @param $shade-effect-name - название эффекта для имени переменной
+// @param $shade-effect-value - номер оттенка для интерполяции
+// @return CSS-переменная в формате var(--color-{name})
+@function _get-css-var-color($color, $alpha, $shade-effect-name, $shade-effect-value) {
+	$_var-name: _get-variable-color-name($color, $shade-effect-name, $alpha);
+	$_shade-color: _shade-color($color, $shade-effect-value, $alpha);
+	$_set-var: _set-color-in-variables-map($_var-name, $_shade-color);
+
+	@return var(--color-#{$_var-name});
+}
+
+
+// Конвертирует цвет из любого пространства в HEX-формат
+// @param $color - цвет в любом цветовом пространстве
+// @param $include-alpha - включать ли альфа-канал в результат
+// @return HEX-строка (например, #FF0000 или #FF000080)
+@function _to-hex($color, $include-alpha: false) {
+	$_srgb: color.to-space($color, srgb);
+	$_r: math.round(color.channel($_srgb, 'red', $space: srgb) * 255);
+	$_g: math.round(color.channel($_srgb, 'green', $space: srgb) * 255);
+	$_b: math.round(color.channel($_srgb, 'blue', $space: srgb) * 255);
+
+	$_hex: "##{_to-hex-byte($_r)}#{_to-hex-byte($_g)}#{_to-hex-byte($_b)}";
+
+	@if $include-alpha {
+		$_a: color.channel($_srgb, 'alpha', $space: srgb);
+		$_a-int: math.round($_a * 255);
+		$_hex: "#{$_hex}#{_to-hex-byte($_a-int)}";
+	}
+
+	@return $_hex;
+}
+
+// Конвертирует число (0-255) в двухсимвольную HEX-строку
+// @param $value - число от 0 до 255
+// @return HEX-строка (например, 'FF' для 255)
+@function _to-hex-byte($value) {
+	$_hex: "0123456789ABCDEF";
+	$_high: math.floor(math.div($value, 16));
+	$_low: $value % 16;
+
+	@return "#{string.slice($_hex, $_high + 1, $_high + 1)}#{string.slice($_hex, $_low + 1, $_low + 1)}";
 }

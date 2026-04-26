@@ -1,10 +1,6 @@
-//@use "@config/colors" as colors;
 @use "@core/colors";
 @use "@utils/mixins/font" as *;
 @use "@utils/functions/size";
 
-
 .link {
-	color: colors.var-base(colors.$accent);
-
 }

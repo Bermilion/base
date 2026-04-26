@@ -1,12 +1,12 @@
 @use "../config/sizes" as sizes;
 @use "../config/typography" as typography;
+@use "@mixins/generate-css-variables" as *;
 @use "@core/colors" as colors;
-@use "../utils/mixins/generate-css-variables" as *;
 
 :root {
 	@include generate-css-variables(sizes.$sizes, 'size');
 	@include generate-css-variables(typography.$font-size, 'font-size');
 	@include generate-css-variables(typography.$line-height, 'line-height');
 	@include generate-css-variables(typography.$font-weight, 'font-weight');
-	@include generate-css-variables(colors.get-colors-map-flat(), 'color');
+	@include generate-css-variables(colors.$variables-map, 'color');
 }
