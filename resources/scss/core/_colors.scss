@@ -166,6 +166,10 @@ $variables-map: ();
 	@return _get-css-var-color($color, $alpha, 'dark-50', 950);
 }
 
+// Возвращает контрастный цвет для текста в виде CSS-переменной
+// Используется для автоматического определения цвета текста на основе цвета фона
+// @param $color - название цвета из палитры
+// @return CSS-переменная с контрастным цветом (var(--color-{color}-contrast))
 @function content($color) {
 	@return _get-css-var-color($color, 1, 'contrast', 500);
 }
@@ -291,10 +295,11 @@ $variables-map: ();
 
 
 
+// Вычисляет контрастный цвет для текста на основе яркости фона
+// Использует взвешенную формулу яркости (ITU-R BT.601)
+// @param $color - цвет фона в любом цветовом пространстве
+// @return темный цвет (#222) для светлых фонов (>50% яркости) или светлый (#fff) для темных фонов
 @function _contrast($color) {
-	// Считаем светлоту цвета.
-	// Каждый канал имеет разный вес в светлоте цвета,
-	// поэтому необходимо использовать коэффициенты.
 	$_brightness: 0.299 * color.channel($color, "red");
 	$_brightness: $_brightness + 0.587 * color.channel($color, "green");
 	$_brightness: $_brightness + 0.114 * color.channel($color, "blue");
