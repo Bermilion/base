@@ -1,6 +1,18 @@
 @use "@core/colors";
 @use "@utils/mixins/font" as *;
 @use "@utils/functions/size";
+@use "sass:color";
 
 .link {
+	display: inline-flex;
+	align-items: center;
+	gap: size.s(4);
+
+	&_accent {
+		color: colors.base(colors.$accent);
+
+		&:hover {
+			color: colors.light-10(colors.$accent);
+		}
+	}
 }
