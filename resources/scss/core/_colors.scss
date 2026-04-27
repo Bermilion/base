@@ -182,6 +182,15 @@ $variables-map: ();
 // @return цвет в пространстве OKLCH
 @function _shade-color($color, $step, $alpha) {
 	$_color: color.to-space($color, oklch);
+
+	$_color-hue: color.channel($_color, 'hue');
+	//@debug map.get($_base-colors-reversed, $color) $_color-hue color.to-space($color, oklch);
+	@if $_color-hue == none {
+		@debug color.to-space($color, oklch);
+		$_color: color.change($_color, $hue: 0deg);
+	}
+	@debug $_color;
+
 	$_scope-map: _get-map-by-shade($_color);
 	$_scope-name: map.get($_scope-map, 'scope');
 	$_interpolation: _get-interpolation-shade($_scope-name, $step);
@@ -189,7 +198,12 @@ $variables-map: ();
 	$_chroma: map.get($_interpolation, 'chroma');
 	$_hue: map.get($_interpolation, 'hue');
 
-	$_lch: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
+	//@if $_hue == none {
+	//	$_hue: 0deg;
+	//}
+
+	//$_lch: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
+	$_lch: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma);
 
 	$result-color: color.change($_lch, $alpha: $alpha);
 

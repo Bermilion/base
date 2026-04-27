@@ -77,7 +77,6 @@
 	@include font(12, 16, 'regular');
 }
 .code {
-	@include font(12, 16, 'regular');
 	font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
 	background-color: colors.$orange-50;
 	outline: s(1) solid colors.$grey;
@@ -198,5 +197,6 @@
 	color: colors.$dark-grey-dark;
 }
 .supheading, .hint {
-	color: colors.$dark-grey-light;
+	//color: colors.$dark-grey-light;
+	color: colors.base(colors.$dark-grey-light);
 }
