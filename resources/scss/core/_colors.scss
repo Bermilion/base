@@ -83,7 +83,7 @@ $variables-map: ();
 			// Разница по lightness
 			$_l-diff: math.div($_color-lightness - $_shade-color-lightness, 1%);
 
-			// Расчет взвешенной дистанции (lightness имеет наибольший вес)
+			// Расчет взвешенной дистанции (hue имеет наибольший вес)
 			$_distance: math.sqrt(
 				math.pow($_l-diff * 1.0, 2) +
 				math.pow($_h-diff * 1.5, 2) +
@@ -272,7 +272,15 @@ $variables-map: ();
 // @param $color - цвет фона в любом цветовом пространстве
 // @return темный цвет (#222) для светлых фонов (>0.5 lightness) или светлый (#fff) для темных фонов
 @function _contrast($color, $alpha) {
-	$_oklch: color.to-space($color, oklch);
+	$_color: $color;
+
+	// Проверка если вдруг предано значение css переменной, тогда ищем её цвет в $variables-map;
+	@if meta.type-of($color) != 'color' and string.index($color, "var(--color-") {
+		$var-name: string.slice($color, 13, string.length($color) - 1);
+		$_color: map.get($variables-map, $var-name);
+	}
+
+	$_oklch: color.to-space($_color, oklch);
 	$_lightness: color.channel($_oklch, 'lightness');
 
 	// Определение цвета контента в зависимости от светлоты базового цвета
