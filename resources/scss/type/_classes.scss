@@ -80,8 +80,8 @@
 .code {
 	@include font(12, 16, 'regular');
 	font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
-	background-color: var-base(colors.$warning);
-	outline: s(1) solid var-base(colors.$grey);
+	//background-color: var-base(colors.$warning);
+	//outline: s(1) solid var-base(colors.$grey);
 	padding: s(2, 8);
 	border-radius: s(4);
 
@@ -188,4 +188,15 @@
 		list-style-type: none;
 		margin-left: 0;
 	}
+}
+
+.hero, .h1, .h2, .h3, .h4, .h5, .h6 {
+	color: colors.$content-dark;
+}
+
+.p, .ul, .ol, .code {
+	color: colors.$dark-grey-dark;
+}
+.supheading, .hint {
+	color: colors.$dark-grey-light;
 }
