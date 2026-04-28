@@ -182,15 +182,7 @@ $variables-map: ();
 // @return цвет в пространстве OKLCH
 @function _shade-color($color, $step, $alpha) {
 	$_color: color.to-space($color, oklch);
-
-	$_color-hue: color.channel($_color, 'hue');
-	//@debug map.get($_base-colors-reversed, $color) $_color-hue color.to-space($color, oklch);
-	@if $_color-hue == none {
-		@debug color.to-space($color, oklch);
-		$_color: color.change($_color, $hue: 0deg);
-	}
-	@debug $_color;
-
+	$_color: fix-hue($_color);
 	$_scope-map: _get-map-by-shade($_color);
 	$_scope-name: map.get($_scope-map, 'scope');
 	$_interpolation: _get-interpolation-shade($_scope-name, $step);
@@ -198,16 +190,29 @@ $variables-map: ();
 	$_chroma: map.get($_interpolation, 'chroma');
 	$_hue: map.get($_interpolation, 'hue');
 
-	//@if $_hue == none {
-	//	$_hue: 0deg;
-	//}
 
-	//$_lch: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
-	$_lch: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma);
+	$_lch: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
 
 	$result-color: color.change($_lch, $alpha: $alpha);
 
 	@return $result-color;
+}
+
+// Корректирует значение hue цвета, гарантируя наличие числового значения с единицей измерения.
+// Заменяет некорректные значения (none или без единицы измерения) на 0deg.
+// @param $color - исходный цвет
+// @return цвет в пространстве OKLCH с корректным значением hue
+@function fix-hue($color) {
+	$l: color.channel($color, 'lightness', oklch);
+	$c: color.channel($color, 'chroma', oklch);
+	$h: color.channel($color, 'hue', oklch);
+
+	// Явно проверяем, является ли hue числом с единицей измерения
+	@if meta.type-of($h) != 'number' or math.is-unitless($h) {
+		$h: 0deg;
+	}
+
+	@return oklch($l $c $h);
 }
 
 // Генерирует имя CSS-переменной на основе цвета, эффекта оттенка и прозрачности
@@ -298,7 +303,7 @@ $variables-map: ();
 	$_lightness: color.channel($_oklch, 'lightness');
 
 	// Определение цвета контента в зависимости от светлоты базового цвета
-	@if $_lightness > 50% {
+	@if $_lightness > 56% {
 		@if $alpha < 1 {
 			$_color: color.change(palette.$content-dark, $alpha: $alpha);
 
