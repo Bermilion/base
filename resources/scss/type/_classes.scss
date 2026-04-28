@@ -1,7 +1,9 @@
 @use "@core/viewports";
 @use "../utils/mixins/font" as *;
 @use "../utils/functions/size" as *;
+@use "../utils/functions/font" as *;
 @use "@core/colors" as colors;
+@use "@config/fonts" as font-config;
 
 .h1 {
 	@include font(24, 32, 'bold');
@@ -75,19 +77,6 @@
 }
 .hint {
 	@include font(12, 16, 'regular');
-}
-.code {
-	font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
-	background-color: colors.$orange-50;
-	outline: s(1) solid colors.$grey;
-	padding: s(2, 8);
-	border-radius: s(4);
-	margin-right: s(8);
-
-	&_block {
-		display: block;
-		white-space: pre;
-	}
 }
 
 .ol {
@@ -190,13 +179,12 @@
 }
 
 .hero, .h1, .h2, .h3, .h4, .h5, .h6 {
-	color: colors.$content-dark;
+	color: colors.base(colors.$content-dark);
 }
 
-.p, .ul, .ol, .code {
-	color: colors.$dark-grey-dark;
+.p, .ul, .ol {
+	color: colors.base(colors.$dark-grey-dark);
 }
 .supheading, .hint {
-	//color: colors.$dark-grey-light;
 	color: colors.base(colors.$dark-grey-light);
 }
