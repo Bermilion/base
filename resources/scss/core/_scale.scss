@@ -1,0 +1,8 @@
+@use "sass:meta";
+@use "sass:map";
+
+@forward "@config/scale";
+
+@use "@config/scale" as config;
+
+
