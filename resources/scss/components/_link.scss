@@ -15,4 +15,12 @@
 			color: colors.light-10(colors.$accent);
 		}
 	}
+
+	&_dark {
+		color: colors.base(colors.$dark-grey-dark);
+
+		&:hover {
+			color: colors.base(colors.$content-dark);
+		}
+	}
 }
