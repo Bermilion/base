@@ -1,0 +1,104 @@
+@use "sass:meta";
+@use "sass:map";
+@use "sass:string";
+
+@forward "../config/weight";
+
+@use "../config/weight" as config;
+
+// Вся карта доступных переменных конфига
+$_base-weight: meta.module-variables(config);
+
+$_font-weight-reversed: map.deep-merge((), ());
+@each $name, $value in $_base-weight {
+	$_font-weight-reversed: map.set($_font-weight-reversed, $value, $name);
+}
+
+$variables-map-weight: ();
+
+/**
+ * Преобразует значения font-weight в CSS-переменные.
+ *
+ * Принимает значение (ключ или числовое значение) и возвращает
+ * соответствующую CSS-переменную (--weight-name).
+ *
+ * @param $weight - Значение для преобразования. Может быть:
+ *   - Ключ из карты $font-weight (например: 'bold', 'medium')
+ *   - Числовое значение (например: 700, 500)
+ *
+ * @return {String} - CSS-переменная (например: 'var(--weight-bold)')
+ *
+ * @example
+ * weight('bold') -> var(--weight-bold)
+ * weight(700) -> var(--weight-bold)
+ */
+@function weight($weight) {
+	$_name: _get-name-weight($weight);
+	$_value: map.get($_base-weight, $_name);
+	$_set-in-variables-map: _set-in-variables-map-weight($_name, $_value);
+	$_css-var: _get-css-var-weight($_name);
+	@return $_css-var;
+}
+
+/**
+ * Определяет имя переменной font-weight по её значению.
+ *
+ * Анализирует переданное значение и возвращает соответствующее имя переменной
+ * из карты $font-weight. Поддерживает как ключи, так и числовые значения.
+ *
+ * @param $weight - Значение для поиска. Может быть:
+ *   - Ключ (например: 'bold', 'medium')
+ *   - Числовое значение (например: 700, 500)
+ *
+ * @return {String|Null} - Имя переменной (например: 'bold') или null,
+ *                        если значение не найдено
+ *
+ * @warn - Выдаёт предупреждение, если значение не найдено в карте
+ */
+@function _get-name-weight($weight) {
+	$_name: map.get($_base-weight, $weight);
+
+	@if $_name == null {
+		$_name: map.get($_font-weight-reversed, $weight);
+	}
+
+	@if $_name == null {
+		@warn "Значение '#{$weight}' не найдено в карте $font-weight";
+	}
+
+	@return $_name;
+}
+
+/**
+ * Регистрирует переменную font-weight в глобальной карте переменных.
+ *
+ * Добавляет пару имя-значение в глобальную карту $variables-map-weight,
+ * если такое имя ещё не зарегистрировано.
+ *
+ * @param $name - Имя переменной (например: 'bold')
+ * @param $value - Значение переменной (например: 700)
+ *
+ * @return {Map} - Обновлённая глобальная карта $variables-map-weight
+ */
+@function _set-in-variables-map-weight($name, $value) {
+	$_name: map.get($variables-map-weight, $name);
+
+	@if $_name == null {
+		$variables-map-weight: map.set($variables-map-weight, $name, $value) !global;
+		@return $variables-map-weight;
+	} @else {
+		@return $variables-map-weight;
+	}
+}
+
+/**
+ * Формирует CSS-переменную из имени переменной font-weight.
+ *
+ * @param $name - Имя переменной (например: 'bold')
+ *
+ * @return {String} - CSS-переменная (например: 'var(--weight-bold)')
+ */
+@function _get-css-var-weight($name) {
+	@return var(--#{$name});
+}
+

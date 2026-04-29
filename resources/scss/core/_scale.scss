@@ -2,6 +2,7 @@
 @use "sass:math";
 @use "sass:map";
 @use "sass:string";
+@use "sass:list";
 
 @forward "@config/scale";
 
@@ -11,30 +12,95 @@
 $_base-scales: meta.module-variables(config);
 
 // Базовая величина 8px = 1rem
-$_base-scale-unit: map.get($_base-scales, 'scale-8');
+$_base-scale-unit: 8;
 
+/**
+ * Обратная карта масштаба: значение -> имя переменной.
+ *
+ * Создаёт инвертированную версию $_base-scales, где ключами являются
+ * значения (в пикселях), а значениями - имена переменных масштаба.
+ * Используется для поиска имени переменной по её значению.
+ *
+ * Пример структуры:
+ * $_base-scales-reversed: (
+ *   8rem: 'scale-8',
+ *   16rem: 'scale-16',
+ *   24rem: 'scale-24'
+ * )
+ */
 $_base-scales-reversed: map.deep-merge((), ());
 @each $name, $value in $_base-scales {
 	$_base-scales-reversed: map.set($_base-scales-reversed, $value, $name);
 }
 
+/**
+ * Обратная карта масштаба: числовой суффикс -> имя переменной.
+ *
+ * Создаёт карту, где ключами являются числовые суффиксы имён переменных
+ * (число после 'scale-'), а значениями - полные имена переменных.
+ * Используется для поиска имени переменной по числовому значению без единиц.
+ *
+ * Пример структуры:
+ * $_base-scales-reversed-numbers: (
+ *   8: 'scale-8',
+ *   16: 'scale-16',
+ *   24: 'scale-24'
+ * )
+ */
 $_base-scales-reversed-numbers: map.deep-merge((), ());
 @each $name, $value in $_base-scales {
 	$_postfix-key: string.slice($name, 7);
 	$_base-scales-reversed-numbers: map.set($_base-scales-reversed-numbers, $_postfix-key, $name);
 }
 
-$scale-variables-map: ();
+$variables-map-scales: ();
 
-@function base($scale) {
-	$_name: _get-name-scale($scale);
-	$_value: map.get($_base-scales, $_name);
-	$_set-in-variables-map: _set-in-variables-map($_name, $_value);
-	$_css-var: _get-css-var-scale($_name);
-
-	@return $_css-var;
+/**
+ * Преобразует значения масштаба в CSS-переменные.
+ *
+ * Принимает одно или несколько значений (числа или rem-значения) и возвращает
+ * соответствующие CSS-переменные (--scale-name). Значения ищутся в конфигурации
+ * масштаба (@config/scale.scss).
+ *
+ * @param $values... - Список значений для преобразования. Может быть:
+ *   - Число, кратное 8 (например: 8, 16, 24)
+ *   - rem-значение (например: 1rem, 2rem)
+ *   - Имя переменной из конфига (например: 'scale-8')
+ *
+ * @return {String} - Строка с CSS-переменными через пробел
+ *
+ * @example
+ * base(8, 16) -> var(--scale-8) var(--scale-16)
+ * base(1rem, 2rem) -> var(--scale-8) var(--scale-16)
+ */
+@function scale($values...) {
+	$result: ();
+	@each $value in $values {
+		$_name: _get-name-scale($value);
+		$_value: map.get($_base-scales, $_name);
+		$_set-in-variables-map: _set-in-variables-map($_name, $_value);
+		$_css-var: _get-css-var-scale($_name);
+		$result: list.append($result, $_css-var, space);
+	}
+	@return $result;
 }
 
+/**
+ * Определяет имя переменной масштаба по её значению.
+ *
+ * Анализирует переданное значение и возвращает соответствующее имя переменной
+ * из конфигурации масштаба. Поддерживает как числовые значения, так и rem-значения.
+ *
+ * @param $value - Значение для поиска. Может быть:
+ *   - Число (например: 8, 16, 24)
+ *   - rem-значение (например: 1rem, 2rem)
+ *
+ * @return {String|Null} - Имя переменной масштаба (например: 'scale-8') или null,
+ *                        если значение не найдено в конфигурации
+ *
+ * @warn - Выдаёт предупреждение, если значение не объявлено в конфиге
+ *        или не кратно базовой единице (8px)
+ */
 @function _get-name-scale($value) {
 	$_reversed-map: map.get(_analyse-value($value), 'map');
 	$_rem-status: map.get(_analyse-value($value), 'rem');
@@ -44,24 +110,76 @@ $scale-variables-map: ();
 		$_name: map.get($_reversed-map, $value);
 	}
 
+	@if $_name == null {
+		@if is-multiple($value) {
+			@warn "Значение '#{$value}' не объявлено в @config/scale.scss";
+		} @else {
+			@warn "Значение '#{$value}' не кратно 8 и не объявлено в @config/scale.scss";
+		}
+	}
+
 	@return $_name;
 }
 
+/**
+ * Регистрирует переменную масштаба в глобальной карте переменных.
+ *
+ * Добавляет пару имя-значение в глобальную карту $variables-map-scales,
+ * если такое имя ещё не зарегистрировано. Это позволяет отслеживать,
+ * какие переменные масштаба были использованы в проекте.
+ *
+ * @param $name - Имя переменной масштаба (например: 'scale-8')
+ * @param $value - Значение переменной (например: 8px)
+ *
+ * @return {Map} - Обновлённая глобальная карта $variables-map-scales
+ *
+ * @note - Использует !global для модификации глобальной переменной
+ */
 @function _set-in-variables-map($name, $value) {
-	$_name: map.get($scale-variables-map, $name);
+	$_name: map.get($variables-map-scales, $name);
 
 	@if $_name == null {
-		$scale-variables-map: map.set($scale-variables-map, $name, $value) !global;
-		@return $scale-variables-map;
+		$variables-map-scales: map.set($variables-map-scales, $name, $value) !global;
+		@return $variables-map-scales;
 	} @else {
-		@return $scale-variables-map;
+		@return $variables-map-scales;
 	}
 }
 
+/**
+ * Формирует CSS-переменную из имени переменной масштаба.
+ *
+ * Преобразует имя переменной масштаба в формат CSS-переменной
+ * с префиксом -- для использования в стилях.
+ *
+ * @param $name - Имя переменной масштаба (например: 'scale-8')
+ *
+ * @return {String} - CSS-переменная (например: 'var(--scale-8)')
+ *
+ * @example
+ * _get-css-var-scale('scale-8') -> var(--scale-8)
+ */
 @function _get-css-var-scale($name) {
 	@return var(--#{$name});
 }
 
+/**
+ * Анализирует тип значения и возвращает соответствующую карту для поиска.
+ *
+ * Определяет, является ли значение rem-единицей или обычным числом,
+ * и возвращает соответствующую обратную карту для поиска имени переменной.
+ *
+ * @param $value - Значение для анализа
+ *
+ * @return {Map} - Карта с двумя ключами:
+ *   - 'map': Обратная карта для поиска ($_base-scales-reversed для rem,
+ *            $_base-scales-reversed-numbers для чисел)
+ *   - 'rem': Булево значение, true если значение содержит 'rem'
+ *
+ * @example
+ * _analyse-value(1rem) -> ('map': $_base-scales-reversed, 'rem': true)
+ * _analyse-value(8) -> ('map': $_base-scales-reversed-numbers, 'rem': false)
+ */
 @function _analyse-value($value) {
 	@if string.index("#{$value}", 'rem') != null {
 		@return ('map': $_base-scales-reversed, 'rem': true);
@@ -70,3 +188,32 @@ $scale-variables-map: ();
 	}
 }
 
+/**
+ * Проверяет, кратно ли значение базовой единице масштаба (8px).
+ *
+ * Определяет, делится ли значение на базовую единицу масштаба без остатка.
+ * Поддерживает как безразмерные числа, так и значения с единицами измерения.
+ *
+ * @param $value - Значение для проверки. Может быть:
+ *   - Безразмерное число (например: 8, 16, 24)
+ *   - Значение с единицей (например: 8px, 1rem)
+ *
+ * @return {Bool} - true, если значение кратно 8, иначе false
+ *
+ * @example
+ * is-multiple(8) -> true
+ * is-multiple(16) -> true
+ * is-multiple(10) -> false
+ * is-multiple(1rem) -> true (при базовой единице 8px = 1rem)
+ */
+@function is-multiple($value) {
+	$_base: $_base-scale-unit;
+	@if not math.is-unitless($value) and not math.is-unitless($_base) {
+		@return $value % $_base == 0;
+	}
+
+	$value-unitless: if(math.is-unitless($value), $value, math.div($value, 1rem));
+	$base-unitless: if(math.is-unitless($_base), $_base, math.div($_base, 1rem));
+
+	@return $value-unitless % $base-unitless == 0;
+}

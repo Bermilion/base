@@ -25,7 +25,7 @@ $_base-colors-reversed: map.deep-merge((), ());
 	$_base-colors-reversed: map.set($_base-colors-reversed, $value, $name);
 }
 
-$variables-map: ();
+$variables-map-colors: ();
 
 // Преобразует цвет в пространство OKLCH и извлекает его параметры
 // @param $color - исходный цвет в любом цветовом пространстве
@@ -251,10 +251,10 @@ $variables-map: ();
 // @param $color - цвет в цветовом пространстве (OKLCH)
 // @return имя переменной
 @function _set-color-in-variables-map($name, $color) {
-	$_name: map.get($variables-map, $name);
+	$_name: map.get($variables-map-colors, $name);
 
 	@if $_name == null {
-		$variables-map: map.set($variables-map, $name, $color) !global;
+		$variables-map-colors: map.set($variables-map-colors, $name, $color) !global;
 		@return $name;
 	} @else {
 		@return $_name;
@@ -292,11 +292,21 @@ $variables-map: ();
 // @return темный цвет (#222) для светлых фонов (>0.5 lightness) или светлый (#fff) для темных фонов
 @function _contrast($color, $alpha) {
 	$_color: $color;
+	$_content-dark: map.get($_base-colors, 'content-dark');
+	$_content-light: map.get($_base-colors, 'content-light');
 
-	// Проверка если вдруг предано значение css переменной, тогда ищем её цвет в $variables-map;
+	@if $_content-dark == null {
+		$_content-dark: #222233;
+	}
+
+	@if $_content-light == null {
+		$_content-light: #ffffff;
+	}
+
+	// Проверка если вдруг предано значение css переменной, тогда ищем её цвет в $variables-map-colors;
 	@if meta.type-of($color) != 'color' and string.index($color, "var(--color-") {
 		$var-name: string.slice($color, 13, string.length($color) - 1);
-		$_color: map.get($variables-map, $var-name);
+		$_color: map.get($variables-map-colors, $var-name);
 	}
 
 	$_oklch: color.to-space($_color, oklch);
@@ -305,19 +315,19 @@ $variables-map: ();
 	// Определение цвета контента в зависимости от светлоты базового цвета
 	@if $_lightness > 56% {
 		@if $alpha < 1 {
-			$_color: color.change(palette.$content-dark, $alpha: $alpha);
+			$_color: color.change($_content-dark, $alpha: $alpha);
 
 			@return ('shade-effect': 'dark', 'color': $_color);
 		} @else {
-			@return ('shade-effect': 'dark', 'color': palette.$content-dark);
+			@return ('shade-effect': 'dark', 'color':$_content-dark);
 		}
 	} @else {
 		@if $alpha < 1 {
-			$_color: color.change(palette.$content-light, $alpha: $alpha);
+			$_color: color.change($_content-light, $alpha: $alpha);
 
 			@return ('shade-effect': 'light', 'color': $_color);
 		} @else {
-			@return ('shade-effect': 'light', 'color': palette.$content-light);
+			@return ('shade-effect': 'light', 'color':$_content-light);
 		}
 	}
 }

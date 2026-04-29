@@ -1,0 +1,65 @@
+@forward "@config/scale";
+@forward "@config/colors";
+@forward "@config/fonts";
+@forward "../config/weight";
+
+@use "@core/scale" as scale-functions;
+@use "@core/colors" as colors-functions;
+@use "@core/weight" as weight-functions;
+
+@function scale($values...) {
+	@return scale-functions.scale($values...);
+}
+
+@function color-base($color, $alpha: 1) {
+	@return colors-functions.base($color, $alpha);
+}
+
+@function color-light-10($color, $alpha: 1) {
+	@return colors-functions.light-10($color, $alpha);
+}
+
+@function color-light-20($color, $alpha: 1) {
+	@return colors-functions.light-20($color, $alpha);
+}
+
+@function color-light-30($color, $alpha: 1) {
+	@return colors-functions.light-30($color, $alpha);
+}
+
+@function color-light-40($color, $alpha: 1) {
+	@return colors-functions.light-40($color, $alpha);
+}
+
+@function color-light-50($color, $alpha: 1) {
+	@return colors-functions.light-50($color, $alpha);
+}
+
+@function color-dark-10($color, $alpha: 1) {
+	@return colors-functions.dark-10($color, $alpha);
+}
+
+@function color-dark-20($color, $alpha: 1) {
+	@return colors-functions.dark-20($color, $alpha);
+}
+
+@function color-dark-30($color, $alpha: 1) {
+	@return colors-functions.dark-30($color, $alpha);
+}
+
+@function color-dark-40($color, $alpha: 1) {
+	@return colors-functions.dark-40($color, $alpha);
+}
+
+@function color-dark-50($color, $alpha: 1) {
+	@return colors-functions.dark-50($color, $alpha);
+}
+
+@function color-content($color, $alpha: 1) {
+	@return colors-functions.content($color, $alpha);
+}
+
+@function weight($weight) {
+	@return weight-functions.weight($weight);
+}
+

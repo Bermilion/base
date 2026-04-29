@@ -1,12 +1,10 @@
 @use "@core/viewports";
-@use "../utils/mixins/font" as *;
-@use "../utils/functions/size" as *;
-@use "../utils/functions/font" as *;
-@use "@core/colors" as colors;
-@use "@config/fonts" as font-config;
+@use "@core/tokens";
 
 .h1 {
-	@include font(24, 32, 'bold');
+	font-size: tokens.scale(24);
+	line-height: tokens.scale(32);
+	font-weight: tokens.weight(tokens.$weight-bold);
 	word-wrap: break-word;
 	word-break: break-word;
 	overflow-wrap: break-word;
@@ -14,48 +12,65 @@
 	text-wrap: pretty;
 
 	@include viewports.no-phone {
-		@include font(48, 56);
+		font-size: tokens.scale(48);
+		line-height: tokens.scale(56);
 	}
 }
 
 .h2 {
-	@include font(20, 24, 'bold');
+	font-size: tokens.scale(20);
+	line-height: tokens.scale(24);
+	font-weight: tokens.weight(tokens.$weight-bold);
 
 	@include viewports.no-phone {
-		@include font(40, 48);
+		font-size: tokens.scale(40);
+		line-height: tokens.scale(48);
 	}
 }
 
 .h3 {
-	@include font(16, 24, 'bold');
+	font-size: tokens.scale(16);
+	line-height: tokens.scale(24);
+	font-weight: tokens.weight(tokens.$weight-bold);
 
 	@include viewports.no-phone {
-		@include font(32, 40);
+		font-size: tokens.scale(32);
+		line-height: tokens.scale(40);
 	}
 }
 
 .h4 {
-	@include font(24, 32, 'medium');
+	font-size: tokens.scale(24);
+	line-height: tokens.scale(32);
+	font-weight: tokens.weight(tokens.$weight-medium);
 
 	@include viewports.no-phone {
-		@include font(32, 40);
+		font-size: tokens.scale(32);
+		line-height: tokens.scale(40);
 	}
 }
 
 .h5 {
-	@include font(20, 24, 'medium');
+	font-size: tokens.scale(20);
+	line-height: tokens.scale(24);
+	font-weight: tokens.weight(tokens.$weight-medium);
 
 	@include viewports.no-phone {
-		@include font(24, 32);
+		font-size: tokens.scale(24);
+		line-height: tokens.scale(32);
 	}
 }
 
 .h6 {
-	@include font(16, 24, 'medium');
+	font-size: tokens.scale(16);
+	line-height: tokens.scale(24);
+	font-weight: tokens.weight(tokens.$weight-medium);
 }
 
 .hero {
-	@include font(32, 40, 'bold');
+	font-size: tokens.scale(32);
+	line-height: tokens.scale(40);
+	font-weight: tokens.weight(tokens.$weight-bold);
 	word-wrap: break-word;
 	word-break: break-word;
 	overflow-wrap: break-word;
@@ -63,20 +78,27 @@
 	text-wrap: pretty;
 
 	@include viewports.no-phone {
-		@include font(64, 72);
+		font-size: tokens.scale(64);
+		line-height: tokens.scale(72);
 	}
 }
 
 .supheading {
-	@include font(12, 16, 'regular');
+	font-size: tokens.scale(12);
+	line-height: tokens.scale(16);
+	font-weight: tokens.weight(tokens.$weight-regular);
 	text-transform: uppercase;
 }
 
 .p, .ul, .ol, .li {
-	@include font(16, 24, 'regular');
+	font-size: tokens.scale(16);
+	line-height: tokens.scale(24);
+	font-weight: tokens.weight(tokens.$weight-regular);
 }
 .hint {
-	@include font(12, 16, 'regular');
+	font-size: tokens.scale(12);
+	line-height: tokens.scale(16);
+	font-weight: tokens.weight(tokens.$weight-regular);
 }
 
 .ol {
@@ -162,15 +184,15 @@
 
 .ol, .ul {
 	.ol, .ul {
-		margin-top: s(4);
-		margin-bottom: s(8);
-		padding-left: s(24);
+		margin-top: tokens.scale(4);
+		margin-bottom: tokens.scale(8);
+		padding-left: tokens.scale(24);
 	}
 }
 .li {
 	> .ol, > .ul {
-		margin: s(4, 0);
-		padding-left: s(20);
+		margin: tokens.scale(4, 0);
+		padding-left: tokens.scale(20);
 	}
 	&:has(.ol, .ul) {
 		list-style-type: none;
@@ -179,12 +201,12 @@
 }
 
 .hero, .h1, .h2, .h3, .h4, .h5, .h6 {
-	color: colors.base(colors.$content-dark);
+	color: tokens.color-base(tokens.$content-dark);
 }
 
 .p, .ul, .ol {
-	color: colors.base(colors.$dark-grey-dark);
+	color: tokens.color-base(tokens.$dark-grey-dark);
 }
 .supheading, .hint {
-	color: colors.base(colors.$dark-grey-light);
+	color: tokens.color-base(tokens.$dark-grey-light);
 }

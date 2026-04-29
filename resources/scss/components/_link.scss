@@ -1,12 +1,12 @@
 @use "@core/colors";
 @use "@utils/mixins/font" as *;
-@use "@utils/functions/size";
+@use "@core/scale" as scale;
 @use "sass:color";
 
 .link {
 	display: inline-flex;
 	align-items: center;
-	gap: size.s(4);
+	gap: scale.scale(scale.$scale-4);
 
 	&_accent {
 		color: colors.base(colors.$accent);
