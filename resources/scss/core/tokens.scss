@@ -63,3 +63,55 @@
 	@return weight-functions.weight($weight);
 }
 
+// Raw функции - возвращают цветовые значения вместо CSS переменных
+@function color-base-value($color, $alpha: 1) {
+	@return colors-functions.base-value($color, $alpha);
+}
+
+@function color-light-10-value($color, $alpha: 1) {
+	@return colors-functions.light-10-value($color, $alpha);
+}
+
+@function color-light-20-value($color, $alpha: 1) {
+	@return colors-functions.light-20-value($color, $alpha);
+}
+
+@function color-light-30-value($color, $alpha: 1) {
+	@return colors-functions.light-30-value($color, $alpha);
+}
+
+@function color-light-40-value($color, $alpha: 1) {
+	@return colors-functions.light-40-value($color, $alpha);
+}
+
+@function color-light-50-value($color, $alpha: 1) {
+	@return colors-functions.light-50-value($color, $alpha);
+}
+
+@function color-dark-10-value($color, $alpha: 1) {
+	@return colors-functions.dark-10-value($color, $alpha);
+}
+
+@function color-dark-20-value($color, $alpha: 1) {
+	@return colors-functions.dark-20-value($color, $alpha);
+}
+
+@function color-dark-30-value($color, $alpha: 1) {
+	@return colors-functions.dark-30-value($color, $alpha);
+}
+
+@function color-dark-40-value($color, $alpha: 1) {
+	@return colors-functions.dark-40-value($color, $alpha);
+}
+
+@function color-dark-50-value($color, $alpha: 1) {
+	@return colors-functions.dark-50-value($color, $alpha);
+}
+
+@function color-content-value($color, $alpha: 1) {
+	@return colors-functions.content-value($color, $alpha);
+}
+
+@function scale-value($values...) {
+	@return scale-functions.scale-value($values...);
+}
