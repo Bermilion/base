@@ -14,17 +14,29 @@
 @use "@colors/palette-map" as palette-map;
 @use "@colors/interpolation-map" as interpolation-map;
 
+// Базовые цвета из палитры (название -> значение)
 $_base-colors: meta.module-variables(palette);
+// Карта палитр с оттенками (название палитры -> карта оттенков)
 $_base-colors-map: meta.module-variables(palette-map);
+// Карта параметров интерполяции для каждой палитры и оттенка
 $_interpolation-map: meta.module-variables(interpolation-map);
 
+// Константы для цветовых вычислений
+// Порог светлоты для определения контрастного цвета текста
+$_contrast-threshold: 56%;
+// Веса каналов для расчёта дистанции в пространстве OKLCH
+$_distance-weights: ('lightness': 1.0, 'hue': 1.5, 'chroma': 2.0);
 
-// Обратный map чтобы не гонять циклы лишний раз для поиска названия цвета
+
+// Обратная карта цветов: значение -> имя переменной
+// Используется для быстрого поиска имени цвета по его значению
 $_base-colors-reversed: map.deep-merge((), ());
 @each $name, $value in $_base-colors {
 	$_base-colors-reversed: map.set($_base-colors-reversed, $value, $name);
 }
 
+// Глобальная карта для отслеживания всех сгенерированных CSS-переменных цветов
+// Ключ: имя переменной, Значение: цвет в OKLCH
 $variables-map-colors: ();
 
 // Преобразует цвет в пространство OKLCH и извлекает его параметры
@@ -85,9 +97,9 @@ $variables-map-colors: ();
 
 			// Расчет взвешенной дистанции (hue имеет наибольший вес)
 			$_distance: math.sqrt(
-				math.pow($_l-diff * 1.0, 2) +
-				math.pow($_h-diff * 1.5, 2) +
-				math.pow($_c-diff * 2.0, 2)
+				math.pow($_l-diff * map.get($_distance-weights, 'lightness'), 2) +
+				math.pow($_h-diff * map.get($_distance-weights, 'hue'), 2) +
+				math.pow($_c-diff * map.get($_distance-weights, 'chroma'), 2)
 			);
 
 			@if ($_min-distance == null or $_distance < $_min-distance) {
@@ -280,22 +292,18 @@ $variables-map-colors: ();
 @function _get-variable-color-name($color, $shade-effect, $alpha) {
 	$_name: map.get($_base-colors-reversed, $color);
 
-	@if $shade-effect == 'base' and $alpha == 1 {
-		$_name: $_name;
-	} @else if $shade-effect == 'base' and $alpha < 1 {
-		$_name: '#{$_name}-alpha-#{$alpha * 100}';
-	} @else if $shade-effect == 'contrast' and $alpha == 1 {
+	// Обработка контрастного цвета
+	@if $shade-effect == 'contrast' {
 		$_contrast-map: _contrast($color, $alpha);
-		$_shade-effect: '#{map.get($_contrast-map, 'shade-effect')}';
+		$_shade-effect: map.get($_contrast-map, 'shade-effect');
 		$_name: 'content-#{$_shade-effect}';
-	} @else if $shade-effect == 'contrast' and $alpha < 1 {
-		$_contrast-map: _contrast($color, $alpha);
-		$_shade-effect: '#{map.get($_contrast-map, 'shade-effect')}';
-		$_name: 'content-#{$_shade-effect}-alpha-#{$alpha * 100}';
-	} @else if $shade-effect != 'base' and $shade-effect != 'contrast' and $alpha < 1 {
-		$_name: '#{$_name}-#{$shade-effect}-alpha-#{$alpha * 100}';
-	} @else  {
+	} @else if $shade-effect != 'base' {
 		$_name: '#{$_name}-#{$shade-effect}';
+	}
+
+	// Добавление alpha-суффикса
+	@if $alpha < 1 {
+		$_name: '#{$_name}-alpha-#{$alpha * 100}';
 	}
 
 	@return $_name;
@@ -369,7 +377,7 @@ $variables-map-colors: ();
 	$_lightness: color.channel($_oklch, 'lightness');
 
 	// Определение цвета контента в зависимости от светлоты базового цвета
-	@if $_lightness > 56% {
+	@if $_lightness > $_contrast-threshold {
 		@if $alpha < 1 {
 			$_color: color.change($_content-dark, $alpha: $alpha);
 
