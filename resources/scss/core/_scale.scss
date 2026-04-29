@@ -130,8 +130,9 @@ $variables-map-scales: ();
  *        или не кратно базовой единице (8px)
  */
 @function _get-name-scale($value) {
-	$_reversed-map: map.get(_analyse-value($value), 'map');
-	$_rem-status: map.get(_analyse-value($value), 'rem');
+	$_analysis: _analyse-value($value);
+	$_reversed-map: map.get($_analysis, 'map');
+	$_rem-status: map.get($_analysis, 'rem');
 	$_name: map.get($_reversed-map, "#{$value}");
 
 	@if $_rem-status {
@@ -164,14 +165,10 @@ $variables-map-scales: ();
  * @note - Использует !global для модификации глобальной переменной
  */
 @function _set-in-variables-map($name, $value) {
-	$_name: map.get($variables-map-scales, $name);
-
-	@if $_name == null {
+	@if map.get($variables-map-scales, $name) == null {
 		$variables-map-scales: map.set($variables-map-scales, $name, $value) !global;
-		@return $variables-map-scales;
-	} @else {
-		@return $variables-map-scales;
 	}
+	@return $variables-map-scales;
 }
 
 /**
