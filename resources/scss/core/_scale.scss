@@ -1,8 +1,72 @@
 @use "sass:meta";
+@use "sass:math";
 @use "sass:map";
+@use "sass:string";
 
 @forward "@config/scale";
 
 @use "@config/scale" as config;
 
+// Вся карта доступных переменных конфига
+$_base-scales: meta.module-variables(config);
+
+// Базовая величина 8px = 1rem
+$_base-scale-unit: map.get($_base-scales, 'scale-8');
+
+$_base-scales-reversed: map.deep-merge((), ());
+@each $name, $value in $_base-scales {
+	$_base-scales-reversed: map.set($_base-scales-reversed, $value, $name);
+}
+
+$_base-scales-reversed-numbers: map.deep-merge((), ());
+@each $name, $value in $_base-scales {
+	$_postfix-key: string.slice($name, 7);
+	$_base-scales-reversed-numbers: map.set($_base-scales-reversed-numbers, $_postfix-key, $name);
+}
+
+$scale-variables-map: ();
+
+@function base($scale) {
+	$_name: _get-name-scale($scale);
+	$_value: map.get($_base-scales, $_name);
+	$_set-in-variables-map: _set-in-variables-map($_name, $_value);
+	$_css-var: _get-css-var-scale($_name);
+
+	@return $_css-var;
+}
+
+@function _get-name-scale($value) {
+	$_reversed-map: map.get(_analyse-value($value), 'map');
+	$_rem-status: map.get(_analyse-value($value), 'rem');
+	$_name: map.get($_reversed-map, "#{$value}");
+
+	@if $_rem-status {
+		$_name: map.get($_reversed-map, $value);
+	}
+
+	@return $_name;
+}
+
+@function _set-in-variables-map($name, $value) {
+	$_name: map.get($scale-variables-map, $name);
+
+	@if $_name == null {
+		$scale-variables-map: map.set($scale-variables-map, $name, $value) !global;
+		@return $scale-variables-map;
+	} @else {
+		@return $scale-variables-map;
+	}
+}
+
+@function _get-css-var-scale($name) {
+	@return var(--#{$name});
+}
+
+@function _analyse-value($value) {
+	@if string.index("#{$value}", 'rem') != null {
+		@return ('map': $_base-scales-reversed, 'rem': true);
+	} @else {
+		@return ('map': $_base-scales-reversed-numbers, 'rem': false);
+	}
+}
 
