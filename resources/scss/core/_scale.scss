@@ -141,8 +141,14 @@ $variables-map-scales: ();
 	}
 
 	@if $_name == null {
-		@if is-multiple($value) {
-			@warn "Значение '#{$value}' не объявлено в @config/scale.scss";
+		$_abs-value: math.abs($value);
+		@if is-multiple($_abs-value) {
+			$_new-name: "scale-#{$value}";
+			$_new-value: "#{math.div($value, $_base-scale-unit)}rem";
+			$_base-scales: map.set($_base-scales, $_new-name, $_new-value) !global;
+			$_base-scales-reversed: map.set($_base-scales-reversed, $_new-value, $_new-name) !global;
+			$_base-scales-reversed-numbers: map.set($_base-scales-reversed-numbers, $value, $_new-name) !global;
+			$_name: $_new-name;
 		} @else {
 			@warn "Значение '#{$value}' не кратно 8 и не объявлено в @config/scale.scss";
 		}
