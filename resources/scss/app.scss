@@ -1,4 +1,7 @@
 @use "@core/reset";
-@use "certain";
+@use "@core/viewports";
+@use "@core/rem-clamp";
 @use "@type";
-@use "@blocks";
+@use "@core/colors";
+@use "@classes/margin";
+@use "@classes/padding";

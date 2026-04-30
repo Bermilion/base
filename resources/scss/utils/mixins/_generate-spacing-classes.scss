@@ -2,8 +2,11 @@
 @use "sass:list";
 @use "sass:meta";
 @use "sass:string";
-@use "../../config/sizes";
-@use "../functions/size" as *;
+@use "sass:math";
+@use "@core/scale" as *;
+@use "@config/scale" as scale-config;
+
+$_base-scales: meta.module-variables(scale-config);
 
 /*
  * Направления отступов
@@ -21,44 +24,56 @@ $_directions: (
 	$prefix: string.slice($property, 0, 1);
 
 	@if $device-key == null {
-		@each $size-key, $size-value in sizes.$sizes {
-			// Все стороны
-			.#{$prefix}-#{$size-key} {
-				#{$property}: s($size-key);
-			}
+		@each $scale-name, $scale-value in $_base-scales {
+			// Пропускаем отрицательные значения
+			@if meta.type-of($scale-value) == 'number' and $scale-value >= 0 {
+				// Извлекаем числовой суффикс из имени (scale-8 -> 8)
+				$size-key: string.slice($scale-name, 7);
 
-			// Отдельные направления
-			@each $dir-key, $dir-value in $_directions {
-				@if meta.type-of($dir-value) == 'string' {
-					.#{$prefix}#{$dir-key}-#{$size-key} {
-						#{$property}-#{$dir-value}: s($size-key);
-					}
-				} @else {
-					.#{$prefix}#{$dir-key}-#{$size-key} {
-						@each $side in $dir-value {
-							#{$property}-#{$side}: s($size-key);
+				// Все стороны
+				.#{$prefix}-#{$size-key} {
+					#{$property}: scale($size-key);
+				}
+
+				// Отдельные направления
+				@each $dir-key, $dir-value in $_directions {
+					@if meta.type-of($dir-value) == 'string' {
+						.#{$prefix}#{$dir-key}-#{$size-key} {
+							#{$property}-#{$dir-value}: scale($size-key);
+						}
+					} @else {
+						.#{$prefix}#{$dir-key}-#{$size-key} {
+							@each $side in $dir-value {
+								#{$property}-#{$side}: scale($size-key);
+							}
 						}
 					}
 				}
 			}
 		}
 	} @else {
-		@each $size-key, $size-value in sizes.$sizes {
-			// Все стороны
-			.#{$device-key}\:#{$prefix}-#{$size-key} {
-				#{$property}: s($size-key);
-			}
+		@each $scale-name, $scale-value in $_base-scales {
+			// Пропускаем отрицательные значения
+			@if meta.type-of($scale-value) == 'number' and $scale-value >= 0 {
+				// Извлекаем числовой суффикс из имени (scale-8 -> 8)
+				$size-key: string.slice($scale-name, 7);
 
-			// Отдельные направления
-			@each $dir-key, $dir-value in $_directions {
-				@if meta.type-of($dir-value) == 'string' {
-					.#{$device-key}\:#{$prefix}#{$dir-key}-#{$size-key} {
-						#{$property}-#{$dir-value}: s($size-key);
-					}
-				} @else {
-					.#{$device-key}\:#{$prefix}#{$dir-key}-#{$size-key} {
-						@each $side in $dir-value {
-							#{$property}-#{$side}: s($size-key);
+				// Все стороны
+				.#{$device-key}\:#{$prefix}-#{$size-key} {
+					#{$property}: scale($size-key);
+				}
+
+				// Отдельные направления
+				@each $dir-key, $dir-value in $_directions {
+					@if meta.type-of($dir-value) == 'string' {
+						.#{$device-key}\:#{$prefix}#{$dir-key}-#{$size-key} {
+							#{$property}-#{$dir-value}: scale($size-key);
+						}
+					} @else {
+						.#{$device-key}\:#{$prefix}#{$dir-key}-#{$size-key} {
+							@each $side in $dir-value {
+								#{$property}-#{$side}: scale($size-key);
+							}
 						}
 					}
 				}

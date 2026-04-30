@@ -1,26 +1,15 @@
-@use "@core/colors";
-@use "@utils/mixins/font" as *;
-@use "@core/scale" as scale;
-@use "sass:color";
+@use "@core/tokens" as token;
 
 .link {
 	display: inline-flex;
 	align-items: center;
-	gap: scale.scale(scale.$scale-4);
+	gap: token.scale(token.$scale-4);
 
 	&_accent {
-		color: colors.base(colors.$accent);
+		color: token.color-base(token.$accent);
 
 		&:hover {
-			color: colors.light-10(colors.$accent);
-		}
-	}
-
-	&_dark {
-		color: colors.base(colors.$dark-grey-dark);
-
-		&:hover {
-			color: colors.base(colors.$content-dark);
+			color: token.color-light-10(token.$accent);
 		}
 	}
 }
