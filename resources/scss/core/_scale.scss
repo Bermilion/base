@@ -23,9 +23,9 @@ $_base-scale-unit: 8;
  *
  * Пример структуры:
  * $_base-scales-reversed: (
- *   8rem: 'scale-8',
- *   16rem: 'scale-16',
- *   24rem: 'scale-24'
+ *   8px: 'scale-8',
+ *   16px: 'scale-16',
+ *   24px: 'scale-24'
  * )
  */
 $_base-scales-reversed: map.deep-merge((), ());
@@ -82,6 +82,7 @@ $variables-map-scales: ();
 		$_css-var: _get-css-var-scale($_name);
 		$result: list.append($result, $_css-var, space);
 	}
+
 	@return $result;
 }
 
@@ -165,10 +166,14 @@ $variables-map-scales: ();
  * @note - Использует !global для модификации глобальной переменной
  */
 @function _set-in-variables-map($name, $value) {
-	@if map.get($variables-map-scales, $name) == null {
+	$_name: map.get($variables-map-scales, $name);
+
+	@if $_name == null {
 		$variables-map-scales: map.set($variables-map-scales, $name, $value) !global;
+		@return $variables-map-scales;
+	} @else {
+		@return $variables-map-scales;
 	}
-	@return $variables-map-scales;
 }
 
 /**
