@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
 			'certain/_link.scss',
 
 			'config/_colors.scss',
+			'config/_scale.scss',
 			'config/_viewports.scss',
 		]);
 
