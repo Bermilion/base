@@ -258,7 +258,6 @@ $variables-map-colors: ();
 	$_chroma: map.get($_interpolation, 'chroma');
 	$_hue: map.get($_interpolation, 'hue');
 
-
 	$_lch: color.adjust($_color, $lightness: $_lightness, $chroma: $_chroma, $hue: $_hue);
 
 	$result-color: color.change($_lch, $alpha: $alpha);
