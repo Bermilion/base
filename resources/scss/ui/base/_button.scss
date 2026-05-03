@@ -42,7 +42,7 @@ $box-shadow-color: token.color-base($accent, .25);
 		&:disabled:active,
 		&:disabled:focus,
 		&:disabled:focus-visible {
-			background-color: $disabled;
+			background-color: $pale;
 			cursor: default;
 			box-shadow: none;
 		}
@@ -57,5 +57,10 @@ $box-shadow-color: token.color-base($accent, .25);
 		color: $content;
 		cursor: default;
 		box-shadow: none;
+	}
+
+	&_full-width {
+		justify-content: center;
+		width: 100%;
 	}
 }

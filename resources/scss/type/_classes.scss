@@ -1,5 +1,6 @@
 @use "@core/viewports";
 @use "@core/tokens";
+@use "sass:string";
 
 .h1 {
 	font-size: tokens.scale(24);
