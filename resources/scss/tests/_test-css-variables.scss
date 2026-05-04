@@ -1,0 +1,150 @@
+/**
+ * Тесты для универсального модуля CSS-переменных (полная версия)
+ * Тестируем все функции модуля с полным покрытием сценариев
+ *
+ * Запуск из директории chunker2i/base/resources/scss:
+ * npx sass tests/_test-css-variables.scss NULL --load-path=.
+ */
+
+@use "sass:map";
+@use "../utils/css-variables" as css-vars;
+
+// Тестовые карты для реестра
+$test-registry: ();
+
+// Тест 1: регистрация новой переменной
+@debug "=== Тест 1: register-variable (новая переменная) ===";
+$test-registry: css-vars.register-variable($test-registry, 'test-var', 'test-value');
+@debug "Значение после регистрации: " + map.get($test-registry, 'test-var');
+// Ожидается: 'test-value'
+
+// Тест 2: попытка регистрации дубликата (значение не должно измениться)
+@debug "=== Тест 2: register-variable (дубликат, защита перезаписи) ===";
+$test-registry-before-value: map.get($test-registry, 'test-var');
+$test-registry: css-vars.register-variable($test-registry, 'test-var', 'new-value');
+$test-registry-after-value: map.get($test-registry, 'test-var');
+@debug "Значение до: " + $test-registry-before-value;
+@debug "Значение после попытки перезаписи: " + $test-registry-after-value;
+@debug "Значение не изменилось: " + ($test-registry-before-value == $test-registry-after-value);
+// Ожидается: true
+
+// Тест 3: регистрация нескольких переменных
+@debug "=== Тест 3: register-variable (несколько переменных) ===";
+$test-registry: css-vars.register-variable($test-registry, 'var-second', 'value-2');
+$test-registry: css-vars.register-variable($test-registry, 'var-third', 'value-3');
+@debug "Первая переменная: " + map.get($test-registry, 'test-var');
+@debug "Вторая переменная: " + map.get($test-registry, 'var-second');
+@debug "Третья переменная: " + map.get($test-registry, 'var-third');
+// Ожидается: все три значения присутствуют
+
+// Тест 4: проверка существующей переменной (is-registered)
+@debug "=== Тест 4: is-registered (существующая переменная) ===";
+@debug "Зарегистрирована ли 'test-var': " + css-vars.is-registered($test-registry, 'test-var');
+// Ожидается: true
+
+// Тест 5: проверка несуществующей переменной (is-registered)
+@debug "=== Тест 5: is-registered (несуществующая переменная) ===";
+@debug "Зарегистрирована ли 'non-existent': " + css-vars.is-registered($test-registry, 'non-existent');
+// Ожидается: false
+
+// Тест 6: получение значения существующей переменной (get-registered-value)
+@debug "=== Тест 6: get-registered-value (существующая переменная) ===";
+@debug "Значение 'test-var': " + css-vars.get-registered-value($test-registry, 'test-var');
+// Ожидается: 'test-value'
+
+// Тест 7: получение значения несуществующей переменной (get-registered-value)
+@debug "=== Тест 7: get-registered-value (несуществующая переменная) ===";
+@debug "Значение 'non-existent': " + css-vars.get-registered-value($test-registry, 'non-existent');
+// Ожидается: null
+
+// Тест 8: генерация CSS-переменной без префикса (generate-css-var)
+@debug "=== Тест 8: generate-css-var (без префикса) ===";
+@debug "CSS-переменная для 'scale-8': " + css-vars.generate-css-var('scale-8');
+// Ожидается: var(--scale-8)
+
+// Тест 9: генерация CSS-переменной с префиксом (generate-css-var)
+@debug "=== Тест 9: generate-css-var (с префиксом 'color') ===";
+@debug "CSS-переменная для 'red-base' с префиксом 'color': " + css-vars.generate-css-var('red-base', 'color');
+// Ожидается: var(--color-red-base)
+
+// Тест 10: генерация с другими префиксами (generate-css-var)
+@debug "=== Тест 10: generate-css-var (с префиксом 'space') ===";
+@debug "CSS-переменная для 'gap-16' с префиксом 'space': " + css-vars.generate-css-var('gap-16', 'space');
+// Ожидается: var(--space-gap-16)
+
+// Тест 11: базовый эффект без суффикса (name-with-effect)
+@debug "=== Тест 11: name-with-effect (базовый эффект) ===";
+@debug "Имя с эффектом 'base': " + css-vars.name-with-effect('red', 'base');
+// Ожидается: 'red'
+
+// Тест 12: эффект осветления (name-with-effect)
+@debug "=== Тест 12: name-with-effect (эффект light-10) ===";
+@debug "Имя с эффектом 'light-10': " + css-vars.name-with-effect('red', 'light-10');
+// Ожидается: 'red-light-10'
+
+// Тест 13: эффект затемнения (name-with-effect)
+@debug "=== Тест 13: name-with-effect (эффект dark-20) ===";
+@debug "Имя с эффектом 'dark-20': " + css-vars.name-with-effect('blue', 'dark-20');
+// Ожидается: 'blue-dark-20'
+
+// Тест 14: эффект с другими суффиксами (name-with-effect)
+@debug "=== Тест 14: name-with-effect (эффект saturate-15) ===";
+@debug "Имя с эффектом 'saturate-15': " + css-vars.name-with-effect('green', 'saturate-15');
+// Ожидается: 'green-saturate-15'
+
+// Тест 15: имя без прозрачности (name-with-alpha)
+@debug "=== Тест 15: name-with-alpha (alpha = 1, без суффикса) ===";
+@debug "Имя с alpha=1: " + css-vars.name-with-alpha('red-base', 1);
+// Ожидается: 'red-base'
+
+// Тест 16: имя с прозрачностью 50% (name-with-alpha)
+@debug "=== Тест 16: name-with-alpha (alpha = 0.5) ===";
+@debug "Имя с alpha=0.5: " + css-vars.name-with-alpha('red-base', 0.5);
+// Ожидается: 'red-base-alpha-50'
+
+// Тест 17: имя с прозрачностью 25% (name-with-alpha)
+@debug "=== Тест 17: name-with-alpha (alpha = 0.25) ===";
+@debug "Имя с alpha=0.25: " + css-vars.name-with-alpha('blue-light', 0.25);
+// Ожидается: 'blue-light-alpha-25'
+
+// Тест 18: имя с нулевой прозрачностью (name-with-alpha)
+@debug "=== Тест 18: name-with-alpha (alpha = 0) ===";
+@debug "Имя с alpha=0: " + css-vars.name-with-alpha('green-dark', 0);
+// Ожидается: 'green-dark-alpha-0'
+
+// Тест 19: полное имя с эффектом и alpha (name-full)
+@debug "=== Тест 19: name-full (эффект и alpha) ===";
+@debug "Полное имя (red, light-10, 0.5): " + css-vars.name-full('red', 'light-10', 0.5);
+// Ожидается: 'red-light-10-alpha-50'
+
+// Тест 20: полное имя только с alpha (name-full)
+@debug "=== Тест 20: name-full (без эффекта, с alpha) ===";
+@debug "Полное имя (blue, base, 0.3): " + css-vars.name-full('blue', 'base', 0.3);
+// Ожидается: 'blue-alpha-30'
+
+// Тест 21: полное имя без alpha (name-full)
+@debug "=== Тест 21: name-full (с эффектом, без alpha) ===";
+@debug "Полное имя (green, dark-20, 1): " + css-vars.name-full('green', 'dark-20', 1);
+// Ожидается: 'green-dark-20'
+
+// Тест 22: контрастный цвет тёмный (name-contrast)
+@debug "=== Тест 22: name-contrast (тёмный контраст) ===";
+@debug "Контрастное имя (red, dark, 1): " + css-vars.name-contrast('red', 'dark', 1);
+// Ожидается: 'content-dark'
+
+// Тест 23: контрастный цвет светлый (name-contrast)
+@debug "=== Тест 23: name-contrast (светлый контраст) ===";
+@debug "Контрастное имя (blue, light, 1): " + css-vars.name-contrast('blue', 'light', 1);
+// Ожидается: 'content-light'
+
+// Тест 24: контрастный цвет с прозрачностью (name-contrast)
+@debug "=== Тест 24: name-contrast (с alpha) ===";
+@debug "Контрастное имя с alpha (red, light, 0.3): " + css-vars.name-contrast('red', 'light', 0.3);
+// Ожидается: 'content-light-alpha-30'
+
+// Тест 25: контрастный цвет с другой прозрачностью (name-contrast)
+@debug "=== Тест 25: name-contrast (с alpha 0.75) ===";
+@debug "Контрастное имя с alpha (blue, dark, 0.75): " + css-vars.name-contrast('blue', 'dark', 0.75);
+// Ожидается: 'content-dark-alpha-75'
+
+@debug "=== Все тесты CSS-переменных завершены ===";

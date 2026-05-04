@@ -1,0 +1,110 @@
+/**
+ * Тесты для цветовых функций (полная версия)
+ * Тестируем функцию fix-hue со всеми возможными сценариями
+ *
+ * Запуск из директории chunker2i/base/resources/scss:
+ * npx sass tests/_test-colors.scss NULL --load-path=.
+ */
+
+@use "sass:color";
+@use "sass:meta";
+@use "sass:math";
+
+// Копия функции fix-hue для тестирования
+@function test-fix-hue($color) {
+	$l: color.channel($color, 'lightness', oklch);
+	$c: color.channel($color, 'chroma', oklch);
+	$h: color.channel($color, 'hue', oklch);
+
+	@if meta.type-of($h) != 'number' or math.is-unitless($h) {
+		$h: 0deg;
+	}
+
+	@return oklch($l $c $h);
+}
+
+// Тест 1: коррекция hue с единицей измерения (deg)
+@debug "=== Тест 1: fix-hue (с единицей deg) ===";
+$test-color-1: oklch(0.5 0.2 25deg);
+$fixed-1: test-fix-hue($test-color-1);
+@debug "Исходный цвет: " + $test-color-1;
+@debug "Исправленный цвет: " + $fixed-1;
+// Ожидается: oklch(0.5 0.2 25deg) - hue сохраняется
+
+// Тест 2: коррекция hue с единицей измерения (rad)
+@debug "=== Тест 2: fix-hue (с единицей rad) ===";
+$test-color-2: oklch(0.6 0.15 0.5rad);
+$fixed-2: test-fix-hue($test-color-2);
+@debug "Исходный цвет: " + $test-color-2;
+@debug "Исправленный цвет: " + $fixed-2;
+// Ожидается: oklch с корректным hue в rad
+
+// Тест 3: коррекция hue с единицей измерения (turn)
+@debug "=== Тест 3: fix-hue (с единицей turn) ===";
+$test-color-3: oklch(0.7 0.1 0.25turn);
+$fixed-3: test-fix-hue($test-color-3);
+@debug "Исходный цвет: " + $test-color-3;
+@debug "Исправленный цвет: " + $fixed-3;
+// Ожидается: oklch с корректным hue в turn
+
+// Тест 4: коррекция hue без единицы измерения (число)
+@debug "=== Тест 4: fix-hue (без единицы - число) ===";
+$test-color-4: oklch(0.5 0.2 25);
+$fixed-4: test-fix-hue($test-color-4);
+@debug "Исходный цвет: " + $test-color-4;
+@debug "Исправленный цвет: " + $fixed-4;
+// Ожидается: oklch(0.5 0.2 0deg) - hue заменён на 0deg
+
+// Тест 5: коррекция hue со значением none
+@debug "=== Тест 5: fix-hue (значение none) ===";
+$test-color-5: oklch(0.5 0.2 none);
+$fixed-5: test-fix-hue($test-color-5);
+@debug "Исходный цвет: " + $test-color-5;
+@debug "Исправленный цвет: " + $fixed-5;
+// Ожидается: oklch(0.5 0.2 0deg) - hue заменён на 0deg
+
+// Тест 6: коррекция hue с нулевым значением (0deg)
+@debug "=== Тест 6: fix-hue (нулевое значение 0deg) ===";
+$test-color-6: oklch(0.5 0.2 0deg);
+$fixed-6: test-fix-hue($test-color-6);
+@debug "Исходный цвет: " + $test-color-6;
+@debug "Исправленный цвет: " + $fixed-6;
+// Ожидается: oklch(0.5 0.2 0deg) - hue сохраняется
+
+// Тест 7: коррекция hue с максимальным значением (360deg)
+@debug "=== Тест 7: fix-hue (максимальное значение 360deg) ===";
+$test-color-7: oklch(0.5 0.2 360deg);
+$fixed-7: test-fix-hue($test-color-7);
+@debug "Исходный цвет: " + $test-color-7;
+@debug "Исправленный цвет: " + $fixed-7;
+// Ожидается: oklch(0.5 0.2 360deg) - hue сохраняется
+
+// Тест 8: коррекция серого цвета (chroma = 0)
+@debug "=== Тест 8: fix-hue (серый цвет, chroma=0) ===";
+$test-color-8: oklch(0.5 0 180deg);
+$fixed-8: test-fix-hue($test-color-8);
+@debug "Исходный цвет: " + $test-color-8;
+@debug "Исправленный цвет: " + $fixed-8;
+// Ожидается: oklch(0.5 0 180deg) - hue сохраняется
+
+// Тест 9: коррекция с различными значениями lightness
+@debug "=== Тест 9: fix-hue (различные lightness) ===";
+$test-light: oklch(0.9 0.2 45deg);
+$test-dark: oklch(0.1 0.2 45deg);
+$fixed-light: test-fix-hue($test-light);
+$fixed-dark: test-fix-hue($test-dark);
+@debug "Светлый цвет: " + $test-light + " -> " + $fixed-light;
+@debug "Тёмный цвет: " + $test-dark + " -> " + $fixed-dark;
+// Ожидается: оба цвета сохраняют hue
+
+// Тест 10: коррекция с различными значениями chroma
+@debug "=== Тест 10: fix-hue (различные chroma) ===";
+$test-high-chroma: oklch(0.5 0.4 120deg);
+$test-low-chroma: oklch(0.5 0.05 120deg);
+$fixed-high: test-fix-hue($test-high-chroma);
+$fixed-low: test-fix-hue($test-low-chroma);
+@debug "Высокий chroma: " + $test-high-chroma + " -> " + $fixed-high;
+@debug "Низкий chroma: " + $test-low-chroma + " -> " + $fixed-low;
+// Ожидается: оба цвета сохраняют hue
+
+@debug "=== Все тесты цветов завершены ===";

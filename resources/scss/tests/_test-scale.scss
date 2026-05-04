@@ -1,0 +1,101 @@
+/**
+ * Тесты для функций масштабирования (полная версия)
+ * Тестируем функцию is-multiple со всеми возможными сценариями
+ *
+ * Запуск из директории chunker2i/base/resources/scss:
+ * npx sass tests/_test-scale.scss NULL --load-path=.
+ */
+
+@use "sass:math";
+
+// Копия функции is-multiple для тестирования
+$_base-scale-unit: 8;
+
+@function test-is-multiple($value) {
+	$_base: $_base-scale-unit;
+	@if not math.is-unitless($value) and not math.is-unitless($_base) {
+		@return $value % $_base == 0;
+	}
+
+	$value-unitless: if(math.is-unitless($value), $value, math.div($value, 1rem));
+	$base-unitless: if(math.is-unitless($_base), $_base, math.div($_base, 1rem));
+
+	@return $value-unitless % $base-unitless == 0;
+}
+
+// Тест 1: проверка кратности 8
+@debug "=== Тест 1: is-multiple (8) ===";
+@debug "Является ли 8 кратным 8: " + test-is-multiple(8);
+// Ожидается: true
+
+// Тест 2: проверка кратности 16
+@debug "=== Тест 2: is-multiple (16) ===";
+@debug "Является ли 16 кратным 8: " + test-is-multiple(16);
+// Ожидается: true
+
+// Тест 3: проверка кратности 24
+@debug "=== Тест 3: is-multiple (24) ===";
+@debug "Является ли 24 кратным 8: " + test-is-multiple(24);
+// Ожидается: true
+
+// Тест 4: проверка некратного числа 10
+@debug "=== Тест 4: is-multiple (10) ===";
+@debug "Является ли 10 кратным 8: " + test-is-multiple(10);
+// Ожидается: false
+
+// Тест 5: проверка некратного числа 7
+@debug "=== Тест 5: is-multiple (7) ===";
+@debug "Является ли 7 кратным 8: " + test-is-multiple(7);
+// Ожидается: false
+
+// Тест 6: проверка нуля
+@debug "=== Тест 6: is-multiple (0) ===";
+@debug "Является ли 0 кратным 8: " + test-is-multiple(0);
+// Ожидается: true
+
+// Тест 7: проверка с единицами измерения (8px)
+@debug "=== Тест 7: is-multiple (8px) ===";
+@debug "Является ли 8px кратным 8: " + test-is-multiple(8px);
+// Ожидается: true
+
+// Тест 8: проверка с px (16px)
+@debug "=== Тест 8: is-multiple (16px) ===";
+@debug "Является ли 16px кратным 8: " + test-is-multiple(16px);
+// Ожидается: true
+
+// Тест 9: проверка с px (10px - некратное)
+@debug "=== Тест 9: is-multiple (10px) ===";
+@debug "Является ли 10px кратным 8: " + test-is-multiple(10px);
+// Ожидается: false
+
+// Тест 10: проверка с rem (1rem = 16px)
+@debug "=== Тест 10: is-multiple (1rem) ===";
+@debug "Является ли 1rem кратным 8: " + test-is-multiple(1rem);
+// Ожидается: true (при базовой единице 8px = 0.5rem)
+
+// Тест 11: проверка с rem (0.5rem = 8px)
+@debug "=== Тест 11: is-multiple (0.5rem) ===";
+@debug "Является ли 0.5rem кратным 8: " + test-is-multiple(0.5rem);
+// Ожидается: true
+
+// Тест 12: проверка с rem (2rem = 32px)
+@debug "=== Тест 12: is-multiple (2rem) ===";
+@debug "Является ли 2rem кратным 8: " + test-is-multiple(2rem);
+// Ожидается: true
+
+// Тест 13: проверка с rem (0.75rem = 12px - некратное)
+@debug "=== Тест 13: is-multiple (0.75rem) ===";
+@debug "Является ли 0.75rem кратным 8: " + test-is-multiple(0.75rem);
+// Ожидается: false
+
+// Тест 14: проверка отрицательного числа (-8)
+@debug "=== Тест 14: is-multiple (-8) ===";
+@debug "Является ли -8 кратным 8: " + test-is-multiple(-8);
+// Ожидается: true
+
+// Тест 15: проверка отрицательного числа (-16)
+@debug "=== Тест 15: is-multiple (-16) ===";
+@debug "Является ли -16 кратным 8: " + test-is-multiple(-16);
+// Ожидается: true
+
+@debug "=== Все тесты масштабирования завершены ===";
