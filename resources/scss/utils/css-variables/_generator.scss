@@ -1,0 +1,54 @@
+@use "sass:string";
+
+/**
+ * Генератор CSS-переменных.
+ *
+ * Предоставляет функции для формирования CSS var() из имён переменных.
+ */
+
+/**
+ * Формирует CSS-переменную из имени.
+ *
+ * Преобразует имя переменной в формат CSS-переменной с префиксом --.
+ *
+ * @param $name - Имя переменной (например: 'red-base', 'scale-8')
+ * @param $prefix - Опциональный префикс (например: 'color', 'scale')
+ *
+ * @return {String} - CSS-переменная (например: 'var(--color-red-base)' или 'var(--scale-8)')
+ *
+ * @example
+ * generate-css-var('red-base', 'color') -> var(--color-red-base)
+ * generate-css-var('scale-8', null) -> var(--scale-8)
+ */
+@function generate-css-var($name, $prefix: null) {
+	@if $prefix != null {
+		@return var(--#{$prefix}-#{$name});
+	} @else {
+		@return var(--#{$name});
+	}
+}
+
+/**
+ * Формирует CSS-переменную с полным путём.
+ *
+ * Для сложных имён с разделителями (например, через дефис).
+ *
+ * @param $parts - Части имени переменной (список)
+ * @param $prefix - Опциональный префикс
+ *
+ * @return {String} - CSS-переменная
+ *
+ * @example
+ * generate-css-var-from-parts(('red', 'base'), 'color') -> var(--color-red-base)
+ */
+@function generate-css-var-from-parts($parts, $prefix: null) {
+	$_name: null;
+	@each $part in $parts {
+		@if $_name == null {
+			$_name: $part;
+		} @else {
+			$_name: #{$_name}-#{$part};
+		}
+	}
+	@return generate-css-var($_name, $prefix);
+}

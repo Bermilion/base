@@ -1,0 +1,58 @@
+@use "sass:map";
+
+/**
+ * Универсальный реестр CSS-переменных.
+ *
+ * Предоставляет функции для регистрации и отслеживания CSS-переменных
+ * разных типов (colors, scale, weight и т.д.). Избегает дублирования переменных.
+ */
+
+/**
+ * Регистрирует переменную в указанной карте реестра.
+ *
+ * Добавляет пару имя-значение в карту, если такое имя ещё не зарегистрировано.
+ * Использует !global для модификации глобальной переменной.
+ *
+ * @param $registry-map - Глобальная карта реестра (например, $variables-map-colors)
+ * @param $name - Имя переменной (например: 'red-base', 'scale-8')
+ * @param $value - Значение переменной
+ *
+ * @return {Map} - Обновлённая карта реестра
+ *
+ * @example
+ * $variables-map-colors: ();
+ * $variables-map-colors: register-variable($variables-map-colors, 'red-base', oklch(0.6 0.2 25deg))
+ */
+@function register-variable($registry-map, $name, $value) {
+	$_existing: map.get($registry-map, $name);
+
+	@if $_existing == null {
+		@return map.set($registry-map, $name, $value);
+	} @else {
+		@return $registry-map;
+	}
+}
+
+/**
+ * Проверяет, зарегистрирована ли переменная в реестре.
+ *
+ * @param $registry-map - Карта реестра
+ * @param $name - Имя переменной для проверки
+ *
+ * @return {Bool} - true, если переменная зарегистрирована, иначе false
+ */
+@function is-registered($registry-map, $name) {
+	@return map.get($registry-map, $name) != null;
+}
+
+/**
+ * Получает значение переменной из реестра.
+ *
+ * @param $registry-map - Карта реестра
+ * @param $name - Имя переменной
+ *
+ * @return - Значение переменной или null, если не найдена
+ */
+@function get-registered-value($registry-map, $name) {
+	@return map.get($registry-map, $name);
+}

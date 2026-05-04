@@ -1,0 +1,90 @@
+@use "sass:string";
+@use "sass:math";
+
+/**
+ * Формирователь имён CSS-переменных.
+ *
+ * Предоставляет функции для создания имён переменных с учётом
+ * эффектов (shade, light, dark) и прозрачности (alpha).
+ */
+
+/**
+ * Формирует имя переменной с эффектом оттенка.
+ *
+ * @param $base-name - Базовое имя (например: 'red')
+ * @param $effect - Эффект (например: 'light-10', 'dark-20', 'base')
+ *
+ * @return {String} - Имя переменной с эффектом
+ *
+ * @example
+ * name-with-effect('red', 'light-10') -> red-light-10
+ * name-with-effect('red', 'base') -> red
+ */
+@function name-with-effect($base-name, $effect) {
+	@if $effect == 'base' {
+		@return $base-name;
+	}
+	@return '#{$base-name}-#{$effect}';
+}
+
+/**
+ * Формирует имя переменной с alpha-суффиксом.
+ *
+ * Добавляет суффикс с процентом прозрачности, если alpha < 1.
+ *
+ * @param $name - Имя переменной
+ * @param $alpha - Прозрачность (0-1)
+ *
+ * @return {String} - Имя с alpha-суффиксом или без
+ *
+ * @example
+ * name-with-alpha('red-base', 0.5) -> red-base-alpha-50
+ * name-with-alpha('red-base', 1) -> red-base
+ */
+@function name-with-alpha($name, $alpha) {
+	@if $alpha < 1 {
+		$_percent: math.round($alpha * 100);
+		@return '#{$name}-alpha-#{$_percent}';
+	}
+	@return $name;
+}
+
+/**
+ * Формирует полное имя переменной с эффектом и alpha.
+ *
+ * Комбинирует базовое имя, эффект и alpha-суффикс.
+ *
+ * @param $base-name - Базовое имя
+ * @param $effect - Эффект оттенка
+ * @param $alpha - Прозрачность
+ *
+ * @return {String} - Полное имя переменной
+ *
+ * @example
+ * name-full('red', 'light-10', 0.5) -> red-light-10-alpha-50
+ * name-full('red', 'base', 1) -> red
+ */
+@function name-full($base-name, $effect, $alpha) {
+	$_with-effect: name-with-effect($base-name, $effect);
+	@return name-with-alpha($_with-effect, $alpha);
+}
+
+/**
+ * Формирует имя для контрастного цвета контента.
+ *
+ * Специальный формат для контрастных цветов текста.
+ *
+ * @param $base-name - Базовое имя цвета
+ * @param $shade-effect - Эффект оттенка ('light' или 'dark')
+ * @param $alpha - Прозрачность
+ *
+ * @return {String} - Имя контрастного цвета
+ *
+ * @example
+ * name-contrast('red', 'dark', 1) -> content-dark
+ * name-contrast('red', 'light', 0.5) -> content-light-alpha-50
+ */
+@function name-contrast($base-name, $shade-effect, $alpha) {
+	$_name: 'content-#{$shade-effect}';
+	@return name-with-alpha($_name, $alpha);
+}

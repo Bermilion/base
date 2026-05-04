@@ -4,6 +4,8 @@
 @use "sass:string";
 @use "sass:list";
 
+@use "../utils/css-variables" as css-vars;
+
 @forward "@config/scale";
 
 @use "@config/scale" as config;
@@ -78,7 +80,7 @@ $variables-map-scales: ();
 	@each $value in $values {
 		$_name: _get-name-scale($value);
 		$_value: map.get($_base-scales, $_name);
-		$_set-in-variables-map: _set-in-variables-map($_name, $_value);
+		$_: _set-in-variables-map($_name, $_value);
 		$_css-var: _get-css-var-scale($_name);
 		$result: list.append($result, $_css-var, space);
 	}
@@ -172,14 +174,13 @@ $variables-map-scales: ();
  * @note - Использует !global для модификации глобальной переменной
  */
 @function _set-in-variables-map($name, $value) {
-	$_name: map.get($variables-map-scales, $name);
+	$_existing: map.get($variables-map-scales, $name);
 
-	@if $_name == null {
+	@if $_existing == null {
 		$variables-map-scales: map.set($variables-map-scales, $name, $value) !global;
-		@return $variables-map-scales;
-	} @else {
-		@return $variables-map-scales;
 	}
+
+	@return $name;
 }
 
 /**
@@ -196,7 +197,7 @@ $variables-map-scales: ();
  * _get-css-var-scale('scale-8') -> var(--scale-8)
  */
 @function _get-css-var-scale($name) {
-	@return var(--#{$name});
+	@return css-vars.generate-css-var($name);
 }
 
 /**

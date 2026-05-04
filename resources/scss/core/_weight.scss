@@ -2,6 +2,8 @@
 @use "sass:map";
 @use "sass:string";
 
+@use "../utils/css-variables" as css-vars;
+
 @forward "../config/weight";
 
 @use "../config/weight" as config;
@@ -35,7 +37,7 @@ $variables-map-weight: ();
 @function weight($weight) {
 	$_name: _get-name-weight($weight);
 	$_value: map.get($_base-weight, $_name);
-	$_set-in-variables-map: _set-in-variables-map-weight($_name, $_value);
+	$_: _set-in-variables-map-weight($_name, $_value);
 	$_css-var: _get-css-var-weight($_name);
 	@return $_css-var;
 }
@@ -81,14 +83,13 @@ $variables-map-weight: ();
  * @return {Map} - Обновлённая глобальная карта $variables-map-weight
  */
 @function _set-in-variables-map-weight($name, $value) {
-	$_name: map.get($variables-map-weight, $name);
+	$_existing: map.get($variables-map-weight, $name);
 
-	@if $_name == null {
+	@if $_existing == null {
 		$variables-map-weight: map.set($variables-map-weight, $name, $value) !global;
-		@return $variables-map-weight;
-	} @else {
-		@return $variables-map-weight;
 	}
+
+	@return $name;
 }
 
 /**
@@ -99,6 +100,6 @@ $variables-map-weight: ();
  * @return {String} - CSS-переменная (например: 'var(--weight-bold)')
  */
 @function _get-css-var-weight($name) {
-	@return var(--#{$name});
+	@return css-vars.generate-css-var($name);
 }
 

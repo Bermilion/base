@@ -4,6 +4,8 @@
 @use "sass:map";
 @use "sass:string";
 
+@use "../utils/css-variables" as css-vars;
+
 // Пробрасываем базовые цвета из конфига дальше,
 // чтобы к ним можно было обращаться и было удобно
 // использовать через автоподстановку в IDE
@@ -289,23 +291,27 @@ $variables-map-colors: ();
 // @param $alpha - прозрачность
 // @return строка с именем переменной
 @function _get-variable-color-name($color, $shade-effect, $alpha) {
-	$_name: map.get($_base-colors-reversed, $color);
+	$_base-name: map.get($_base-colors-reversed, $color);
+
+	// Если цвет не найден в обратной карте, проверяем, является ли он CSS-переменной
+	@if $_base-name == null {
+		@if meta.type-of($color) != 'color' and string.index($color, "var(--color-") {
+			// Извлекаем имя из CSS-переменной var(--color-xxx)
+			$var-name: string.slice($color, 13, string.length($color) - 1);
+			$_base-name: $var-name;
+		} @else {
+			@return null;
+		}
+	}
 
 	// Обработка контрастного цвета
 	@if $shade-effect == 'contrast' {
 		$_contrast-map: _contrast($color, $alpha);
 		$_shade-effect: map.get($_contrast-map, 'shade-effect');
-		$_name: 'content-#{$_shade-effect}';
-	} @else if $shade-effect != 'base' {
-		$_name: '#{$_name}-#{$shade-effect}';
+		@return css-vars.name-contrast($_base-name, $_shade-effect, $alpha);
 	}
 
-	// Добавление alpha-суффикса
-	@if $alpha < 1 {
-		$_name: '#{$_name}-alpha-#{$alpha * 100}';
-	}
-
-	@return $_name;
+	@return css-vars.name-full($_base-name, $shade-effect, $alpha);
 }
 
 // Добавляет цвет в глобальную карту переменных, если его там еще нет
@@ -314,14 +320,13 @@ $variables-map-colors: ();
 // @param $color - цвет в цветовом пространстве (OKLCH)
 // @return имя переменной
 @function _set-color-in-variables-map($name, $color) {
-	$_name: map.get($variables-map-colors, $name);
+	$_existing: map.get($variables-map-colors, $name);
 
-	@if $_name == null {
+	@if $_existing == null {
 		$variables-map-colors: map.set($variables-map-colors, $name, $color) !global;
-		@return $name;
-	} @else {
-		@return $_name;
 	}
+
+	@return $name;
 }
 
 // Основная функция для получения CSS-переменной с цветом
@@ -333,6 +338,12 @@ $variables-map-colors: ();
 // @return CSS-переменная в формате var(--color-{name})
 @function _get-css-var-color($color, $alpha, $shade-effect-name, $shade-effect-value) {
 	$_var-name: _get-variable-color-name($color, $shade-effect-name, $alpha);
+
+	// Если не удалось получить имя переменной, возвращаем исходный цвет как есть
+	@if $_var-name == null {
+		@return $color;
+	}
+
 	$_shade-color: null;
 
 	@if $shade-effect-name == 'contrast' {
@@ -341,10 +352,9 @@ $variables-map-colors: ();
 		$_shade-color: _shade-color($color, $shade-effect-value, $alpha);
 	}
 
+	$_: _set-color-in-variables-map($_var-name, $_shade-color);
 
-	$_set-var: _set-color-in-variables-map($_var-name, $_shade-color);
-
-	@return var(--color-#{$_var-name});
+	@return css-vars.generate-css-var($_var-name, 'color');
 }
 
 
@@ -370,6 +380,16 @@ $variables-map-colors: ();
 	@if meta.type-of($color) != 'color' and string.index($color, "var(--color-") {
 		$var-name: string.slice($color, 13, string.length($color) - 1);
 		$_color: map.get($variables-map-colors, $var-name);
+
+		// Если цвет не найден в карте, возвращаем дефолтный контрастный цвет
+		@if $_color == null {
+			@if $alpha < 1 {
+				$_color: color.change($_content-dark, $alpha: $alpha);
+				@return ('shade-effect': 'dark', 'color': $_color);
+			} @else {
+				@return ('shade-effect': 'dark', 'color': $_content-dark);
+			}
+		}
 	}
 
 	$_oklch: color.to-space($_color, oklch);
