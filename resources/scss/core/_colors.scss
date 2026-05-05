@@ -130,54 +130,112 @@ $variables-map-colors: ();
 	@return map.get($_scope, $shade);
 }
 
+// Единая точка обработки цвета
+// @param $color - исходный цвет
+// @param $alpha - прозрачность
+// @param $shade-effect-name - название эффекта (base, light-10, dark-20...)
+// @param $shade-step - номер оттенка для интерполяции
+// @param $return-var - true: вернуть CSS-переменную, false: вернуть значение
+// @return CSS-переменная или цветовое значение
+@function _process-color($color, $alpha, $shade-effect-name, $shade-step, $return-var: true) {
+	// 1. Определяем базовое имя (из палитры, CSS-переменной, или $variables-map-colors)
+	$_base-name: map.get($_base-colors-reversed, $color);
+
+	// Если не найдено в палитре, ищем в $variables-map-colors (обратный поиск)
+	@if $_base-name == null {
+		$_found-name: null;
+		@each $name, $value in $variables-map-colors {
+			@if $_found-name == null and $value == $color {
+				$_found-name: $name;
+			}
+		}
+		$_base-name: $_found-name;
+	}
+
+	@if $_base-name == null and meta.type-of($color) != 'color' {
+		@if string.index($color, "var(--color-") {
+			$_base-name: string.slice($color, 13, string.length($color) - 1);
+		}
+	}
+
+	// 2. Вычисляем цвет
+	$_result-color: null;
+	$_final-effect: $shade-effect-name;
+
+	@if $shade-effect-name == 'contrast' {
+		$_contrast-map: _contrast($color, $alpha);
+		$_result-color: map.get($_contrast-map, 'color');
+		$_final-effect: map.get($_contrast-map, 'shade-effect'); // 'dark' или 'light'
+	} @else {
+		$_result-color: _shade-color($color, $shade-step, $alpha);
+	}
+
+	// 3. Регистрация (если имя определено)
+	@if $_base-name != null {
+		$_var-name: null;
+		@if $shade-effect-name == 'contrast' {
+			$_var-name: css-vars.name-contrast($_base-name, $_final-effect, $alpha);
+		} @else {
+			$_var-name: css-vars.name-full($_base-name, $shade-effect-name, $alpha);
+		}
+
+		$_: _set-color-in-variables-map($_var-name, $_result-color);
+
+		@if $return-var {
+			@return css-vars.generate-css-var($_var-name, 'color');
+		}
+	}
+
+	// 4. Возвращаем значение
+	@return $_result-color;
+}
+
 // Возвращает базовый цвет (оттенок 500) в виде CSS-переменной
 // @param $color - название цвета из палитры
 // @param $alpha - прозрачность (1 = непрозрачный)
 // @return CSS-переменная с цветом
 @function base($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'base', 500);
+	@return _process-color($color, $alpha, 'base', 500, true);
 }
-
 
 // Возвращает светлый оттенок цвета (уровни 10-50) в виде CSS-переменной
 // @param $color - название цвета из палитры
 // @param $alpha - прозрачность (1 = непрозрачный)
 // @return CSS-переменная с осветленным цветом
 @function light-10($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'light-10', 400);
+	@return _process-color($color, $alpha, 'light-10', 400, true);
 }
 @function light-20($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'light-20', 300);
+	@return _process-color($color, $alpha, 'light-20', 300, true);
 }
 @function light-30($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'light-30', 200);
+	@return _process-color($color, $alpha, 'light-30', 200, true);
 }
 @function light-40($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'light-40', 100);
+	@return _process-color($color, $alpha, 'light-40', 100, true);
 }
 @function light-50($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'light-50', 50);
+	@return _process-color($color, $alpha, 'light-50', 50, true);
 }
-
 
 // Возвращает темный оттенок цвета (уровни 10-50) в виде CSS-переменной
 // @param $color - название цвета из палитры
 // @param $alpha - прозрачность (1 = непрозрачный)
 // @return CSS-переменная с затемненным цветом
 @function dark-10($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'dark-10', 600);
+	@return _process-color($color, $alpha, 'dark-10', 600, true);
 }
 @function dark-20($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'dark-20', 700);
+	@return _process-color($color, $alpha, 'dark-20', 700, true);
 }
 @function dark-30($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'dark-30', 800);
+	@return _process-color($color, $alpha, 'dark-30', 800, true);
 }
 @function dark-40($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'dark-40', 900);
+	@return _process-color($color, $alpha, 'dark-40', 900, true);
 }
 @function dark-50($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'dark-50', 950);
+	@return _process-color($color, $alpha, 'dark-50', 950, true);
 }
 
 // Возвращает контрастный цвет для текста в виде CSS-переменной
@@ -185,7 +243,7 @@ $variables-map-colors: ();
 // @param $color - название цвета из палитры
 // @return CSS-переменная с контрастным цветом (var(--color-{color}-content))
 @function content($color, $alpha: 1) {
-	@return _get-css-var-color($color, $alpha, 'contrast', light);
+	@return _process-color($color, $alpha, 'contrast', null, true);
 }
 
 // Возвращает базовый цвет (оттенок 500) в виде цветового значения
@@ -193,7 +251,7 @@ $variables-map-colors: ();
 // @param $alpha - прозрачность (1 = непрозрачный)
 // @return цвет в пространстве OKLCH
 @function base-value($color, $alpha: 1) {
-	@return _shade-color($color, 500, $alpha);
+	@return _process-color($color, $alpha, 'base', 500, false);
 }
 
 // Возвращает светлый оттенок цвета (уровни 10-50) в виде цветового значения
@@ -201,19 +259,19 @@ $variables-map-colors: ();
 // @param $alpha - прозрачность (1 = непрозрачный)
 // @return цвет в пространстве OKLCH
 @function light-10-value($color, $alpha: 1) {
-	@return _shade-color($color, 400, $alpha);
+	@return _process-color($color, $alpha, 'light-10', 400, false);
 }
 @function light-20-value($color, $alpha: 1) {
-	@return _shade-color($color, 300, $alpha);
+	@return _process-color($color, $alpha, 'light-20', 300, false);
 }
 @function light-30-value($color, $alpha: 1) {
-	@return _shade-color($color, 200, $alpha);
+	@return _process-color($color, $alpha, 'light-30', 200, false);
 }
 @function light-40-value($color, $alpha: 1) {
-	@return _shade-color($color, 100, $alpha);
+	@return _process-color($color, $alpha, 'light-40', 100, false);
 }
 @function light-50-value($color, $alpha: 1) {
-	@return _shade-color($color, 50, $alpha);
+	@return _process-color($color, $alpha, 'light-50', 50, false);
 }
 
 // Возвращает темный оттенок цвета (уровни 10-50) в виде цветового значения
@@ -221,19 +279,19 @@ $variables-map-colors: ();
 // @param $alpha - прозрачность (1 = непрозрачный)
 // @return цвет в пространстве OKLCH
 @function dark-10-value($color, $alpha: 1) {
-	@return _shade-color($color, 600, $alpha);
+	@return _process-color($color, $alpha, 'dark-10', 600, false);
 }
 @function dark-20-value($color, $alpha: 1) {
-	@return _shade-color($color, 700, $alpha);
+	@return _process-color($color, $alpha, 'dark-20', 700, false);
 }
 @function dark-30-value($color, $alpha: 1) {
-	@return _shade-color($color, 800, $alpha);
+	@return _process-color($color, $alpha, 'dark-30', 800, false);
 }
 @function dark-40-value($color, $alpha: 1) {
-	@return _shade-color($color, 900, $alpha);
+	@return _process-color($color, $alpha, 'dark-40', 900, false);
 }
 @function dark-50-value($color, $alpha: 1) {
-	@return _shade-color($color, 950, $alpha);
+	@return _process-color($color, $alpha, 'dark-50', 950, false);
 }
 
 // Возвращает контрастный цвет для текста в виде цветового значения
@@ -241,7 +299,7 @@ $variables-map-colors: ();
 // @param $alpha - прозрачность (1 = непрозрачный)
 // @return цвет в пространстве OKLCH
 @function content-value($color, $alpha: 1) {
-	@return map.get(_contrast($color, $alpha), 'color');
+	@return _process-color($color, $alpha, 'contrast', null, false);
 }
 
 // Вычисляет оттенок цвета на основе параметров интерполяции
@@ -252,7 +310,7 @@ $variables-map-colors: ();
 // @return цвет в пространстве OKLCH
 @function _shade-color($color, $step, $alpha) {
 	$_color: color.to-space($color, oklch);
-	$_color: fix-hue($_color);
+	$_color: fix-channels($_color);
 	$_scope-map: _get-map-by-shade($_color);
 	$_scope-name: map.get($_scope-map, 'scope');
 	$_interpolation: _get-interpolation-shade($_scope-name, $step);
@@ -267,51 +325,105 @@ $variables-map-colors: ();
 	@return $result-color;
 }
 
-// Корректирует значение hue цвета, гарантируя наличие числового значения с единицей измерения.
-// Заменяет некорректные значения (none или без единицы измерения) на 0deg.
-// @param $color - исходный цвет
-// @return цвет в пространстве OKLCH с корректным значением hue
-@function fix-hue($color) {
-	$l: color.channel($color, 'lightness', oklch);
-	$c: color.channel($color, 'chroma', oklch);
-	$h: color.channel($color, 'hue', oklch);
-
-	// Явно проверяем, является ли hue числом с единицей измерения
-	@if meta.type-of($h) != 'number' or math.is-unitless($h) {
-		$h: 0deg;
-	}
-
-	@return oklch($l $c $h);
+// Вспомогательная функция для получения единицы измерения по умолчанию
+@function _get-default-unit($channel) {
+  @if $channel == 'lightness' {
+    @return '%';
+  } @else if $channel == 'chroma' {
+    @return '';
+  } @else if $channel == 'hue' {
+    @return 'deg';
+  }
+  @return '';
 }
 
-// Генерирует имя CSS-переменной на основе цвета, эффекта оттенка и прозрачности
-// Формат: {color}-{effect}-alpha-{percent} (если alpha < 1)
-// @param $color - исходный цвет
-// @param $shade-effect - эффект оттенка (base, light-10, dark-20 и т.д.)
-// @param $alpha - прозрачность
-// @return строка с именем переменной
-@function _get-variable-color-name($color, $shade-effect, $alpha) {
-	$_base-name: map.get($_base-colors-reversed, $color);
+// Валидация единиц измерения для канала
+@function _validate-channel($value, $channel) {
+  @if meta.type-of($value) != 'number' {
+    @warn "Значение для канала #{$channel} должно быть числом";
+    @return 0;
+  }
+  
+  @if $channel == 'lightness' and math.is-unitless($value) {
+    @warn "Lightness должен иметь единицу измерения %";
+    @return $value * 100%;
+  } @else if $channel == 'hue' and math.is-unitless($value) {
+    @warn "Hue должен иметь единицу измерения (deg, rad, turn)";
+    @return $value * 1deg;
+  }
+  
+  @return $value;
+}
 
-	// Если цвет не найден в обратной карте, проверяем, является ли он CSS-переменной
-	@if $_base-name == null {
-		@if meta.type-of($color) != 'color' and string.index($color, "var(--color-") {
-			// Извлекаем имя из CSS-переменной var(--color-xxx)
-			$var-name: string.slice($color, 13, string.length($color) - 1);
-			$_base-name: $var-name;
-		} @else {
-			@return null;
-		}
-	}
+// Ограничение диапазонов каналов
+@function _clamp-channel($value, $channel) {
+  @if $channel == 'lightness' {
+    @return math.clamp(0%, $value, 100%);
+  } @else if $channel == 'chroma' {
+    @return math.clamp(0, $value, 0.37);
+  } @else if $channel == 'hue' {
+    // Нормализуем hue в диапазон 0-360deg
+    @if math.unit($value) == 'deg' {
+      @return $value % 360deg;
+    } @else if math.unit($value) == 'rad' {
+      @return ($value % (2 * math.$pi)) * 1rad;
+    } @else if math.unit($value) == 'turn' {
+      @return ($value % 1) * 1turn;
+    } @else {
+      @return $value % 360deg;
+    }
+  }
+  @return $value;
+}
 
-	// Обработка контрастного цвета
-	@if $shade-effect == 'contrast' {
-		$_contrast-map: _contrast($color, $alpha);
-		$_shade-effect: map.get($_contrast-map, 'shade-effect');
-		@return css-vars.name-contrast($_base-name, $_shade-effect, $alpha);
-	}
+// Корректирует значения всех каналов цвета в пространстве OKLCH.
+// Валидирует единицы измерения и ограничивает значения в допустимых диапазонах.
+// @param $color - исходный цвет в пространстве OKLCH
+// @param $preserve-lightness - сохранять lightness без ограничения (по умолчанию false)
+// @param $clamp-chroma - ограничивать chroma до 0-0.37 (по умолчанию true)
+// @param $normalize-hue - нормализовать hue в 0-360deg (по умолчанию true)
+// @return цвет в пространстве OKLCH с корректными значениями всех каналов
+@function fix-channels($color, $preserve-lightness: false, $clamp-chroma: true, $normalize-hue: true) {
+  // Извлекаем каналы
+  $l: color.channel($color, 'lightness', oklch);
+  $c: color.channel($color, 'chroma', oklch);
+  $h: color.channel($color, 'hue', oklch);
+  
+  // Валидация и коррекция каналов
+  @if meta.type-of($l) == 'number' {
+    $l: _validate-channel($l, 'lightness');
+    @if not $preserve-lightness {
+      $l: _clamp-channel($l, 'lightness');
+    }
+  } @else {
+    $l: 50%; // значение по умолчанию
+  }
+  
+  @if meta.type-of($c) == 'number' {
+    $c: _validate-channel($c, 'chroma');
+    @if $clamp-chroma {
+      $c: _clamp-channel($c, 'chroma');
+    }
+  } @else {
+    $c: 0.1; // значение по умолчанию
+  }
+  
+  @if meta.type-of($h) == 'number' {
+    $h: _validate-channel($h, 'hue');
+    @if $normalize-hue {
+      $h: _clamp-channel($h, 'hue');
+    }
+  } @else {
+    $h: 0deg; // значение по умолчанию
+  }
+  
+  @return oklch($l $c $h);
+}
 
-	@return css-vars.name-full($_base-name, $shade-effect, $alpha);
+// Устаревшая функция fix-hue для обратной совместимости
+// Рекомендуется использовать fix-channels
+@function fix-hue($color) {
+  @return fix-channels($color);
 }
 
 // Добавляет цвет в глобальную карту переменных, если его там еще нет
@@ -327,34 +439,6 @@ $variables-map-colors: ();
 	}
 
 	@return $name;
-}
-
-// Основная функция для получения CSS-переменной с цветом
-// Генерирует имя переменной, вычисляет цвет, сохраняет в карту и возвращает CSS var()
-// @param $color - исходный цвет
-// @param $alpha - прозрачность
-// @param $shade-effect-name - название эффекта для имени переменной
-// @param $shade-effect-value - номер оттенка для интерполяции
-// @return CSS-переменная в формате var(--color-{name})
-@function _get-css-var-color($color, $alpha, $shade-effect-name, $shade-effect-value) {
-	$_var-name: _get-variable-color-name($color, $shade-effect-name, $alpha);
-
-	// Если не удалось получить имя переменной, возвращаем исходный цвет как есть
-	@if $_var-name == null {
-		@return $color;
-	}
-
-	$_shade-color: null;
-
-	@if $shade-effect-name == 'contrast' {
-		$_shade-color: map.get(_contrast($color, $alpha), 'color');
-	} @else {
-		$_shade-color: _shade-color($color, $shade-effect-value, $alpha);
-	}
-
-	$_: _set-color-in-variables-map($_var-name, $_shade-color);
-
-	@return css-vars.generate-css-var($_var-name, 'color');
 }
 
 

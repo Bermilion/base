@@ -1,6 +1,6 @@
 /**
  * Тесты для цветовых функций (полная версия)
- * Тестируем функцию fix-hue со всеми возможными сценариями
+ * Тестируем функцию fix-channels со всеми возможными сценариями
  *
  * Запуск из директории chunker2i/base/resources/scss:
  * npx sass tests/_test-colors.scss NULL --load-path=.
@@ -10,101 +10,247 @@
 @use "sass:meta";
 @use "sass:math";
 
-// Копия функции fix-hue для тестирования
+// Вспомогательная функция для получения единицы измерения по умолчанию
+@function get-default-unit($channel) {
+  @if $channel == 'lightness' {
+    @return '%';
+  } @else if $channel == 'chroma' {
+    @return '';
+  } @else if $channel == 'hue' {
+    @return 'deg';
+  }
+  @return '';
+}
+
+// Валидация единиц измерения для канала
+@function validate-channel($value, $channel) {
+  @if meta.type-of($value) != 'number' {
+    @warn "Значение для канала #{$channel} должно быть числом";
+    @return 0;
+  }
+  
+  @if $channel == 'lightness' and math.is-unitless($value) {
+    @warn "Lightness должен иметь единицу измерения %";
+    @return $value * 100%;
+  } @else if $channel == 'hue' and math.is-unitless($value) {
+    @warn "Hue должен иметь единицу измерения (deg, rad, turn)";
+    @return $value * 1deg;
+  }
+  
+  @return $value;
+}
+
+// Ограничение диапазонов каналов
+@function clamp-channel($value, $channel) {
+  @if $channel == 'lightness' {
+    @return math.clamp(0%, $value, 100%);
+  } @else if $channel == 'chroma' {
+    @return math.clamp(0, $value, 0.37);
+  } @else if $channel == 'hue' {
+    // Нормализуем hue в диапазон 0-360deg
+    @if unit($value) == 'deg' {
+      @return $value % 360deg;
+    } @else if unit($value) == 'rad' {
+      @return ($value % (2 * math.$pi)) * 1rad;
+    } @else if unit($value) == 'turn' {
+      @return ($value % 1) * 1turn;
+    } @else {
+      @return $value % 360deg;
+    }
+  }
+  @return $value;
+}
+
+// Основная функция fix-channels (ранее fix-hue)
+@function fix-channels($color, $preserve-lightness: false, $clamp-chroma: true, $normalize-hue: true) {
+  // Извлекаем каналы
+  $l: color.channel($color, 'lightness', oklch);
+  $c: color.channel($color, 'chroma', oklch);
+  $h: color.channel($color, 'hue', oklch);
+  
+  // Валидация и коррекция каналов
+  @if meta.type-of($l) == 'number' {
+    $l: validate-channel($l, 'lightness');
+    @if not $preserve-lightness {
+      $l: clamp-channel($l, 'lightness');
+    }
+  } @else {
+    $l: 50%; // значение по умолчанию
+  }
+  
+  @if meta.type-of($c) == 'number' {
+    $c: validate-channel($c, 'chroma');
+    @if $clamp-chroma {
+      $c: clamp-channel($c, 'chroma');
+    }
+  } @else {
+    $c: 0.1; // значение по умолчанию
+  }
+  
+  @if meta.type-of($h) == 'number' {
+    $h: validate-channel($h, 'hue');
+    @if $normalize-hue {
+      $h: clamp-channel($h, 'hue');
+    }
+  } @else {
+    $h: 0deg; // значение по умолчанию
+  }
+  
+  @return oklch($l $c $h);
+}
+
+// Сохраняем старую функцию для обратной совместимости
 @function test-fix-hue($color) {
-	$l: color.channel($color, 'lightness', oklch);
-	$c: color.channel($color, 'chroma', oklch);
-	$h: color.channel($color, 'hue', oklch);
-
-	@if meta.type-of($h) != 'number' or math.is-unitless($h) {
-		$h: 0deg;
-	}
-
-	@return oklch($l $c $h);
+  @return fix-channels($color);
 }
 
 // Тест 1: коррекция hue с единицей измерения (deg)
-@debug "=== Тест 1: fix-hue (с единицей deg) ===";
+@debug "=== Тест 1: fix-channels (с единицей deg) ===";
 $test-color-1: oklch(0.5 0.2 25deg);
-$fixed-1: test-fix-hue($test-color-1);
+$fixed-1: fix-channels($test-color-1);
 @debug "Исходный цвет: " + $test-color-1;
 @debug "Исправленный цвет: " + $fixed-1;
 // Ожидается: oklch(0.5 0.2 25deg) - hue сохраняется
 
 // Тест 2: коррекция hue с единицей измерения (rad)
-@debug "=== Тест 2: fix-hue (с единицей rad) ===";
+@debug "=== Тест 2: fix-channels (с единицей rad) ===";
 $test-color-2: oklch(0.6 0.15 0.5rad);
-$fixed-2: test-fix-hue($test-color-2);
+$fixed-2: fix-channels($test-color-2);
 @debug "Исходный цвет: " + $test-color-2;
 @debug "Исправленный цвет: " + $fixed-2;
 // Ожидается: oklch с корректным hue в rad
 
 // Тест 3: коррекция hue с единицей измерения (turn)
-@debug "=== Тест 3: fix-hue (с единицей turn) ===";
+@debug "=== Тест 3: fix-channels (с единицей turn) ===";
 $test-color-3: oklch(0.7 0.1 0.25turn);
-$fixed-3: test-fix-hue($test-color-3);
+$fixed-3: fix-channels($test-color-3);
 @debug "Исходный цвет: " + $test-color-3;
 @debug "Исправленный цвет: " + $fixed-3;
 // Ожидается: oklch с корректным hue в turn
 
 // Тест 4: коррекция hue без единицы измерения (число)
-@debug "=== Тест 4: fix-hue (без единицы - число) ===";
+@debug "=== Тест 4: fix-channels (без единицы - число) ===";
 $test-color-4: oklch(0.5 0.2 25);
-$fixed-4: test-fix-hue($test-color-4);
+$fixed-4: fix-channels($test-color-4);
 @debug "Исходный цвет: " + $test-color-4;
 @debug "Исправленный цвет: " + $fixed-4;
-// Ожидается: oklch(0.5 0.2 0deg) - hue заменён на 0deg
+// Ожидается: oklch(0.5 0.2 25deg) - hue получает единицу измерения
 
 // Тест 5: коррекция hue со значением none
-@debug "=== Тест 5: fix-hue (значение none) ===";
+@debug "=== Тест 5: fix-channels (значение none) ===";
 $test-color-5: oklch(0.5 0.2 none);
-$fixed-5: test-fix-hue($test-color-5);
+$fixed-5: fix-channels($test-color-5);
 @debug "Исходный цвет: " + $test-color-5;
 @debug "Исправленный цвет: " + $fixed-5;
-// Ожидается: oklch(0.5 0.2 0deg) - hue заменён на 0deg
+// Ожидается: oklch(0.5 0.2 0deg) - hue заменён на значение по умолчанию
 
 // Тест 6: коррекция hue с нулевым значением (0deg)
-@debug "=== Тест 6: fix-hue (нулевое значение 0deg) ===";
+@debug "=== Тест 6: fix-channels (нулевое значение 0deg) ===";
 $test-color-6: oklch(0.5 0.2 0deg);
-$fixed-6: test-fix-hue($test-color-6);
+$fixed-6: fix-channels($test-color-6);
 @debug "Исходный цвет: " + $test-color-6;
 @debug "Исправленный цвет: " + $fixed-6;
 // Ожидается: oklch(0.5 0.2 0deg) - hue сохраняется
 
 // Тест 7: коррекция hue с максимальным значением (360deg)
-@debug "=== Тест 7: fix-hue (максимальное значение 360deg) ===";
+@debug "=== Тест 7: fix-channels (максимальное значение 360deg) ===";
 $test-color-7: oklch(0.5 0.2 360deg);
-$fixed-7: test-fix-hue($test-color-7);
+$fixed-7: fix-channels($test-color-7);
 @debug "Исходный цвет: " + $test-color-7;
 @debug "Исправленный цвет: " + $fixed-7;
-// Ожидается: oklch(0.5 0.2 360deg) - hue сохраняется
+// Ожидается: oklch(0.5 0.2 0deg) - hue нормализуется в 0-360deg
 
 // Тест 8: коррекция серого цвета (chroma = 0)
-@debug "=== Тест 8: fix-hue (серый цвет, chroma=0) ===";
+@debug "=== Тест 8: fix-channels (серый цвет, chroma=0) ===";
 $test-color-8: oklch(0.5 0 180deg);
-$fixed-8: test-fix-hue($test-color-8);
+$fixed-8: fix-channels($test-color-8);
 @debug "Исходный цвет: " + $test-color-8;
 @debug "Исправленный цвет: " + $fixed-8;
 // Ожидается: oklch(0.5 0 180deg) - hue сохраняется
 
 // Тест 9: коррекция с различными значениями lightness
-@debug "=== Тест 9: fix-hue (различные lightness) ===";
+@debug "=== Тест 9: fix-channels (различные lightness) ===";
 $test-light: oklch(0.9 0.2 45deg);
 $test-dark: oklch(0.1 0.2 45deg);
-$fixed-light: test-fix-hue($test-light);
-$fixed-dark: test-fix-hue($test-dark);
+$fixed-light: fix-channels($test-light);
+$fixed-dark: fix-channels($test-dark);
 @debug "Светлый цвет: " + $test-light + " -> " + $fixed-light;
 @debug "Тёмный цвет: " + $test-dark + " -> " + $fixed-dark;
 // Ожидается: оба цвета сохраняют hue
 
 // Тест 10: коррекция с различными значениями chroma
-@debug "=== Тест 10: fix-hue (различные chroma) ===";
+@debug "=== Тест 10: fix-channels (различные chroma) ===";
 $test-high-chroma: oklch(0.5 0.4 120deg);
 $test-low-chroma: oklch(0.5 0.05 120deg);
-$fixed-high: test-fix-hue($test-high-chroma);
-$fixed-low: test-fix-hue($test-low-chroma);
+$fixed-high: fix-channels($test-high-chroma);
+$fixed-low: fix-channels($test-low-chroma);
 @debug "Высокий chroma: " + $test-high-chroma + " -> " + $fixed-high;
 @debug "Низкий chroma: " + $test-low-chroma + " -> " + $fixed-low;
-// Ожидается: оба цвета сохраняют hue
+// Ожидается: высокий chroma ограничивается до 0.37
 
-@debug "=== Все тесты цветов завершены ===";
+// Дополнительные тесты для fix-channels
+
+// Тест 11: валидация lightness без единицы измерения
+@debug "=== Тест 11: fix-channels (lightness без единицы) ===";
+$test-lightness-no-unit: oklch(50 0.2 180deg);
+$fixed-lightness: fix-channels($test-lightness-no-unit);
+@debug "Исходный цвет: " + $test-lightness-no-unit;
+@debug "Исправленный цвет: " + $fixed-lightness;
+// Ожидается: oklch(50% 0.2 180deg) - lightness получает %
+
+// Тест 12: ограничение lightness вне диапазона
+@debug "=== Тест 12: fix-channels (lightness вне диапазона) ===";
+$test-lightness-high: oklch(150% 0.2 180deg);
+$test-lightness-low: oklch(-20% 0.2 180deg);
+$fixed-high: fix-channels($test-lightness-high);
+$fixed-low: fix-channels($test-lightness-low);
+@debug "Высокий lightness: " + $test-lightness-high + " -> " + $fixed-high;
+@debug "Низкий lightness: " + $test-lightness-low + " -> " + $fixed-low;
+// Ожидается: ограничение до 100% и 0%
+
+// Тест 13: ограничение chroma вне диапазона
+@debug "=== Тест 13: fix-channels (chroma вне диапазона) ===";
+$test-chroma-high: oklch(50% 0.5 180deg);
+$test-chroma-negative: oklch(50% -0.1 180deg);
+$fixed-chroma-high: fix-channels($test-chroma-high);
+$fixed-chroma-negative: fix-channels($test-chroma-negative);
+@debug "Высокий chroma: " + $test-chroma-high + " -> " + $fixed-chroma-high;
+@debug "Отрицательный chroma: " + $test-chroma-negative + " -> " + $fixed-chroma-negative;
+// Ожидается: ограничение до 0.37 и 0
+
+// Тест 14: hue с различными единицами и нормализация
+@debug "=== Тест 14: fix-channels (hue нормализация) ===";
+$test-huge-deg: oklch(50% 0.2 720deg);
+$test-negative-deg: oklch(50% 0.2 -90deg);
+$test-huge-rad: oklch(50% 0.2 10rad);
+$fixed-huge-deg: fix-channels($test-huge-deg);
+$fixed-negative-deg: fix-channels($test-negative-deg);
+$fixed-huge-rad: fix-channels($test-huge-rad);
+@debug "Большой deg: " + $test-huge-deg + " -> " + $fixed-huge-deg;
+@debug "Отрицательный deg: " + $test-negative-deg + " -> " + $fixed-negative-deg;
+@debug "Большой rad: " + $test-huge-rad + " -> " + $fixed-huge-rad;
+// Ожидается: нормализация в 0-360deg
+
+// Тест 15: продвинутое использование с параметрами
+@debug "=== Тест 15: fix-channels (продвинутое использование) ===";
+$test-color: oklch(120% 0.5 450deg);
+$fixed-default: fix-channels($test-color);
+$fixed-preserve-lightness: fix-channels($test-color, $preserve-lightness: true);
+$fixed-no-chroma-clamp: fix-channels($test-color, $clamp-chroma: false);
+$fixed-no-hue-normalize: fix-channels($test-color, $normalize-hue: false);
+@debug "Исходный: " + $test-color;
+@debug "По умолчанию: " + $fixed-default;
+@debug "Сохранить lightness: " + $fixed-preserve-lightness;
+@debug "Без ограничения chroma: " + $fixed-no-chroma-clamp;
+@debug "Без нормализации hue: " + $fixed-no-hue-normalize;
+
+// Тест 16: обратная совместимость с test-fix-hue
+@debug "=== Тест 16: обратная совместимость ===";
+$test-compat: oklch(0.5 0.2 25);
+$fixed-new: fix-channels($test-compat);
+$fixed-old: test-fix-hue($test-compat);
+@debug "Новая функция: " + $fixed-new;
+@debug "Старая функция: " + $fixed-old;
+// Ожидается: одинаковые результаты
+
+@debug "=== Все тесты fix-channels завершены ===";
