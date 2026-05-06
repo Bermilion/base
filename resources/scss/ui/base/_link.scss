@@ -6,6 +6,7 @@
 	gap: token.scale(token.$scale-4);
 	text-decoration: none;
 	transition: color  .2s ease, border-color .2s ease;
+	cursor: pointer;
 
 	&_accent {
 		color: token.color-base(token.$accent);
