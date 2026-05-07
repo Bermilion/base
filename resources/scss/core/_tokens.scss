@@ -116,3 +116,11 @@
 @function scale-value($values...) {
 	@return scale-functions.scale-value($values...);
 }
+
+@function color-mix($base-color, $amount-base-color: 80%, $mixed-color, $amount-mixed-color: 20%) {
+	@return colors-functions.mix($base-color, $amount-base-color, $mixed-color, $amount-mixed-color);
+}
+
+@function color-mix-value($base-color, $amount-base-color: 80%, $mixed-color, $amount-mixed-color: 20%) {
+	@return colors-functions.mix-value($base-color, $amount-base-color, $mixed-color, $amount-mixed-color);
+}

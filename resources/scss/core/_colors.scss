@@ -343,7 +343,7 @@ $variables-map-colors: ();
     @warn "Значение для канала #{$channel} должно быть числом";
     @return 0;
   }
-  
+
   @if $channel == 'lightness' and math.is-unitless($value) {
     @warn "Lightness должен иметь единицу измерения %";
     @return $value * 100%;
@@ -351,7 +351,7 @@ $variables-map-colors: ();
     @warn "Hue должен иметь единицу измерения (deg, rad, turn)";
     @return $value * 1deg;
   }
-  
+
   @return $value;
 }
 
@@ -388,7 +388,7 @@ $variables-map-colors: ();
   $l: color.channel($color, 'lightness', oklch);
   $c: color.channel($color, 'chroma', oklch);
   $h: color.channel($color, 'hue', oklch);
-  
+
   // Валидация и коррекция каналов
   @if meta.type-of($l) == 'number' {
     $l: _validate-channel($l, 'lightness');
@@ -398,7 +398,7 @@ $variables-map-colors: ();
   } @else {
     $l: 50%; // значение по умолчанию
   }
-  
+
   @if meta.type-of($c) == 'number' {
     $c: _validate-channel($c, 'chroma');
     @if $clamp-chroma {
@@ -407,7 +407,7 @@ $variables-map-colors: ();
   } @else {
     $c: 0.1; // значение по умолчанию
   }
-  
+
   @if meta.type-of($h) == 'number' {
     $h: _validate-channel($h, 'hue');
     @if $normalize-hue {
@@ -416,7 +416,7 @@ $variables-map-colors: ();
   } @else {
     $h: 0deg; // значение по умолчанию
   }
-  
+
   @return oklch($l $c $h);
 }
 
@@ -442,6 +442,83 @@ $variables-map-colors: ();
 }
 
 
+
+// Смешивает два цвета с заданными пропорциями в пространстве OKLCH
+// @param $base-color - базовый цвет (название из палитры или цветовое значение)
+// @param $amount-base-color - процент базового цвета (по умолчанию 80%)
+// @param $mixed-color - смешиваемый цвет (название из палитры или цветовое значение)
+// @param $amount-mixed-color - процент смешиваемого цвета (по умолчанию 20%)
+// @param $return-var - true: вернуть CSS-переменную, false: вернуть значение
+// @return CSS-переменная или цветовое значение
+@function _mix($base-color, $amount-base-color, $mixed-color, $amount-mixed-color, $return-var: true) {
+	// 1. Определяем базовые имена цветов
+	$_base-name-1: map.get($_base-colors-reversed, $base-color);
+	$_base-name-2: map.get($_base-colors-reversed, $mixed-color);
+
+	// Если не найдено в палитре, ищем в $variables-map-colors
+	@if $_base-name-1 == null {
+		@each $name, $value in $variables-map-colors {
+			@if $_base-name-1 == null and $value == $base-color {
+				$_base-name-1: $name;
+			}
+		}
+	}
+	@if $_base-name-2 == null {
+		@each $name, $value in $variables-map-colors {
+			@if $_base-name-2 == null and $value == $mixed-color {
+				$_base-name-2: $name;
+			}
+		}
+	}
+
+	// Если переданы CSS-переменные как строки
+	@if $_base-name-1 == null and meta.type-of($base-color) != 'color' {
+		@if string.index($base-color, "var(--color-") {
+			$_base-name-1: string.slice($base-color, 13, string.length($base-color) - 1);
+		}
+	}
+	@if $_base-name-2 == null and meta.type-of($mixed-color) != 'color' {
+		@if string.index($mixed-color, "var(--color-") {
+			$_base-name-2: string.slice($mixed-color, 13, string.length($mixed-color) - 1);
+		}
+	}
+
+	// 2. Вычисляем смешанный цвет
+	$_result-color: color-mix(in oklch, $base-color $amount-base-color, $mixed-color $amount-mixed-color);
+
+	// 3. Регистрация (если имена определены)
+	@if $_base-name-1 != null and $_base-name-2 != null {
+		$_var-name: '#{$_base-name-1}-#{$_base-name-2}-mix';
+		$_: _set-color-in-variables-map($_var-name, $_result-color);
+
+		@if $return-var {
+			@return css-vars.generate-css-var($_var-name, 'color');
+		}
+	}
+
+	// 4. Возвращаем значение
+	@return $_result-color;
+}
+
+// Возвращает смешанный цвет в виде CSS-переменной
+// @param $base-color - базовый цвет (название из палитры)
+// @param $amount-base-color - процент базового цвета (по умолчанию 80%)
+// @param $mixed-color - смешиваемый цвет (название из палитры)
+// @param $amount-mixed-color - процент смешиваемого цвета (по умолчанию 20%)
+// @return CSS-переменная с цветом
+@function mix($base-color, $amount-base-color: 80%, $mixed-color, $amount-mixed-color: 20%) {
+	@return _mix($base-color, $amount-base-color, $mixed-color, $amount-mixed-color, true);
+}
+
+// Возвращает смешанный цвет в виде цветового значения
+// @param $base-color - базовый цвет (название из палитры)
+// @param $amount-base-color - процент базового цвета (по умолчанию 80%)
+// @param $mixed-color - смешиваемый цвет (название из палитры)
+// @param $amount-mixed-color - процент смешиваемого цвета (по умолчанию 20%)
+// @return цвет в пространстве OKLCH
+@function mix-value($base-color, $amount-base-color: 80%, $mixed-color, $amount-mixed-color: 20%) {
+	@return _mix($base-color, $amount-base-color, $mixed-color, $amount-mixed-color, false);
+}
 
 // Вычисляет контрастный цвет для текста на основе светлоты фона
 // Использует канал lightness в пространстве OKLCH

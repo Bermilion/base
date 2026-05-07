@@ -12,6 +12,7 @@ class Button extends AbstractComponent
     public bool $loading;
     public bool $square;
     public string $iconVariant;
+    public ?string $weight;
 
     public function __construct(
         string $variant = 'primary',
@@ -23,7 +24,8 @@ class Button extends AbstractComponent
         ?string $icon = null,
         ?bool $loading = null,
         ?bool $square = null,
-        ?string $iconVariant = null
+        ?string $iconVariant = null,
+        ?string $weight = 'regular'
     ) {
         parent::__construct();
 
@@ -46,6 +48,9 @@ class Button extends AbstractComponent
 
         // Автоопределение варианта иконки
         $this->iconVariant = $iconVariant ?? $this->resolveIconVariant($this->sizeIcon, $this->square);
+
+        // Жирность текста
+        $this->weight = $weight;
     }
 
     public function render()
@@ -73,6 +78,12 @@ class Button extends AbstractComponent
                 'lg' => 'button_lg',
             ])
             ->addIf($this->sizeFont === 'sm', 'button_font-sm')
+            ->addMatch($this->weight, [
+                'regular' => 'button_text-regular',
+                'medium' => 'button_text-medium',
+                'semibold' => 'button_text-semibold',
+                'bold' => 'button_text-bold',
+            ])
             ->addIf($this->loading, 'button_loading')
             ->addIf($this->loading, 'opacity-75 cursor-not-allowed')
             ->toString();

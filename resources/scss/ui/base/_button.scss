@@ -25,63 +25,79 @@
 	&:disabled:active,
 	&:disabled:focus,
 	&:disabled:focus-visible {
-		background-color: color-mix(in oklch, token.color-light-50($color) 80%, token.color-dark-10(token.$gray) 20%);
+		$base-color: token.color-light-50($color);
+		$mixed-color: token.color-dark-10(token.$gray);
+		background-color: token.color-mix($base-color, 80%, $mixed-color, 20%);
 		cursor: default;
 		box-shadow: none;
 	}
 }
 
 // Миксин для outline варианта (бордер)
-@mixin button-outline($color-var) {
+@mixin button-outline($color) {
 	background-color: transparent;
-	border: token.scale(1) solid token.color-base($color-var);
-	color: token.color-base($color-var);
+	border: token.scale(1) solid token.color-base($color);
+	color: token.color-base($color);
 
 	&:hover {
-		border-color: token.color-light-10($color-var);
-		color: token.color-light-10($color-var);
+		border-color: token.color-light-10($color);
+		color: token.color-light-10($color);
 	}
 	&:active {
-		border-color: token.color-dark-10($color-var);
-		color: token.color-dark-10($color-var);
+		border-color: token.color-dark-10($color);
+		color: token.color-dark-10($color);
 	}
 	&:focus-visible {
-		outline-color: token.color-light-10($color-var, .5);
+		outline-color: token.color-light-10($color, .5);
 	}
 	&:disabled,
 	&:disabled:hover,
 	&:disabled:active,
 	&:disabled:focus,
 	&:disabled:focus-visible {
-		//$disabled: token.color-light-30($color-var);
-		$disabled: color-mix(in oklch, token.color-light-50($color-var) 80%, token.color-dark-10(token.$gray) 20%);
-		border-color: $disabled;
-		color: $disabled;
+		$base-color: token.color-light-50($color);
+		$mixed-color: token.color-dark-10(token.$gray);
+		border-color: token.color-mix($base-color, 80%, $mixed-color, 20%);
+		color: token.color-mix($base-color, 80%, $mixed-color, 20%);
 		cursor: default;
 		box-shadow: none;
 	}
 }
 
 // Миксин для ghost варианта (только текст)
-@mixin button-ghost($color-var) {
+@mixin button-ghost($base-color, $hover-color: null, $active-color: null, $focus-color: null) {
 	background-color: transparent;
-	color: token.color-base($color-var);
+	color: token.color-base($base-color);
 
 	&:hover {
-		color: token.color-light-10($color-var);
+		@if $hover-color != null {
+			color: $hover-color;
+		} @else {
+			color: token.color-light-10($base-color);
+		}
 	}
 	&:active {
-		color: token.color-dark-10($color-var);
+		@if $active-color != null {
+			color: $active-color;
+		} @else {
+			color: token.color-dark-10($base-color);
+		}
 	}
 	&:focus-visible {
-		outline-color: token.color-light-10($color-var, .5);
+		@if $focus-color != null {
+			outline-color: $focus-color;
+		} @else {
+			outline-color: token.color-light-10($base-color, .5);
+		}
 	}
 	&:disabled,
 	&:disabled:hover,
 	&:disabled:active,
 	&:disabled:focus,
 	&:disabled:focus-visible {
-		color: color-mix(in oklch, token.color-light-50($color-var) 80%, token.color-dark-10(token.$gray) 20%);
+		$main-color: token.color-light-50($base-color);
+		$mixed-color: token.color-dark-10(token.$gray);
+		color: token.color-mix($main-color, 80%, $mixed-color, 20%);
 		cursor: default;
 		box-shadow: none;
 	}
@@ -163,7 +179,18 @@
 		@include button-ghost(token.$danger);
 	}
 	&_ghost-gray {
-		@include button-ghost(token.$dark-gary-dark);
+		$base-color: token.$dark-gary-dark;
+		$hover-color: token.color-dark-30($base-color);
+		$active-color: token.$accent;
+		$focus-color: token.color-light-10(token.$accent, .5);
+		@include button-ghost($base-color, $hover-color, $active-color, $focus-color);
+	}
+	&_ghost-dark {
+		$base-color: token.$content-dark;
+		$hover-color: token.color-light-10($base-color);
+		$active-color: token.$accent;
+		$focus-color: token.color-light-10(token.$accent, .5);
+		@include button-ghost($base-color, $hover-color, $active-color, $focus-color);
 	}
 
 	&_none {
@@ -192,18 +219,8 @@
 	&_base {
 		padding: token.scale(8, 24);
 
-		svg {
-			height: token.scale(24);
-			width: token.scale(24);
-		}
-
 		&.button_square {
 			padding: token.scale(8);
-
-			svg {
-				height: token.scale(24);
-				width: token.scale(24);
-			}
 		}
 	}
 	&_lg {
@@ -211,11 +228,6 @@
 
 		&.button_square {
 			padding: token.scale(8);
-
-			svg {
-				height: token.scale(32);
-				width: token.scale(32);
-			}
 		}
 	}
 
@@ -228,5 +240,19 @@
 	&_full-width {
 		justify-content: center;
 		width: 100%;
+	}
+
+	// Модификаторы жирности текста
+	&_text-regular {
+		font-weight: token.weight(token.$weight-regular);
+	}
+	&_text-medium {
+		font-weight: token.weight(token.$weight-medium);
+	}
+	&_text-semibold {
+		font-weight: token.weight(token.$weight-semibold);
+	}
+	&_text-bold {
+		font-weight: token.weight(token.$weight-bold);
 	}
 }
