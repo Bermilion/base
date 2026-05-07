@@ -1,7 +1,3 @@
-@php
-    $size = $iconSize();
-@endphp
-
-<svg {{ $attributes->merge(['class' => $classes() . ' icon']) }}>
+<svg {{ $attributes->merge(['class' => $classes()]) }}>
 	<use xlink:href='#icon-{{ $name }}'></use>
 </svg>
