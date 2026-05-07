@@ -1,12 +1,18 @@
 <?php namespace Chunker2i\Base\Providers;
 
+use Chunker2i\Base\Core\ClassBuilder;
+use Chunker2i\Base\Core\ComponentManager;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
 	public function register():void {
-		//
+		// Регистрация синглтона менеджера
+		$this->app->singleton(ComponentManager::class, fn() => ComponentManager::getInstance());
+
+		// Регистрация ClassBuilder
+		$this->app->bind(ClassBuilder::class, fn() => new ClassBuilder());
 	}
 
 	public function boot():void {
@@ -26,6 +32,13 @@ class AppServiceProvider extends ServiceProvider
 		$this->loadViewsFrom($this->packageViewsPath('utils'), 'utils');
 		$this->loadViewsFrom($this->packageViewsPath('type'), 'type');
 		$this->loadViewsFrom($this->packageViewsPath('base'), 'base');
+		$this->loadViewsFrom($this->packageResourcePath('views'), 'chunker');
+
+		// Новые директивы Blade
+		Blade::directive('classes', fn($expression) => "<?php echo app(Chunker2i\\Base\\Core\\ClassBuilder::class){$expression}->toString(); ?>");
+
+		// Регистрация компонентов
+		Blade::componentNamespace('Chunker2i\\Base\\View\\Components', 'chunker');
 	}
 
 	/**

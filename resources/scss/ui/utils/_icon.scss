@@ -3,4 +3,20 @@
 .icon {
 	width: 1.5em;
 	height: 1.5em;
+
+	// Размеры иконок (независимые от размера шрифта)
+	&_size-sm {
+		width: token.scale(16);
+		height: token.scale(16);
+	}
+
+	&_size-base {
+		width: token.scale(24);
+		height: token.scale(24);
+	}
+
+	&_size-lg {
+		width: token.scale(32);
+		height: token.scale(32);
+	}
 }

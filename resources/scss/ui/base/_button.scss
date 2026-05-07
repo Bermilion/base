@@ -1,64 +1,230 @@
 @use "@core/tokens" as token;
 
-$accent: token.color-base-value(token.$oklch-example);
-$accent-base: token.color-base($accent);
-$accent-hover: token.color-light-10($accent);
-$accent-active: token.color-dark-10($accent);
-$content: token.color-base(token.$content-light);
-$accent-focus: token.color-light-10($accent, .5);
-$disabled: token.color-light-30($accent);
-$pale: token.color-base(token.$pale);
-$box-shadow-color: token.color-base($accent, .25);
+// Миксин для primary варианта (заливка)
+@mixin button-primary($color, $text: null) {
+	$_text: token.color-content($color);
+	@if $text != null {
+		$_text: token.color-base($text);
+	}
+
+	background-color: token.color-base($color);
+	color: $_text;
+	box-shadow: token.scale(0, 4, 8) token.color-base($color, .25);
+
+	&:hover {
+		background-color: token.color-light-10($color);
+	}
+	&:active {
+		background-color: token.color-dark-20($color);
+	}
+	&:focus-visible {
+		outline-color: token.color-light-10($color, .5);
+	}
+	&:disabled,
+	&:disabled:hover,
+	&:disabled:active,
+	&:disabled:focus,
+	&:disabled:focus-visible {
+		background-color: color-mix(in oklch, token.color-light-50($color) 80%, token.color-dark-10(token.$gray) 20%);
+		cursor: default;
+		box-shadow: none;
+	}
+}
+
+// Миксин для outline варианта (бордер)
+@mixin button-outline($color-var) {
+	background-color: transparent;
+	border: token.scale(1) solid token.color-base($color-var);
+	color: token.color-base($color-var);
+
+	&:hover {
+		border-color: token.color-light-10($color-var);
+		color: token.color-light-10($color-var);
+	}
+	&:active {
+		border-color: token.color-dark-10($color-var);
+		color: token.color-dark-10($color-var);
+	}
+	&:focus-visible {
+		outline-color: token.color-light-10($color-var, .5);
+	}
+	&:disabled,
+	&:disabled:hover,
+	&:disabled:active,
+	&:disabled:focus,
+	&:disabled:focus-visible {
+		//$disabled: token.color-light-30($color-var);
+		$disabled: color-mix(in oklch, token.color-light-50($color-var) 80%, token.color-dark-10(token.$gray) 20%);
+		border-color: $disabled;
+		color: $disabled;
+		cursor: default;
+		box-shadow: none;
+	}
+}
+
+// Миксин для ghost варианта (только текст)
+@mixin button-ghost($color-var) {
+	background-color: transparent;
+	color: token.color-base($color-var);
+
+	&:hover {
+		color: token.color-light-10($color-var);
+	}
+	&:active {
+		color: token.color-dark-10($color-var);
+	}
+	&:focus-visible {
+		outline-color: token.color-light-10($color-var, .5);
+	}
+	&:disabled,
+	&:disabled:hover,
+	&:disabled:active,
+	&:disabled:focus,
+	&:disabled:focus-visible {
+		color: color-mix(in oklch, token.color-light-50($color-var) 80%, token.color-dark-10(token.$gray) 20%);
+		cursor: default;
+		box-shadow: none;
+	}
+}
 
 .button {
 	display: inline-flex;
 	align-items: center;
 	gap: token.scale(token.$scale-4);
 	border: none;
-	padding: token.scale(8, 24);
 	border-radius: token.scale(token.$scale-80);
 	cursor: pointer;
-	transition: color  .2s ease,  background-color  .2s ease;
+	transition: color .2s ease, background-color .2s ease;
 
 	&:focus-visible {
 		outline: token.scale(4) solid transparent;
 	}
 
-	&_accent {
-		background-color: $accent;
-		color: $content;
-		box-shadow: token.scale(0, 4, 8) $box-shadow-color;
+	// White - отдельный полный стиль без модификаторов
+	&_white {
+		background-color: token.color-base(token.$content-light);
+		color: token.color-base(token.$content-dark);
 
 		&:hover {
-			background-color: $accent-active;
+			background-color: token.color-dark-10(token.$content-light);
 		}
-
+		&:active {
+			background-color: token.color-dark-20(token.$content-light);
+		}
 		&:focus-visible {
-			outline-color: $accent-focus;
+			outline-color: token.color-light-10(token.$content-light, .5);
 		}
-
 		&:disabled,
 		&:disabled:hover,
 		&:disabled:active,
 		&:disabled:focus,
 		&:disabled:focus-visible {
-			background-color: $pale;
+			background-color: token.color-base(token.$content-light);
+			color: token.color-dark-20(token.$content-light);
 			cursor: default;
 			box-shadow: none;
 		}
 	}
 
-	&_circle {
+	// Primary - базовый (accent) и модификаторы цвета
+	&_primary {
+		@include button-primary(token.$oklch-example, token.$content-light);
+	}
+	&_primary-success {
+		@include button-primary(token.$success, token.$content-light);
+	}
+	&_primary-danger {
+		@include button-primary(token.$danger, token.$content-light);
+	}
+
+	&_primary-white {
+		@include button-primary(token.$content-light, token.$content-dark);
+	}
+
+	// Outline - базовый (accent) и модификаторы цвета
+	&_outline {
+		@include button-outline(token.$accent);
+	}
+	&_outline-success {
+		@include button-outline(token.$success);
+	}
+	&_outline-danger {
+		@include button-outline(token.$danger);
+	}
+
+	// Ghost - базовый (accent) и модификаторы цвета
+	&_ghost {
+		@include button-ghost(token.$accent);
+	}
+	&_ghost-success {
+		@include button-ghost(token.$success);
+	}
+	&_ghost-danger {
+		@include button-ghost(token.$danger);
+	}
+	&_ghost-gray {
+		@include button-ghost(token.$dark-gary-dark);
+	}
+
+	&_none {
+		padding: token.scale(0);
+	}
+
+	// Размеры
+	&_sm {
+		padding: token.scale(4, 20);
+
+		&.button_square {
+			padding: token.scale(8);
+
+			svg {
+				height: token.scale(16);
+				width: token.scale(16);
+			}
+		}
+	}
+
+	// Модификатор для маленького шрифта (независимый от размера)
+	&_font-sm {
+		font-size: token.scale(12);
+		line-height: token.scale(16);
+	}
+	&_base {
+		padding: token.scale(8, 24);
+
+		svg {
+			height: token.scale(24);
+			width: token.scale(24);
+		}
+
+		&.button_square {
+			padding: token.scale(8);
+
+			svg {
+				height: token.scale(24);
+				width: token.scale(24);
+			}
+		}
+	}
+	&_lg {
+		padding: token.scale(16, 24);
+
+		&.button_square {
+			padding: token.scale(8);
+
+			svg {
+				height: token.scale(32);
+				width: token.scale(32);
+			}
+		}
+	}
+
+	// Формы (базовый padding для square, специфичные размеры выше)
+	&_circle, &_square {
 		padding: token.scale(token.$scale-8);
 	}
 
-	&_disabled {
-		background-color: $pale;
-		color: $content;
-		cursor: default;
-		box-shadow: none;
-	}
-
+	// Полная ширина
 	&_full-width {
 		justify-content: center;
 		width: 100%;
