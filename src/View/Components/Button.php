@@ -11,8 +11,8 @@ class Button extends AbstractComponent
     public ?string $icon;
     public bool $loading;
     public bool $square;
-    public string $iconVariant;
     public ?string $weight;
+    public ?string $text;
 
     public function __construct(
         string $variant = 'primary',
@@ -24,8 +24,8 @@ class Button extends AbstractComponent
         ?string $icon = null,
         ?bool $loading = null,
         ?bool $square = null,
-        ?string $iconVariant = null,
-        ?string $weight = 'regular'
+        ?string $weight = 'regular',
+        ?string $text = null
     ) {
         parent::__construct();
 
@@ -43,14 +43,14 @@ class Button extends AbstractComponent
         // Автоопределение состояния загрузки
         $this->loading = $loading ?? false;
 
-        // Автоопределение квадратной формы
+        // Автоопределение квадратной формы происходит в шаблоне
         $this->square = $square ?? false;
-
-        // Автоопределение варианта иконки
-        $this->iconVariant = $iconVariant ?? $this->resolveIconVariant($this->sizeIcon, $this->square);
 
         // Жирность текста
         $this->weight = $weight;
+
+        // Текст кнопки (альтернатива $slot)
+        $this->text = $text;
     }
 
     public function render()
@@ -58,15 +58,17 @@ class Button extends AbstractComponent
         return view('chunker::components.button');
     }
 
-    public function classes(): string
+    public function classes(?bool $square = null): string
     {
+        $square = $square ?? $this->square;
+
         $builder = $this->classBuilder
             ->add('button')
-            ->addIf($this->square, 'button_square')
+            ->addIf($square, 'button_square')
             ->add("button_{$this->variant}");
 
         // Добавляем цветовой модификатор если цвет не accent и вариант не white
-        if ($this->color !== 'accent') {
+        if ($this->color !== 'accent' && $this->variant !== 'white') {
             $builder->add("button_{$this->variant}-{$this->color}");
         }
 
@@ -85,7 +87,6 @@ class Button extends AbstractComponent
                 'bold' => 'button_text-bold',
             ])
             ->addIf($this->loading, 'button_loading')
-            ->addIf($this->loading, 'opacity-75 cursor-not-allowed')
             ->toString();
     }
 }

@@ -3,8 +3,12 @@
 // Миксин для primary варианта (заливка)
 @mixin button-primary($color, $text: null) {
 	$_text: token.color-content($color);
+	$_spinner-sector: token.color-content($color);
+	$_spinner-circle: token.color-base($color, .25);
 	@if $text != null {
 		$_text: token.color-base($text);
+		$_spinner-sector: token.color-base($text);
+		$_spinner-circle: token.color-base($text, .25);
 	}
 
 	background-color: token.color-base($color);
@@ -31,10 +35,20 @@
 		cursor: default;
 		box-shadow: none;
 	}
+
+	.spinner__sector {
+		fill: $_spinner-sector;
+	}
+	.spinner__circle {
+		fill: $_spinner-circle;
+	}
 }
 
 // Миксин для outline варианта (бордер)
 @mixin button-outline($color) {
+	$_spinner-sector: token.color-base($color);
+	$_spinner-circle: token.color-base($color, .25);
+
 	background-color: transparent;
 	border: token.scale(1) solid token.color-base($color);
 	color: token.color-base($color);
@@ -62,10 +76,20 @@
 		cursor: default;
 		box-shadow: none;
 	}
+
+	.spinner__sector {
+		fill: $_spinner-sector;
+	}
+	.spinner__circle {
+		fill: $_spinner-circle;
+	}
 }
 
 // Миксин для ghost варианта (только текст)
 @mixin button-ghost($base-color, $hover-color: null, $active-color: null, $focus-color: null) {
+	$_spinner-sector: token.color-base($base-color);
+	$_spinner-circle: token.color-base($base-color, .25);
+
 	background-color: transparent;
 	color: token.color-base($base-color);
 
@@ -100,6 +124,13 @@
 		color: token.color-mix($main-color, 80%, $mixed-color, 20%);
 		cursor: default;
 		box-shadow: none;
+	}
+
+	.spinner__sector {
+		fill: $_spinner-sector;
+	}
+	.spinner__circle {
+		fill: $_spinner-circle;
 	}
 }
 
@@ -254,5 +285,10 @@
 	}
 	&_text-bold {
 		font-weight: token.weight(token.$weight-bold);
+	}
+
+	&_loading {
+		opacity: .75;
+		pointer-events: none;
 	}
 }
