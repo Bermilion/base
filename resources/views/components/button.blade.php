@@ -31,8 +31,23 @@
         : $square;
 @endphp
 
-@if (isset($attributes['href']))
-    <a {{ $attributes->merge(['class' => $classes($isSquare)]) }}>
+@if ($active)
+    <div {{ $attributes->merge(['class' => $classes($isSquare, $active)]) }}>
+        @if($icon && $iconPosition === 'left')
+            <x-chunker::icon name="{{ $icon }}" size="{{ $sizeIcon }}" />
+        @endif
+
+        {{ $slot }}
+        @if((empty($slot) || $slot->isEmpty()) && filled($text))
+			<span class="button__text">{{ $text }}</span>
+        @endif
+
+        @if($icon && $iconPosition === 'right')
+            <x-chunker::icon name="{{ $icon }}" size="{{ $sizeIcon }}" />
+        @endif
+    </div>
+@elseif (isset($attributes['href']))
+    <a {{ $attributes->merge(['class' => $classes($isSquare, $active)]) }}>
         @if($icon && $iconPosition === 'left')
             <x-chunker::icon name="{{ $icon }}" size="{{ $sizeIcon }}" />
         @endif
@@ -47,7 +62,7 @@
         @endif
     </a>
 @else
-    <button type="{{ $type ?? 'button' }}" {{ $attributes->merge(['class' => $classes($isSquare)]) }}>
+    <button type="{{ $type ?? 'button' }}" {{ $attributes->merge(['class' => $classes($isSquare, $active)]) }}>
         @if($icon && $iconPosition === 'left')
             <x-chunker::icon name="{{ $icon }}" size="{{ $sizeIcon }}" />
         @endif

@@ -13,6 +13,7 @@ class Button extends AbstractComponent
     public ?bool $square;
     public ?string $weight;
     public ?string $text;
+    public ?bool $active;
 
     public function __construct(
         string $variant = 'primary',
@@ -25,7 +26,8 @@ class Button extends AbstractComponent
         ?bool $loading = null,
         ?bool $square = null,
         ?string $weight = 'regular',
-        ?string $text = null
+        ?string $text = null,
+        ?bool $active = null
     ) {
         parent::__construct();
 
@@ -51,6 +53,9 @@ class Button extends AbstractComponent
 
         // Текст кнопки (альтернатива $slot)
         $this->text = $text;
+
+        // Активное состояние (роль div-элемента без событий)
+        $this->active = $active ?? false;
     }
 
     public function render()
@@ -58,7 +63,7 @@ class Button extends AbstractComponent
         return view('chunker::components.button');
     }
 
-    public function classes(bool $square = false): string
+    public function classes(bool $square = false, bool $active = false): string
     {
 
         $builder = $this->classBuilder
@@ -96,6 +101,9 @@ class Button extends AbstractComponent
                 'bold' => 'weight_bold',
             ])
             ->addIf($this->loading, 'button_loading')
+            ->addIf($active, $this->color !== 'accent' && $this->variant !== 'white'
+                ? "button_{$this->variant}-{$this->color}-active"
+                : "button_{$this->variant}-active")
             ->toString();
     }
 }

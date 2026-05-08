@@ -18,8 +18,11 @@
 	&:hover {
 		background-color: token.color-light-10($color);
 	}
-	&:active {
+	&:active, &-active {
 		background-color: token.color-dark-20($color);
+	}
+	&-active {
+		pointer-events: none;
 	}
 	&:focus-visible {
 		outline-color: token.color-light-10($color, .5);
@@ -155,8 +158,11 @@
 		&:hover {
 			background-color: token.color-dark-10(token.$content-light);
 		}
-		&:active {
+		&:active, &-active {
 			background-color: token.color-dark-20(token.$content-light);
+		}
+		&-active {
+			pointer-events: none;
 		}
 		&:focus-visible {
 			outline-color: token.color-light-10(token.$content-light, .5);
