@@ -1,0 +1,15 @@
+@use "@core/tokens" as token;
+
+.text {
+	font-size: token.scale(16);
+	line-height: token.scale(24);
+
+	&_sm {
+		font-size: token.scale(12);
+		line-height: token.scale(16);
+	}
+	&_lg {
+		font-size: token.scale(20);
+		line-height: token.scale(24);
+	}
+}

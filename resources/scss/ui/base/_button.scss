@@ -224,67 +224,10 @@
 		@include button-ghost($base-color, $hover-color, $active-color, $focus-color);
 	}
 
-	&_none {
-		padding: token.scale(0);
-	}
-
-	// Размеры
-	&_sm {
-		padding: token.scale(4, 20);
-
-		&.button_square {
-			padding: token.scale(8);
-
-			svg {
-				height: token.scale(16);
-				width: token.scale(16);
-			}
-		}
-	}
-
-	// Модификатор для маленького шрифта (независимый от размера)
-	&_font-sm {
-		font-size: token.scale(12);
-		line-height: token.scale(16);
-	}
-	&_base {
-		padding: token.scale(8, 24);
-
-		&.button_square {
-			padding: token.scale(8);
-		}
-	}
-	&_lg {
-		padding: token.scale(16, 24);
-
-		&.button_square {
-			padding: token.scale(8);
-		}
-	}
-
-	// Формы (базовый padding для square, специфичные размеры выше)
-	&_circle, &_square {
-		padding: token.scale(token.$scale-8);
-	}
-
 	// Полная ширина
 	&_full-width {
 		justify-content: center;
 		width: 100%;
-	}
-
-	// Модификаторы жирности текста
-	&_text-regular {
-		font-weight: token.weight(token.$weight-regular);
-	}
-	&_text-medium {
-		font-weight: token.weight(token.$weight-medium);
-	}
-	&_text-semibold {
-		font-weight: token.weight(token.$weight-semibold);
-	}
-	&_text-bold {
-		font-weight: token.weight(token.$weight-bold);
 	}
 
 	&_loading {

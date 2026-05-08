@@ -10,14 +10,14 @@ class Button extends AbstractComponent
     public ?string $sizeIcon;
     public ?string $icon;
     public bool $loading;
-    public bool $square;
+    public ?bool $square;
     public ?string $weight;
     public ?string $text;
 
     public function __construct(
         string $variant = 'primary',
         string $color = 'accent',
-        string $size = 'base',
+        string $size = 'md',
         ?string $sizeScale = null,
         ?string $sizeFont = null,
         ?string $sizeIcon = null,
@@ -35,7 +35,7 @@ class Button extends AbstractComponent
 
         // Новые параметры с fallback на $size для обратной совместимости
         $this->sizeScale = $sizeScale ?? $size;
-        $this->sizeFont = $sizeFont ?? ($size === 'sm' ? $size : null);
+        $this->sizeFont = $sizeFont ?? $size;
         $this->sizeIcon = $sizeIcon ?? $size;
 
         $this->icon = $icon;
@@ -43,8 +43,8 @@ class Button extends AbstractComponent
         // Автоопределение состояния загрузки
         $this->loading = $loading ?? false;
 
-        // Автоопределение квадратной формы происходит в шаблоне
-        $this->square = $square ?? false;
+        // square определяется в шаблоне по контенту (null = автоопределение)
+        $this->square = $square;
 
         // Жирность текста
         $this->weight = $weight;
@@ -58,13 +58,12 @@ class Button extends AbstractComponent
         return view('chunker::components.button');
     }
 
-    public function classes(?bool $square = null): string
+    public function classes(bool $square = false): string
     {
-        $square = $square ?? $this->square;
 
         $builder = $this->classBuilder
             ->add('button')
-            ->addIf($square, 'button_square')
+            ->addIf($square, 'spacing_square')
             ->add("button_{$this->variant}");
 
         // Добавляем цветовой модификатор если цвет не accent и вариант не white
@@ -72,19 +71,29 @@ class Button extends AbstractComponent
             $builder->add("button_{$this->variant}-{$this->color}");
         }
 
-        return $builder
+        $builder
             ->addMatch($this->sizeScale, [
-                'none' => 'button_size-none',
-                'sm' => 'button_sm',
-                'base' => 'button_base',
-                'lg' => 'button_lg',
-            ])
-            ->addIf($this->sizeFont === 'sm', 'button_font-sm')
+                'none' => 'spacing_none',
+                'sm' => 'spacing_sm',
+                'md' => 'spacing',
+                'lg' => 'spacing_lg',
+            ]);
+
+        // Классы шрифта только для кнопок с текстом
+        if (!$square) {
+            $builder->addMatch($this->sizeFont, [
+                'sm' => 'text_sm',
+                'md' => 'text',
+                'lg' => 'text_lg',
+            ]);
+        }
+
+        return $builder
             ->addMatch($this->weight, [
-                'regular' => 'button_text-regular',
-                'medium' => 'button_text-medium',
-                'semibold' => 'button_text-semibold',
-                'bold' => 'button_text-bold',
+                'regular' => 'weight',
+                'medium' => 'weight_medium',
+                'semibold' => 'weight_semibold',
+                'bold' => 'weight_bold',
             ])
             ->addIf($this->loading, 'button_loading')
             ->toString();

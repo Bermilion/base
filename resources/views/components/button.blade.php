@@ -4,10 +4,9 @@
     $icon = $iconTrailing ?? ($icon ?? $attributes->get('icon'));
     $loading = $loading ?? $resolveAutoLoading($attributes->getAttributes());
 
-    // Определяем квадратную форму: если есть $text или $slot не пустой — не квадратная
+    // Определяем наличие контента
     $hasSlotContent = $slot && !$slot->isEmpty();
     $hasTextContent = filled($text);
-    $square = $square && !$hasSlotContent && !$hasTextContent;
 
     // Позиция иконки: trailing справа, обычная иконка слева
     $iconPosition = filled($iconTrailing) ? 'right' : 'left';
@@ -25,8 +24,15 @@
     }
 @endphp
 
+@php
+    // Вычисляем итоговое значение square для передачи в classes()
+    $isSquare = $square === null
+        ? (!$hasSlotContent && !$hasTextContent)
+        : $square;
+@endphp
+
 @if (isset($attributes['href']))
-    <a {{ $attributes->merge(['class' => $classes($square)]) }}>
+    <a {{ $attributes->merge(['class' => $classes($isSquare)]) }}>
         @if($icon && $iconPosition === 'left')
             <x-chunker::icon name="{{ $icon }}" size="{{ $sizeIcon }}" />
         @endif
@@ -41,7 +47,7 @@
         @endif
     </a>
 @else
-    <button type="{{ $type ?? 'button' }}" {{ $attributes->merge(['class' => $classes($square)]) }}>
+    <button type="{{ $type ?? 'button' }}" {{ $attributes->merge(['class' => $classes($isSquare)]) }}>
         @if($icon && $iconPosition === 'left')
             <x-chunker::icon name="{{ $icon }}" size="{{ $sizeIcon }}" />
         @endif

@@ -1,0 +1,15 @@
+@use "@core/tokens" as token;
+
+.size {
+	height: token.scale(24);
+	width: token.scale(24);
+
+	&_sm {
+		height: token.scale(16);
+		width: token.scale(16);
+	}
+	&_lg {
+		height: token.scale(32);
+		width: token.scale(32);
+	}
+}

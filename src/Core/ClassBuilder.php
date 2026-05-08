@@ -28,6 +28,14 @@ class ClassBuilder
 
     public function toString(): string
     {
-        return implode(' ', array_filter($this->classes));
+        $result = implode(' ', array_filter($this->classes));
+        $this->reset();
+        return $result;
+    }
+
+    public function reset(): self
+    {
+        $this->classes = [];
+        return $this;
     }
 }

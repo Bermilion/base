@@ -1,0 +1,16 @@
+@use "@core/tokens" as token;
+
+// Модификаторы жирности текста
+.weight {
+	font-weight: token.weight(token.$weight-regular);
+
+	&_medium {
+		font-weight: token.weight(token.$weight-medium);
+	}
+	&_semibold {
+		font-weight: token.weight(token.$weight-semibold);
+	}
+	&_bold {
+		font-weight: token.weight(token.$weight-bold);
+	}
+}

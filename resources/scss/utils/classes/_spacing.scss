@@ -1,0 +1,28 @@
+@use "@core/tokens" as token;
+
+.spacing {
+	padding: token.scale(8, 24);
+
+	&.spacing_square {
+		padding: token.scale(8);
+	}
+
+	&_none {
+		padding: token.scale(0);
+	}
+
+	&_sm {
+		padding: token.scale(4, 20);
+
+		&.spacing_square {
+			padding: token.scale(8);
+		}
+	}
+	&_lg {
+		padding: token.scale(16, 24);
+
+		&.spacing_square {
+			padding: token.scale(8);
+		}
+	}
+}

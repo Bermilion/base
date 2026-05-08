@@ -89,10 +89,12 @@ class Icon extends AbstractComponent
             ->add('icon')
             ->add($this->class ?? '');
 
-        // Добавляем класс размера если указан
-        if ($this->size) {
-            $builder->add("icon_size-{$this->size}");
-        }
+        // Добавляем класс размера (по умолчанию 'md' -> 'size')
+        $builder->addMatch($this->size ?? 'md', [
+            'md' => 'size',
+            'sm' => 'size_sm',
+            'lg' => 'size_lg',
+        ]);
 
         return $builder->toString();
     }
