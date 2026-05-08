@@ -55,14 +55,12 @@ class AttributeResolver
 
     public function resolveAutoLoading(): bool
     {
-        $attrs = $this->all();
-        return isset($attrs['wire:click']) &&
-               !str_starts_with($attrs['wire:click'], '$js.');
+        return $this->resolveAutoLoadingFromArray($this->all());
     }
 
     public function resolveSquareForm(mixed $slot): bool
     {
-        return method_exists($slot, 'isEmpty') ? $slot->isEmpty() : empty($slot);
+        return $this->resolveSquareFormFromSlot($slot);
     }
 
     public function resolveIconVariant(string $size, bool $square = false): string
@@ -71,5 +69,19 @@ class AttributeResolver
             'xs' => 'micro',
             default => $square ? 'mini' : 'micro',
         };
+    }
+
+    /**
+     * Приватные методы-обёртки для использования trait логики
+     */
+    private function resolveAutoLoadingFromArray(array $attributes): bool
+    {
+        return isset($attributes['wire:click']) &&
+               !str_starts_with($attributes['wire:click'], '$js.');
+    }
+
+    private function resolveSquareFormFromSlot(mixed $slot): bool
+    {
+        return method_exists($slot, 'isEmpty') ? $slot->isEmpty() : empty($slot);
     }
 }
