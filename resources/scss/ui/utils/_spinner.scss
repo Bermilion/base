@@ -1,0 +1,10 @@
+@use "@core/tokens" as token;
+
+.spinner {
+	&__sector {
+		fill: token.color-base(token.$oklch-example);
+	}
+	&__circle {
+		fill: token.color-base(token.$pale);
+	}
+}
