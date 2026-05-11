@@ -32,13 +32,9 @@ class AppServiceProvider extends ServiceProvider
 		$this->loadViewsFrom($this->packageViewsPath('utils'), 'utils');
 		$this->loadViewsFrom($this->packageViewsPath('type'), 'type');
 		$this->loadViewsFrom($this->packageViewsPath('base'), 'base');
-		$this->loadViewsFrom($this->packageResourcePath('views'), 'chunker');
 
-		// Новые директивы Blade
+		// Директива @classes для ClassBuilder
 		Blade::directive('classes', fn($expression) => "<?php echo app(Chunker2i\\Base\\Core\\ClassBuilder::class){$expression}->toString(); ?>");
-
-		// Регистрация компонентов
-		Blade::componentNamespace('Chunker2i\\Base\\View\\Components', 'chunker');
 	}
 
 	/**
